@@ -1,0 +1,111 @@
+\documentclass[11pt]{article}
+%Gummi|063|=)
+\usepackage{amsmath}
+\usepackage[utf8]{inputenc}
+\usepackage[authoryear, round]{natbib}
+\usepackage{graphicx}
+
+\title{\textbf{Predicting Economic Time-Series using Dynamic Factor Models under Structural Breaks}}
+\author{Johannes Degn}
+\date{01.08.2013}
+\begin{document}
+
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+Bootstrap the structural break tests!!! See if performance can be increased (i.e. improve on the power and maybe the size of the tests of Breitung and Eickmeier)
+
+Further provide a horserace to see which of the following is better for forecasting:
+\begin{enumerate}
+	\item A static factor model with no structural breaks (but with more factors)
+	\item A static factor model with structural break(s)
+	\item A dynamic factor model with no structural breaks
+	\item A dynamic factor model with structural break(s)
+\end{enumerate}
+
+\section{Factor Models}
+The idea behind factor models is that there are underlying latent factors which explain the 
+
+Factor Models are models of the form 
+
+\begin{equation}
+	\label{factor equation}
+	X = F \Lambda' + e = C + e
+\end{equation}
+Where $X$ is a $T \times N$ Matrix of predictors. $F$ is a $T \times r$ factor matrix. $\Lambda$ is a $N \times r$ loadings matrix. $e$ is a $T \times N$ matrix of idiosyncratic errors. $C$ is called the common component. (\ref{factor equation}) is also called factor equation.
+
+
+
+
+\begin{equation}
+	\label{factor equation, it indexed}
+	X_{it} = \lambda_i' F_t + e_{it}
+\end{equation}
+\begin{equation}
+	\label{factor equation, t indexed}
+	X_t = \Lambda F_t + e_t
+\end{equation}
+\begin{equation}
+	\label{factor equation, i indexed}
+	X_i = F_i \lambda + e_i
+\end{equation}
+
+
+\begin{equation}
+	\label{factor equation, lag polynomial}
+	X_t = \lambda(L) f_t + e_t
+\end{equation}
+\begin{equation}
+	f_t = \Psi(L) f_{t-1} + \eta_t
+\end{equation}
+Where $X_t$ is a $N \times 1$ vector of potentially very many predictors. $\lambda(L)$ is the $N \times q$ matrix of lag polynomials, $f_t$ is a $q \times 1$ vector of latent factors. $e_t$ is a $N \times 1$ vector of idiosyncratic errors which may or may not be serially auto-correlated.
+
+(\ref{factor equation}) is also called factor equation.
+
+
+\subsection{Static Factor Models}
+\subsubsection{Estimation of the Number of Factors}
+\subsection{Dynamic Factor Models}
+\begin{equation}
+	\label{var-representation of factors}
+	f_t = \Gamma f_{t-1} \text{\hspace{1cm} (VAR representation)}
+\end{equation}
+\citet{breitung2004identification} also call the $f_t$ structural factors which are gotten from the static or "reduced form" factors $F_t$.
+\citet{giannone2002tracking} and \citet{forni2009opening} apply principal component analysis to the residual covariance matrix for equation (\ref{var-representation of factors}) [see page 4 of \citet{breitung2004identification}].
+
+\citet{geweke1977dynamic} and \citet{sargent1977business} distinguish between exact DFMs and approximate DFMs. Approximated DFMs allow for correlatedness of the idiosyncratic innovations $e_{it}$ between periods. I.e. $E(e_{it}e_{js})$ is allowed to be different from $0$ but only in a limited way.
+
+
+\subsubsection{Estimation of the Number of Factors}
+\subsubsection{Estimation of the Number of Lags}
+\citep{breitung2004identification}
+
+
+\section{Notes on the Literature}
+\citet{cragg1997inferring} shows in a Monte Carlo analysis that $T\rightarrow\infty$ and $N\rightarrow\infty$ makes that classical theory for predicting the number of factors performs badly. Resultingly information criteria as in \citet{bai2002determining} should be used. These results hold under heteroskedasticity and weak serial correlation. But: structural breaks!
+
+Information criteria in \citet{bai2002determining} are a generalized version of Mallows C$_p$ \citep{mallows1973some} (Panel C$_p$ or PC$_p$)
+
+Principal Components estimation of the factors is asymptotically equivalent to maximum likelihood estimation if normality is assumed \citep{bai2003inferential}.
+
+
+\appendix
+\addcontentsline{toc}{section}{Appendix}
+
+\section{Derrivation of Principal Components}
+
+We want to find a vector $u$ such that the the variance along the projection of $x_i$ onto $u$ is maximized where $u$ is a unit norm vector.
+$$\underset{u: ||u|| = 1}{\max} \ \frac{1}{T} \sum_{i=1}^T(x_i'u)^2 = \underset{u: u'u = 1}{\max} \ u' ( \frac{1}{T} \sum_{i=1}^T x_i'x_i )u = \underset{u: u'u = 1}{\max} \ u' (\Sigma)u$$
+Setting up the Lagrangian yields
+$$ L(u, \lambda) = u' \Sigma - \lambda(u'u-1)$$
+After taking derrivatives with respect to $u$ we are left with
+$$\frac{\partial L}{\partial u} = \Sigma u -\lambda u \overset{!}{=} 0$$ or in other words $u$ is an eigenvector of the covariance matrix $\Sigma$ with corresponding eigenvalue $\lambda$.
+
+
+\bibliographystyle{plainnat}
+\bibliography{/home/joi/workspace/latex/citations}
+\end{document}
