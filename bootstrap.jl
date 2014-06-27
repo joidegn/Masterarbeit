@@ -113,15 +113,11 @@ function bootstrap_test_power(R=1000, B=1000, T=100, N=60, r=1, b=1, break_perio
 end
 
 
-
 # replicate table 2 of Breitung, Eickmeier 2011
-function table2_montecarlo()
-    R = 1000
-    r = 1
-    Ts = [50, 100, 150, 200]
-    Ns = [20, 50, 100, 150, 200]
+function table2_montecarlo(R=1000, r=1, Ts=[50, 100, 150, 200], Ns=[20, 50, 100, 150, 200])
     table = zeros(5*4, 3)
     for T_ind in 1:length(Ts), N_ind in 1:length(Ns)
+        println("now doing: T=", Ts[T_ind], "N:", Ns[N_ind])
         T = Ts[T_ind]; N = Ns[N_ind]
         table[(T_ind-1) * length(Ns) + N_ind, :] = montecarlo_test_size(R, T, N, r)
     end
@@ -129,16 +125,11 @@ function table2_montecarlo()
 end
 
 
-
 # replicate table 3 of Breitung, Eickmeier 2011
-function table3_montecarlo()
-    R = 1000
-    r = 1
-    Ts = [50, 100, 150, 200]
-    bs = [0.1, 0.2, 0.3, 0.5]
-    N = 50
+function table3_montecarlo(R=1000, r=1, Ts=[50, 100, 150, 200], bs=[0.1, 0.2, 0.3, 0.5], N=50)
     table = zeros(4*4, 3)
     for T_ind in 1:length(Ts), b_ind in 1:length(bs)
+        println("now doing: T=", Ts[T_ind], "b:", bs[b_ind])
         T = Ts[T_ind]
         table[(T_ind-1)*length(bs) + b_ind, :] = montecarlo_test_power(R, T, N, r, bs[b_ind])
     end
@@ -147,10 +138,10 @@ end
 
 # Bootstrap: rerun monte-carlo of tables 2 and 3 but this time we bootstrap the tests hoping for performance increases with lower sample sizes
 # replicate table 2 of Breitung, Eickmeier 2011 - Bootstrapped
-function table2_bootstrap(B=100, R=1, r=1, Ts=[50, 100, 150, 200], Ns=[20, 50, 100, 150, 200])
-    # replicate table 2 of Breitung, Eickmeier 2011 - Bootstrapped
+function table2_bootstrap(B=100, R=1000, r=1, Ts=[50, 100, 150, 200], Ns=[20, 50, 100, 150, 200])
     table = zeros(length(Ns)*length(Ts), 3)
     for T_ind in 1:length(Ts), N_ind in 1:length(Ns)
+        println("now doing: T=", Ts[T_ind], "N:", Ns[N_ind])
         T = Ts[T_ind]; N = Ns[N_ind]
         table[(T_ind-1) * length(Ns) + N_ind, :] = bootstrap_test_size(R, B, T, N, r)
     end
@@ -158,10 +149,10 @@ function table2_bootstrap(B=100, R=1, r=1, Ts=[50, 100, 150, 200], Ns=[20, 50, 1
 end
 
 # replicate table 3 of Breitung, Eickmeier 2011 - Bootstrapped
-function table3_bootstrap(B=100, R=1, r=1, Ts=[50, 100, 150, 200], bs=[0.1, 0.2, 0.3, 0.5])
-    N = 50
+function table3_bootstrap(B=100, R=1000, r=1, Ts=[50, 100, 150, 200], bs=[0.1, 0.2, 0.3, 0.5], N=50)
     table = zeros(length(Ts)*length(bs), 3)
     for T_ind in 1:length(Ts), b_ind in 1:length(bs)
+        println("now doing: T=", Ts[T_ind], "b:", bs[b_ind])
         T = Ts[T_ind]
         table[(T_ind-1) * length(bs) + b_ind, :] = bootstrap_test_power(R, B, T, N, r, bs[b_ind])
     end
@@ -181,4 +172,7 @@ end
 #complexity_bootstrap_table2(Ns, Ts, B=1000, R=1000) = sum([R*(3*B*Ns[i] + 3*Ns[i]) for i in 1:length(Ns), j in 1:length(Ts)])  # number of models estimated
 #complexity_bootstrap_table3(Ts, bs, B=1000, R=1000) = sum([R*(3*B*50 + 3*50) for i in 1:length(bs), j in 1:length(Ts)])  # number of models estimated
 
-
+table2_monte = table2_montecarlo()
+table3_monte = table3_montecarlo()
+table2_boot = table2_bootstrap()
+table3_boot = table3_bootstrap()
