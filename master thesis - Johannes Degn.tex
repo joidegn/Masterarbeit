@@ -4,10 +4,11 @@
 \usepackage[utf8]{inputenc}
 \usepackage[authoryear, round]{natbib}
 \usepackage{graphicx}
+\usepackage[inner=2.5cm,outer=2.5cm,bottom=2cm]{geometry}
 
 \title{\textbf{Predicting Economic Time-Series using Dynamic Factor Models under Structural Breaks}}
 \author{Johannes Degn}
-\date{01.08.2013}
+\date{07.07.2014}
 \begin{document}
 
 
@@ -15,15 +16,17 @@
 
 \tableofcontents
 
+\newpage
+
 \section{Introduction}
+Factor models are used in a wide range of situations spanning from economic indices over prediction of high-dimensional datasets. The basic idea is that there are unobservable factors driving the change of the variables of interest. Put differently, it is assumed that the change of variables is composed of a common component affecting all variables in the set and an idiosyncratic component which is specific to the variable of interest.
 
-The idea behind factor models or diffusion index models is that there are underlying latent factors which explain the evolution of the observable variables $X$. 
+In a time-series framework an interesting question to ask is whether these common components are stable over time or if the relationship of the variables of interest with the underlying factors are prone to changes. While there are recent additions to the field, the behaviour of factor models under structural breaks is still somewhat under scrutiny.
 
-One important advantage of factor models is that they do not necessarily suffer if the fraction $\frac{T}{N}$ becomes small whereas traditional models can usually not easily cope with more variables than observations.
+If the common factors can be derrived consistently they can prove to be a valuable and possibly less noisy set of predictors for the variables of interest than the whole set of available variables. Nowadays, typically the factors are estimated using principal components analysis. Resultingly factor models harbor similarity to principal component regression including the feature of dimensionality reduction which allows both models to be estimated even if the number of columns exceeds the number of rows. This is precisely what makes factor models appealing in a macroeconomic forecasting context. There exist many international macroeconomic variables some of which are not covered over a very long time horizon. With factor models all this information can be used directly.
 
-Bootstrap the structural break tests!!! See if performance can be increased (i.e. improve on the power and maybe the size of the tests of Breitung and Eickmeier)
-
-Further provide a horserace to see which of the following is better for forecasting:
+This thesis deals with testing for structural breaks in factor models and using factor models for forecasting in a situation where structural breaks might be present.
+The contribution is twofold: Firstly, the influence of structural breaks on factor models is examined. To this end feasible testing procedures developed by \citet{breitung2011testing} are presented. Bootstrap versions of these chow type tests are developed and their performance is evaluated. Secondly, the information about the structural breaks is used for forecating. The performance of different model specifications is tested in the form of horse races. The competing models are:
 \begin{enumerate}
 	\item A static factor model with no structural breaks (but with more factors)
 	\item A static factor model with structural break(s)
@@ -31,26 +34,86 @@ Further provide a horserace to see which of the following is better for forecast
 	\item A dynamic factor model with structural break(s)
 \end{enumerate}
 
+The paper is structured into X parts. Firstly factor models are introduced. Both static and dynamic models are presented along with some theory and estimation methods. Secondly structural breaks are introduced, their effects on the factors and loadings are looked at and testing methods are considered. Thirdly aforementioned models are estimated using both syntetic and real data. Finally the fourth part concludes. \\
+
+Throughout this thesis I will assume that $X$ is a matrix of potentially very many predictors. To stay consistent with existing literature I will index $X$ with $i$ or $t$ interchangeably where $i$ stands for the column index and $t$ for the row index. Also as is customary, throughout this paper capital letters denote matrices while lower case letters denote vectors except for innovation terms which are always in lower case letters. All variables containing data are assumed to be demeaned and normalized to have unit variance\footnote{I.e. every variable $y_t$ is derrived as $y_t = \frac{y_t^* - \bar y_t}{\sigma_{y}}$ where $y_t^*$ is the vector containing the original data and $\sigma_{y}$ is the (sample) standard deviation of $y$}.
 
 \section{Factor Models}
+As mentioned, the idea behind factor models or diffusion index models is that there are underlying latent factors which explain the evolution of the observable variables $X$. 
 
-
-Factor Models are models of the form 
-
+They are ususally written in the form of a factor equation (\ref{factor equation}) and a forecasting equation (\ref{forecasting equation}). 
 \begin{equation}
 	\label{factor equation}
-	X = F \Lambda' + e = C + e
+	X_t = \lambda(L) f_t + e_t
 \end{equation}
-Where $X$ is a $T \times N$ Matrix of predictors. $F$ is a $T \times r$ factor matrix. $\Lambda$ is a $N \times r$ loadings matrix. $e$ is a $T \times N$ matrix of idiosyncratic errors. $C$ is called the common component. (\ref{factor equation}) is also called factor equation.
-Depending on whether authors index by row, column or both, several alternative ways of writing down the factor model equation are used in the literature.
-
 \begin{equation}
-	\label{factor equation, it indexed}
-	X_{it} = \lambda_i' F_t + e_{it}
+	\label{forecasting equation}
+	y^h_{t+h} = \alpha(L) W_t + \beta(L) \hat f_t + \varepsilon_{t+h}
 \end{equation}
+	
+$X_t$ is a $N \times 1$ vector of potentially very many predictors. $\lambda(L)$ is a $N \times q$ matrix of lag polynomials, $f_t$ is a $q \times 1$ vector of latent factors. $e_t$ is a $N \times 1$ vector of idiosyncratic errors which may or may not be serially auto-correlated. $W_t$ consists of variables which the researcher knows to be sufficiently relevant to enter the forecasting equation directly. Usually $W_t$ is taken to consist of lags of $y_t$ and maybe a constant term. $\hat f_t$ is an estimate of the factors in the factor equation (\ref{factor equation}). Estimation of the factors is treated below.
+
+Most authors assume the idiosyncratic component to be a white noise process (i.e. independent and of mean 0), however "weak" dependence is also commonly assumed. In the vocabulary of factor models these are models with uncorrelated idiosyncratic components $e_t$ (more specifically $E(e_t e_t') = \Sigma = \text{diag}(\sigma_{e_1}^2, ..., \sigma_{e_N}^2)$ and $E(e_t) = 0$).
+
+\citet{geweke1977dynamic} and \citet{sargent1977business} distinguish between exact or strict Factor Models and approximate Factor Models. In essence the difference is composed of different assumptions for the error terms. Approximated factor models allow for limited correlatedness of the idiosyncratic innovations $e_{it}$ between periods while strict factor models do not. More precise deifinitions follow now and are taken from \citet{breitung2006dynamic}
+\subsubsection*{Strict factor models}
+\citet{breitung2006dynamic} list the assumptions for strict factor models as follows: For the innovations it is assumed $E(e_t) = 0$ and $E(e_te_t') = \sigma = \text{diag}(\sigma_1^2, ..., \sigma_N^2)$. Also $E(f_t) = 0$ and $E(f_tf_t') = \Omega$. If $E(f_t) = 0$ it follows that $E(X_t) = 0$ which is enforced by demeaning the variables. Additionally $E(f_t e_t') = 0$ i.e. the innovations and the error terms are uncorrelated. It follows directly that $E(X_tX_t') = \Lambda \Omega \Lambda' + \Sigma$\footnote{$E(X_tX_t') = E[(\Lambda f_t +e_t) (\Lambda f_t + e_t)'] = E(\Lambda f_t f_t' \Lambda' + \Lambda f_t e_t' + e_t f_t' \Lambda' + e_t e_t') = \Lambda \Omega \Lambda' + \Sigma$}
+\subsubsection*{Approximate factor models}econo
+Approximate factor models losen the assumptions of strict factor models at the cost of assuming $N \to \infty$.
+$E(e_{it}e_{js})$ is allowed to be different from $0$ but only weakly. Similarly the factors $f_t$ and and the idiosyncratic error terms are allowed to be correlated but again only weakly, so that $E(f_t e_t')$ does not have to be $0$. But $N^{-1}\Lambda'\Lambda$ must converge to a positive definite limiting matrix $\Sigma_\Lambda$ which ensures that the factors influence each variable with a similar order of magnitude. Otherwise it could be that the loadings for some variables are $0$ \citep{breitung2006dynamic}. Similiary it is assumed about the factors that $T^{-1}\sum_{t=1}TF_tF_t' \overset{p}{\to} \Sigma_F$. This allows for stationary processes e.g. an ARMA process. \\
+Some more assumptions are necessary for the inferential theory\footnote{Most notably the results of \citet{bai2003inferential} are consistency and normality of the factor estimations. The rate of convergence is shown to be $\min(\sqrt{N}, \sqrt{T})$.} of \citet{bai2003inferential} to hold. Namely these assumptions are Assumptions A through D:
+
+\begin{flalign*}
+	\textbf{Assumption A: } E||F_t||^4 \leq M < \infty \text{ and } T^{-1} \sum_{t=1}^TF_t F_t' \overset{p}{\to} \Sigma_F \text{ for some } r \times r \text{ positive matrix } \Sigma_F &\\
+\end{flalign*}
+
+\begin{flalign*}
+	\textbf{Assumption B: } ||\lambda_1|| \leq \bar \lambda < \infty, \text{ and } || \Lambda' \Lambda/N - \Sigma_\Lambda|| \to 0 \text{ for some } r\times r \text{ positive definite matrix } \Sigma_\Lambda & \\
+\end{flalign*}
+
+\begin{flalign*}
+	&\textbf{Assumption C: } \exists M: 0<M < \infty \text{ such that } \forall N, T, &\\
+	&\text{1.) } E(e_{it}) = 0, E|e_{it}|^8 \leq M &\\
+	&\text{2.) } E(e_s'e_t/N) = E(N^{-1} \sum_{i=1}^N e_{is} e_{it}) = \gamma_N(s, t), |\gamma_N(s, s)| \leq M \forall s \text{ and } &\\
+	&T^{-1}\sum_{s=1}^T \sum_{t=1}^T | \gamma_N(s, t) \leq M &\\
+	& \text{3.) } E(e_{it}'e_{jt}) = \tau_{ij, t} \text{ with } |\tau_{ij, t}| \leq |\tau_{ij}| \text{ for some } \tau_{ij} \text{ and for all } t \text{ and } &\\
+	& N^{-1} \sum_{i=1}^N \sum_{j=1}^N |\tau_{ij} \leq M &\\
+	& \text{4.) } E(e_{it}'e_{js}) = \tau_{ij, ts} \text{ and } (NT)^{-1} \sum_{i=1}^N\sum_{j=1}^N\sum_{t=1}^T\sum_{s=1}^T|\tau_{ij, ts}| \leq M &\\
+	& \forall (t,s) E\left| N^{-1/2} \sum_{i=1}^N[e_{is}e_{it} - E(e_{is}e_{it})]\right|^4 \leq M &\\
+\end{flalign*}
+
+\begin{flalign*}
+	&\textbf{Assumption D: } E(\frac{1}{N} \sum_{i=1}^N || \frac{1}{\sqrt{N}}\sum_{t=1}^TF_t e_{it} || ^2) \leq M &\\
+\end{flalign*}
+
+Assumption C allows for some degree of dependence and heteroskedasticity among the innovation terms. \\
+
+
+As mentioned, an important advantage of factor models compared to simpler econometric models is that they do not necessarily suffer if the fraction $\frac{T}{N}$ becomes small whereas most models can not cope with more variables than observations. VAR models for example have the problem that the number of parameters to estimate becomes too high quickly if $N$ is high relative to $T$. 
+The reason why factor models do not have this problem is that firstly the factor equation is estimated. This gives estimates $\hat f_t$ of the factors. Then only the first $r$ eigenvectors are used in the forecasting equation where $r<N$\footnote{Typically $r$ is much smaller than $N$. E.g. the famous one factor model of intelligence by \citet{spearman1904general} (in which factor models were developed the first time) has $r=1$.}. This feature allows researchers in principle to append $X$ by further variables derived from the initial set. \citet{bai2008forecasting} for example use what they call squared principal components and quadratic principal components. The first of which appends squares of the $X_i$ to the initial matrix $X$ such that $X_{t}^{spc}=\left\{X_{it}, X_{it}^2\right\}$ and the second of which adds the cross products of $X_i$ such that $X_t^{qpc} = \left\{ X_{it}, X_{it} X_{jt}\right\} \forall i \not= j$. The idea is to change the link function between $X_t$ and $f_t$ from being linear to allow for a nonlinear relationship. \citet{bai2008forecasting} also consider adding a squared term of the factors $f_t$ to the forecasting equation (\ref{forecasting equation}) to allow the volatility of the factors to influence the forecast. Naturally, the value of these approaches depends heavily on what is being forecasted. \\
+
+Apart from the distinction into strict or approximate factor models, a further distinction can be made between static and dynamic factor models. This distinction concerns the relationship between lags of $f_t$ and $X$. Static models set $\alpha(L)$ to be of lag order $0$ while dynamic models alow for dependence with other lag orders.
+
+
+\subsection{Static Factor Models}
+For static factor models $X_t$ depends only on $f_t$ and not on lags of $f_t$ (i.e. factors enter only contemporaneously). Resultingly a static factor model is the case in which the lag order in equation (\ref{factor equation}) is 0.
+
+
 \begin{equation}
 	\label{factor equation, t indexed}
 	X_t = \Lambda F_t + e_t
+\end{equation}
+
+Where $X$ is a $T \times N$ Matrix of predictors. $F$ is a $T \times r$ factor matrix. $\Lambda$ is a $N \times r$ loadings matrix. $e$ is a $T \times N$ matrix of idiosyncratic errors. $C$ is called the common component.
+Note that depending on whether authors index by row, column or both, several alternative ways of writing down the factor model equation are used in the literature.
+
+\begin{equation}
+	\label{factor equation, it indexed}
+	X_{it} = \Lambda_i' F_t + e_{it}
+\end{equation}
+\begin{equation}
+	\label{static factor equation}
+	X = F \Lambda' + e = C + e
 \end{equation}
 \begin{equation}
 	\label{factor equation, i indexed}
@@ -58,77 +121,317 @@ Depending on whether authors index by row, column or both, several alternative w
 \end{equation}
 
 
-\begin{equation}
-	\label{factor equation, lag polynomial}
-	X_t = \lambda(L) f_t + e_t
-\end{equation}
-\begin{equation}
-	f_t = \Psi(L) f_{t-1} + \eta_t
-\end{equation}
-Where $X_t$ is a $N \times 1$ vector of potentially very many predictors. $\lambda(L)$ is the $N \times q$ matrix of lag polynomials, $f_t$ is a $q \times 1$ vector of latent factors. $e_t$ is a $N \times 1$ vector of idiosyncratic errors which may or may not be serially auto-correlated.
-
-There 
 
 
-\subsection{Static Factor Models}
-For static factor models the idiosyncratic component is a white noise process (i.e. independent)
 
-\subsubsection{Estimation of the Number of Factors}
 \subsection{Dynamic Factor Models}
-Dynamic factor models relax the assumption that the indiosyncratic innovation terms are white noise (i.e. independent and mean zero). In most applications the error terms will follow some time dependence structure. Dynamic Factor Models are also called generalized factor models by . Dynamic Factor Models can be written as in equation \ref{var-representation of factors} where the factor loadings of the static factor model has been replaced by dynamic factor loadings (i.e. a polynomial of the lag operator). 
+In applications there will usually be some kind of time dependence structure. Thus, dynamic factor models introduce a dynamic process into the factors. For the purpose of this paper we will assume the following VAR process for the factors.
 
 \begin{equation}
-	\label{var-representation of factors}
-	x_{it} = \lambda_i'(L) f_t
+	\label{time dependence of factors}
+	f_t = \Psi(L) f_{t-1} + \eta_t \text{\ \ \ \ \ (VAR representation)}
 \end{equation}
-Where $\lambda_i(L)$ is a dynamic matrix of loadings (i.e. $L$ is the lag operator).
+
+
+
+\subsubsection{Static interpretation of dynamic factor models}
+Dynamic factor models can be written as static factor models in a linear state space environment. This gives the static factor equation (\ref{factor equation, t indexed}) and $\Phi(L) F_t = G \eta_t$ where $\Phi(L)$ is defined such that equivalence to (\ref{time dependence of factors}) holds and $F_t$ is defined below as the stacked lagged dynamic factors $f_t$ (\citet{stock2011dynamic}). \\
+
+Solving the lag operator, we can write equation (\ref{factor equation}) in the form 
 \begin{equation}
-	\label{dynamic factors equation}
-	f_t = \Gamma f_{t-1} \text{\hspace{1cm} (VAR representation)}
+	\label{factor equation, solved lag polynomial}
+	X_{it} = \lambda_{i1}' f_t + ... + \lambda_{is}' f_{t-m} + e_{it}
+\end{equation}
+Following \citet{bai2002determining} this can be rewritten as 
+$$X_{it} = \Lambda_i^{*'} F_t + e_{it}$$
+$$\text{where } \Lambda_i^* = \begin{bmatrix} \lambda_{i1} \\ \lambda_{i2} \\ \vdots \\ \lambda_{im} \end{bmatrix} \text{ and } F_t = \begin{bmatrix} f_t \\ f_{t-1} \\ \vdots \\ f_{t-m} \end{bmatrix}$$
+
+To keep consistency between variable naming schemes denote the dimension of $F_t$ as $r \times 1$ and the dimension of $\Lambda_i^*$ as $N \times r$. Thus we can always rewrite a dynamic factor model in static form and resultingly we can use the procedure introduced below to estimate the $r$ "static factors"\footnote{\citet{breitung2004identification} call the $f_t$ "structural factors" and the $F_t$ "reduced form" factors.} $F_t$ as specified below.
+It can be seen that the dimension of the resulting stacked vector of "static" factors is $q(m+1)$ thus we can set $r=q(m+1)$. This shows that there is a relationship between $r$ and $q$ if the dynamic factor model is written as a static factor model. To identify $q$ it remains to estimate $m$.
+
+There exist several ways to identify the dynamic factors from there\footnote{Note that identifying the dynamic factors might not be of interest for forecasting but rather that it is a necessary condition in order to interpret the factors in a dynamic factor model. For forecasting purposes, in order to choose the number of factors and the number of the factor lags used in the forecasting equation (\ref{forecasting equation}) one can also follow \citet{bai2008forecasting} in using the BIC criterion to choose both simultaneously. }. Firstly \citet{giannone2002tracking} suggest estimating the VAR $F_t = C F_{t-1} + \kappa_t$ and then to apply principal component analysis on an estimate of the residual covariance matrix (see \citet{breitung2004identification} or \citet{giannone2002tracking} for details). \citet{breitung2004identification} exploit the relationship between $q$ and $r$ in order to find information criteria which can determine $q$ and the lag order of the $\lambda$. This paper does not estimate the dynamic factors directly as in the application the factors are primarily used for the second stage regression. \\
+
+Imagine the true data would be generated by a dynamic factor model. If instead of using the dynamic factor model specification and finding the dynamic factors from the static factors, a researcher simply estimates a static factor model it can be seen above that the number of factors $r$ will be larger than the number of dynamic factors $q$.
+
+\subsection{Estimation of the factors}
+\subsubsection{Static factors}
+There exist now a number of ways to estimate the static factors $F$ in (\ref{static factor equation}). Ultimately what we are looking for is a solution to the minimization of the squared error.
+\begin{equation}
+	\label{factor equation minimization problem}
+	\min_{F_1, ..., F_T, \Lambda} \frac{1}{NT} \sum_{t=1}^T (X_t - \Lambda F_t)'(X_t - \Lambda F_t)
 \end{equation}
 
-Dynamic factor models can be written as static factor models by augmenting the static factors
+Since both $\Lambda$ and $F_t$ are unspecified, there are infinitely many solutions to (\ref{factor equation minimization problem}) and the problem is not identified. To achieve identification assumptions can most conveniently be put on either $\Lambda$ or $F_t$\footnote{\citet{bai2013principal} consider several alternative normalizations. They also show that direct interpretation of the factors and loading matrices are possible if one is willing to additionally assume diagonality of $\Lambda'\Lambda$ or that $\Lambda$ is a block matrix of 2 submatrices with one submatrix being triangular.}. Usually $\Lambda$ is normalized such that $N^{-1} \Lambda'\Lambda = I_r$. Alternatively $T^{-1}F'F = I_r$ is also frequently used. The choice of normalization can have a noticeable impact on the computational demand of calculating a solution for the minimization problem in (\ref{factor equation minimization problem}). The columns spaces spanned by the estimates of $F$ are equivalent with both normalizations \citep{stock2011dynamic}.
 
-\citet{breitung2004identification} also call the $f_t$ structural factors which are gotten from the static or "reduced form" factors $F_t$.
-\citet{giannone2002tracking} and \citet{forni2009opening} apply principal component analysis to the residual covariance matrix for equation (\ref{var-representation of factors}) [see page 4 of \citet{breitung2004identification}]. \citet{bai2007determining} propose a method to estimate the $q$ dynamic factors from the $r$ static factors. Their method involves first estimating a VAR of the static factors $\hat F_t$ on its lags. The order of this VAR will be equal to the $q$ static factors.
+\citet{stock2011dynamic} list four ways which are being applied in the literature to get a solution $\hat F$ and $\hat \Lambda$ to the minimization problem (\ref{factor equation minimization problem}). Firstly a Gaussian process can be assumed which allows for maximum likelihood estimation using the Kalman filter. To do this a dynamic factor can be rewritten as a static factor model in a linear state space writing as mentioned above. \\
+Secondly principal components (and other nonparametric averaging methods) can be used to estimate both $\hat F$ and $\hat \Lambda$ at the same time. This requires relatively weak assumptions and is particularly easy to and computationally efficient which explains both the popularity of this approach and why this approach is applied in this thesis. Additionally the principal component estimation can be generalized by weighting the minimization problem with the variance matrix of the error term to take account of error variances which are not prooportional to the identity matrix (see \citet{stock2011dynamic} for details). Evidence of performance improvements by using the generalized principal components approach over the standard principal components estimator are mixed. Resultingly the simpler principal components estimator will be used. It will be described in more detail below. An unattractive feature of principal component estimation is thaint it can not identify the "true" factors $f_t$ but rather a transformation $Q f_t$ for some undefined rotation matrix $Q$ which results in some difficulty in interpreting the factors directly. \citet{bai2013principal} show a minimum set of assumptions which are required in order to make valid interpretations of the estimated factor and loading matrices.
 
-\citet{geweke1977dynamic} and \citet{sargent1977business} distinguish between exact DFMs and approximate DFMs. Approximated DFMs allow for correlatedness of the idiosyncratic innovations $e_{it}$ between periods. I.e. $E(e_{it}e_{js})$ is allowed to be different from $0$ but only in a limited way.
+Principal Components estimation of the factors is asymptotically equivalent to maximum likelihood estimation if normality is assumed \citep{bai2003inferential}. \\
+Thirdly mixture approaches between the two methods from above can be constructed. \\
+Fourthly and finally Bayesian methods can be used to get estimations of the factors and loadings which can have computational advantages over the maximum likelihood approach and can be useful if the assumption of Gaussian error terms is unappealing. \\
 
+The principal component method estimates $\hat F$ and $\hat \Lambda$ as follows. Normalizing $F$ such that $T^{-1}F'F = I_r$ gives $\hat F = \sqrt{T} * eigenvectors_r(XX')$ where $eigenvectors_i(A)$ returns the i eigenvectors corresponding to the i largest eigenvalues of a square matrix $A$. Since $\hat X = \hat F' \hat \Lambda$, it follows directly that we can estimate $\Lambda$ by $\hat \Lambda' = (\hat F' \hat F)^{-1} \hat F'X$. due to the normalization $\hat F' \hat F = T$ and we can write $\hat \Lambda = X' \hat F / T$. \\
+If, alternatively, we apply the normalization $N^{-1}\Lambda'\Lambda = I_r$ the solution to (\ref{factor equation minimization problem}) becomes $\hat \Lambda = \sqrt{N} * eigenvectors_r(X'X)$. This solution to the optimization problem is shown in appendix \ref{Estimation of the Factor Equation}). Then we can follow from $\hat X = \hat F \hat \Lambda'$ that $\hat F = X \hat \Lambda (\hat \Lambda' \hat \Lambda)^{-1}$. Again due to the normalization $\Lambda' \Lambda = N$ and we can write $\hat F = X \hat \Lambda / N$.
 
-\subsubsection{Estimation of the Number of Lags}
-\citep{breitung2004identification}
+Note that the normalization $T^{-1}F'F = I_r$ requires us to calculate the eigenvectors of $XX'$ which has dimension $T \times T$ while the alternative $N^{-1}\Lambda'\Lambda = I_r$ requires us to calculate the eigenvectors of $X'X$ which is $N \times N$. Depending on the relative sizes of $T$ and $N$ it can make a considerable difference in terms of computational burden which method is applied. \\
 
-\citet{bai2007determining} propose to compare the residual variance of a regression of the factor estimates $\hat F_t$ on their lags to a shrinking bound.
+\textbf{The number of factors}
+One important issue that remains to be addressed is the question of how many factors should be used in the factor equation. There exist many different ways that this choice can be made. Firstly there are simple rules of thumb. E.g. some researchers only consider factors with eigenvalues greater than $1$. Then there are methods which rely on a similar idea but employ graphical methods. The idea is to inspect the resulting scree plots\footnote{Scree plots plot the ordered eigenvalues against the number of factors (i.e. eigenvalues and corresponding eigenvectors) which results in a falling curve.}. The intuition is to only take factors into account if the eigenvalue corresponding to the next factor is smaller by a sufficient amount. This idea is also behind the cut-off value of 1 for eigenvalues. Basing on this, formal tests have been derrived which rely on the eigenvalues calculated above \citep{stock2011dynamic}.
+
+The information criteria developed by \citet{bai2002determining} are perhaps more appealing as they formalize the costs and benefits of an additional factor explicitly \citep{stock2011dynamic}. \citet{bai2002determining} consider $6$ criteria, the first three of which they call $PCp$ criteria (Panel $C_p$ criteria). These criteria result from a generalization of Mallows' $C_p$ \citep{mallows1973some}. The second set of $3$ criteria refine the usual criteria used in time-series analysis to depend on both $N$ and $T$. \citet{bai2002determining} highlight that the criteria $IC_{p1}$, $IC_{p2}$, $PC_{p1}$ and $PC_{p2}$ are specifically suited for principal component estimation. \citet{bai2002determining} present a montecarlo study to highlight the differences between the criteria. Notably the $PC_{p}$ criteria require the specification of a maximum number of factors, the choice of which is quite arbitrary\footnote{In their montecarlo study \citet{bai2002determining} set the maximum number of factors to be $8$ noting that they used the rule in \citet{schwert2002tests} and that one could consider $kmax=\text{int}[(\min\left\{N, T\right\}/100)^{1/4}]$  Choosing a different $kmax$ can result in the $PC_p$ criteria to become quite unstable.}. Resultingly this paper uses the $IC_p$ criteria. Specifically the $IC_{p2}$ criterion because it seems to be more conservative (i.e. it usually underestimates $r$ whereas $IC_{p2}$ overestimates at times). 
+
+In order to understand the criteria better, tables 1 and 2 of \citet{bai2002determining} have been replicated using both different values for $r$ and $kmax$. If $r$ is chosen as in \citet{bai2002determining}, the replicated results are almost identical as the original calculations and thus are not reported\footnote{I.e. differences are so small that they can be explained by sampling variation.}. The results can be found in two tables in appendix \ref{bai ng information criteria}. Tables I through VIII in \citet{bai2002determining} in essence show $3$ points. Firstly, traditional criteria perform poorly in estimating the number of factors if compared to the $6$ presented criteria. Of the newly developed information criteria $PC_{p1}$, $PC_{p2}$, $IC_{p1}$ and $IC_{p2}$ perform well even under heteroskedasticity and autocorrelation. Secondly, if $\min\{N, T\}$ becomes too small, the performance of the criteria suffers which is highlighted by the bottom 5 results in the tables. Especially $PC_{p3}$ suffers in this regard. In the given specifications the cut-off value for $\min\{N, T\}$ appears to be 40 or 60 if the variance of the innovations is high. Thirdly, $PC_{p3}$ and $IC_{p3}$ are less robust to a small $\min\{N, T\}$. \\
+The replication results in appendix \citet{bai2002determining} harbor three additional insights. Firstly as $r$ increases, the requirements for $\min\{N, T\}$ are also higher. For $r=7$ and $r=9$ it seems $\min\{N, T\}$ should be at least $100$. Secondly the choice of $kmax$ can matter a lot. Especially for small samples the specification of $kmax=8$ used in \citet{bai2002determining} choose the maximum number of factors frequently when the $N$ and $T$ are too small. Almost all results in the last 5 rows set $\hat k=8$ whereas the replicated results often report a lower number of factors if $kmax=\text{ceil}(\min\{T, N\})$. Noticeably, this also happens in the replicated results for $r \in \{1, 3, 5\}$ and $kmax=\text{ceil}(\min\{T, N\})$. If $kmax=\text{ceil}(\min\{T, N\})$ $IC_{p3}$ predicts $\hat k=50$ in the $T=100, N=100$ case for $r \in \{1, 3, 5, 7, 9\}$. Thus, the choice of $kmax$ can have a huge impact on the prediction of the number of factors. Luckily it is typically easy to see when the information criteria choose all the factors. In those cases the plausibily of the results should be checked by hand. \\
+
+An interesting question if one is ultimately interested in forecasting is whether the "true" number of factors is of any interest at all or if the number of factors used in the forecasting equation (\ref{forecasting equation}) should perhaps be different from the predicted $r$ in the static model or $q$ in the dynamic model. The answer can not be easily given. Similar to \citet{bai2008forecasting} we can dodge this question somewhat by using the BIC criterion to choose a model among a list of models with differing number of factors (or number of lags of the variable of interest).
+
+\citet{breitung2011testing} among others, however, note that if one is primarily interested in forecasting, the number of dynamic factors can be ignored and a static factor model with a higher number of factors can be estimated with equivalent success.
+
 
 \subsection{Forecasting}
+The forecasting equation (\ref{forecasting equation}) can be estimated using a simple linear regression of $y_{t+h}$ on $\hat F_t$, $y_t$, lags of $y_t$ and depending on the model specification lags of $\hat F_t$.
+
+The performance of factor models for forecasting purposes are most pronounced if the number of variables used in the factor equation is high \citep{stock2010dynamic}. This makes sense because more variables improve the fit of the factor equation. However, there is a trade-off between quantity and quality of variables\footnote{I.e. a smaller set of variables with a high predictive power can outperform a larger set of variables which includes the variables from the smaller set} that should not be ignored. This case will be adressed in the next subsection.
+
+\subsubsection{Targeted predictors}
+\citet{bai2008forecasting} follow the idea that if factor models are ultimately going to be used for forecasting it might make sense to "target" the set of predictors $X$ to the task of forecasting the variable of interest $y$. The idea stems from \citet{boivin2006more} who find that selecting only the "informative" variables can yield better results than taking a bigger set of variable which include the same "informative" variables but also additional ones. \citet{bai2008forecasting} thus provides a formal rule for which variables should be used for forecasting. To that end they use hard and soft thresholding rules to preselect among the predictors $X$ those that have a meassurable influence on $y$. For hard thresholding they regress $y_t^h$ on $W_{t-h}$ and $X_{it-h}$ for each $i=1, ..., N$\footnote{Note that the $N$ regressions include only the lags and single predictors $X_i$ as independent variables.}. Then they compare the resulting t-statistics to a threshold and discard those predictors whose t-statistics do not exceed that threshold. For soft thresholding \citet{bai2008forecasting} perform penalized regressions, LASSO, elastic net and Least Angle Regression (see \citet{tibshirani1996}, \citet{zou_hastie2005}, \citet{efron_hastie_johnstone_tibshirani2004} for details) using the fact that these regression specifications set the parameters of variables which are not important to $0$. \\
+
+It should be noted that this approach, while attractive in principle, requires additional thought in the presence of structural breaks.
+
+
+\subsection{Interpreting the factors}
+TODO: should I include such a chapter? It would involve finding out which variables the factors load onto.
+
+\subsection{Applications}
+Factor models have been applied in a wide range of different domains apart from economics. Most notably psychology and biology. Staying in the realms of economics, prominently, there are applications in the calculation of indices. The is based on the idea that the factors consist of underlying tendencies applying to all variables which makes them appealing as tools to generate indices.
+
+\citet{schumacher2010factor} employs a similar idea in that he uses international predictors to forecast German GDP. Firstly it is intuitive that international data has an influence on an open economy directly. But secondly it is conceivable that there are underlying factors which influence both German GDP growth and international macroeconomic variables at the same time. However, to make sure that the information conveyed in the additional international predictors is of relevance for forecasting, \citet{schumacher2010factor} "targets" the predictors prior to esimating the factor equation, as described above.
+
+
+TODO: see Bai (2003) page 1 for more examples!
+
+\section{Structural breaks}
+The treatment of structural breaks follows \citet{breitung2011testing} closely.
+
+The factor model under a structural breaks in period $T^*$ can be written as follows:
+\begin{equation}
+	\label{}
+	y_{it} = f'_t\lambda_i^{(1)} + \varepsilon_{it} \text{ for } t = 1, ..., T^*
+\end{equation}
+\begin{equation}
+	\label{}
+	y_{it} = f'_t\lambda_i^{(2)} + \varepsilon_{it} \text{ for } t = T^* + 1, ..., T
+\end{equation}
+
+The intuition is the same as with simpler models: a structural break implies a different relationship between the variable of interest and the factors and hence different factor loadings for the periods before and after the breaks. Multiple structural breaks can be specified accordingly.
+
+Interestingly, estimating a static factor model without structural breaks if the true data generating process includes structural breaks yields an analogy to ignoring dynamic factors if they were present in the data generating process: the space estimated by the factors will be of higher dimension. This means that the number of factors $r$ predicted e.g. by the \citet{bai2002determining} information criteria will be higher than if no structural breaks were present. \citet{breitung2011testing} note that similar to dynamic factor models it is enough to increase the number of factors if one is primarily interested in decomposing the common component from the idiosyncratic component (that is to say if one is interested foremost in forecasting).
+
+
+\citet{breitung2011testing} develop several Chow type tests for the static factor model under the assumptions of the strict factor model. They also develop Quandt-Andrews type supremum tests. The test statistics are as follows.
+
 
 \begin{equation}
-	\label{forecasting equation}
-	y_{t+h}^h = \mu + \alpha(L) y_t + b(L) \hat f_t + e_{t+h}^h
+	\label{LR-Statistic}
+	\text{lr}_i = T [ \log(S_{0i}) - \log(S_{1i + S_{2i}}) ]
 \end{equation}
-So forecasts rely on lags of the variable and estimated of the common factors.
+
+\begin{equation}
+	\label{LM-Statistic}
+	\text{lm}_i = T R^2_i \text{ where $R_i^2$ is the r-squared from a regression } \hat \varepsilon_{it} = \theta_i' \hat f_t + \phi \hat f_t^* + \tilde \varepsilon_{it}
+\end{equation}
+
+\begin{equation}
+	\label{Wald-Statistic}
+	\text{wald}_i = \text{ Wald statistic for $H_0: \Psi_i = 0$ in the regression } y_{it} = \lambda_i' \hat f_t + \psi \hat f_t^* + \nu_{it}
+\end{equation}
+
+\begin{equation}
+	\label{LM-Statistic}
+	\text{LM}^* = \frac{\left( \sum_{i=1}^N s_i \right) -rN}{\sqrt{2rN}}
+\end{equation}
+
+The LM$^*$ statistic pertains to the joint test of no structural break in all the factor loadings. Note, however, that the assumptions required for the LM$^*$ statistic are those of a strict factor model, namely no interdependence in the error terms $e_t$ in (\ref{factor equation}). \\
+
+
+We follow \citet{breitung2011testing} in assuming an AR(p) process for the innovation term as in equation (\ref{errors AR(p)}):
+\begin{equation}
+	\label{errors AR(p)}
+	u_{it} = \varrho_{i, 1} u_{i, t-1} + ... + \varrho_{i, p_i} u_{i, t-p_i} + \varepsilon_{it}
+\end{equation}
+This is in line with the assumptions of the approximate factor model introduced above.
+
+For dynamic factor models\footnote{Note that \citet{breitung2011testing} call a model where the innovations are generated by an AR(p) model a dynamic model whereas the literature usually refers to a dynamic process in the factors as in equation (\ref{time dependence of factors}). This is similar in effect but not quite the same.} \citet{breitung2011testing} propose to use a GLS transformed model, i.e. to perform the regression:
+$$\varrho_i(L) y_{it} = \lambda_i'[\varrho(L) \hat f_t] + \psi' [\varrho_i(L) \hat f_t^*] + \varepsilon^*_{it}$$
+The lag polynomials are obtained by applying some information criterion to the $N$ regressions
+$$\hat \varepsilon_{it} = \varrho_{i, t-1} \hat u_{i, t-1} + ... + \varrho_{i, p_i} \hat u_{i, t-p_i} + \tilde \varepsilon_{i,t}$$
+
+Similar test statistics as above can then be applied to the results of the GLS regressions. \citet{breitung2011testing} only present the LM-statistic.
+$$\hat \varrho_i(L) y_{it} = \lambda_i' \left[\varrho_i(L) \hat f_t\right] + \psi_i' \left[\hat \varrho_i(L) \hat f_t^*\right] + \tilde \varepsilon^*_{it} \text{ for } t= p_i+1, ..., T_i$$
+
+Under heteroskedasticity regression has to be weighted by the covariance matrix. If we take account of the possibility of a break in the covariance matrix we get
+$$\frac{1}{\hat \sigma^{(1)}} \varrho_i(L) y_{it} = \lambda_i' \left[\frac{1}{\hat \sigma_i^{(1)}} \varrho_i(L) \hat f_t\right] + \left[\frac{1}{\hat \sigma_i^{(1)}} \varrho_i(L) \hat f_t^*\right] + \tilde \varepsilon^*_{it} \text{ for } t = p_i+1, ..., T^*_i$$
+$$\frac{1}{\hat \sigma^{(2)}} \varrho_i(L) y_{it} = \lambda_i' \left[\frac{1}{\hat \sigma_i^{(2)}} \varrho_i(L) \hat f_t\right] + \left[\frac{1}{\hat \sigma_i^{(2)}} \varrho_i(L) \hat f_t^*\right] + \tilde \varepsilon^*_{it} \text{ for } t = T_i*+1, ..., T$$
+
+
+
+\subsection{Bootstrapping \citet{breitung2011testing}}
+
+
+
+
+
+
+
 
 \section{Notes on the Literature}
-\citet{cragg1997inferring} shows in a Monte Carlo analysis that $T\rightarrow\infty$ and $N\rightarrow\infty$ makes that classical theory for predicting the number of factors performs badly. Resultingly information criteria as in \citet{bai2002determining} should be used. These results hold under heteroskedasticity and weak serial correlation. But: structural breaks!
-
-Information criteria in \citet{bai2002determining} are a generalized version of Mallows C$_p$ \citep{mallows1973some} (Panel C$_p$ or PC$_p$)
-
-Principal Components estimation of the factors is asymptotically equivalent to maximum likelihood estimation if normality is assumed \citep{bai2003inferential}.
+\citet{cragg1997inferring} shows in a Monte Carlo analysis that $T\rightarrow\infty$ and $N\rightarrow\infty$ makes that classical theory for predicting the number of factors performs badly. Resultingly information criteria as in \citet{bai2002determining} should be used. These results hold under heteroskedasticity and weak serial correlation. But: structural breaks! TODO!!
 
 
+\newpage
 \appendix
+\section*{Apendix}
 \addcontentsline{toc}{section}{Appendix}
 
 \section{Derrivation of Principal Components}
+\label{Derrivation of Principal Components}
+The principal components of a data matrix $X$ are defined as the transformation of $X$ into the space spanned by the loadings \footnote{The $u_i$ are also called scores or principal component directions.} $u_i$ where each $u_i$ is a unit vector. The transformation is defined such that the transformed columns are uncorrelated (as are the loadings $u_i$) and such that the first transformed column (i.e. the first principal component) contains the largest amount of the variance of the original data, the second column the second largest amount (i.e. the second principal component), etc. \\
 
-We want to find a vector $u$ such that the the variance along the projection of $x_i$ onto $u$ is maximized where $u$ is a unit norm vector.
-$$\underset{u: ||u|| = 1}{\max} \ \frac{1}{T} \sum_{i=1}^T(x_i'u)^2 = \underset{u: u'u = 1}{\max} \ u' ( \frac{1}{T} \sum_{i=1}^T x_i'x_i )u = \underset{u: u'u = 1}{\max} \ u' (\Sigma)u$$
+Let $X$ have mean 0 (i.e. subtract the mean from each observation if it does not).
+For the first principal component, we want to find a loading vector vector $u_1$ such that the variance along the projection of $x$ onto the first principal component direction $u_1$ is maximized where $u_1$ is a unit norm vector. 
+$$\underset{u_1: ||u_1|| = 1}{\max} \ \frac{1}{T} \sum_{i=1}^T(x_i'u_1)^2 = \underset{u_1: u_1'u_1 = 1}{\max} \ u_1' ( \frac{1}{T} \sum_{i=1}^T x_i'x_i )u_1 = \underset{u_1: u_1'u_1 = 1}{\max} \ u_1' (\Sigma)u_1$$
 Setting up the Lagrangian yields
-$$ L(u, \lambda) = u' \Sigma - \lambda(u'u-1)$$
-After taking derrivatives with respect to $u$ we are left with
-$$\frac{\partial L}{\partial u} = \Sigma u -\lambda u \overset{!}{=} 0$$ or in other words $u$ is an eigenvector of the covariance matrix $\Sigma$ with corresponding eigenvalue $\lambda$.
+$$ L(u_1, \lambda) = u_1' \Sigma u_1 - \lambda(u_1'u_1-1)$$
+After taking the derivative with respect to $u_1$ and dividing by 2 we are left with
+$$\frac{\partial L}{\partial u_1} = \Sigma u_1 -\lambda u_1 \overset{!}{=} 0$$ in other words $u_1$ is an eigenvector of $\Sigma$, the covariance matrix of x. The corresponding eigenvalue is $\lambda$ and we must have $\Sigma = \lambda$ for the variance of the principal component to be maximal under the constraint. \\
+The maximal variance of $x'u_1$ is thus $V(x'u_1) = u_1' \Sigma u_1 = u_1' \lambda u_1$ and it is achieved for the highest eigenvalue $\lambda$ of the covariance matrix of x. The derrivation of the following principal components is accordingly subject to the additional constraint that the principal components are uncorrelated. In the case of the second principal component this implies $\text{cov}(u_1'x, u_2'x) = u_1' \Sigma u_2 = 0$. The solution for the third and all following principal component is more complex but goes accordingly. The derrivations can be seen e.g. in \citet{jolliffe2005principal} or any other textbook on the subject. The solution for the $i$-th principal component is to set the loadings $u_i$ to be eigenvector which belongs to the $i$-th highest eigenvalue. Also, for each principal component $i$ we get that $\text{var}(u_i'x) = \lambda_i$.
+
+\newpage
+\section{Estimation of the Factor Equation}
+\label{Estimation of the Factor Equation}
+Estimators of the factor equation solve (\ref{factor equation minimization problem}).
+$$\min_{F_1, ..., F_T, \Lambda} V_r(\Lambda, F) = \min_{F_1, ..., F_T, \Lambda} \frac{1}{NT} \sum_{t=1}^T (X_t - \Lambda F_t)'(X_t - \Lambda F_t)$$
+
+$$\text{s.t. } N^{-1} \Lambda' \Lambda = I_r$$
+
+The solution can be gotten by first optimizing over $F_t$. The first order condition is: $$\frac{\partial V_r}{\partial F_t} = -2X'_t \Lambda + 2 \hat F'_t \Lambda' \Lambda \overset{!}{=} 0$$
+
+Resultingly $\hat F_t = (\Lambda' \Lambda)^{-1} \Lambda' X_t$. Inserting that back into the optimization problem gives $\min_\Lambda \frac{1}{NT} X_t'X_t - 2X_t' \Lambda (\Lambda' \Lambda)^{-1} \Lambda'X_t + X_t' \Lambda (\Lambda' \Lambda)^{-1} \Lambda' \Lambda (\Lambda' \Lambda)^{-1} \Lambda'X_t = \min_\Lambda \frac{1}{NT} X_t' [I - \Lambda (\Lambda' \Lambda)^{-1} \Lambda']X_t$. \\
+This is equivalent to the problem $\max_\Lambda \text{tr}\left\{(\Lambda'\Lambda)'^{-\frac{1}{2}}\lambda'(T^{-1} \Sigma_{t=1}^T X_tX_t') \Lambda (\Lambda' \Lambda)^{-\frac{1}{2}}\right\}$ which is the same as $\max_\Lambda \Lambda' \hat \Sigma_{XX} \Lambda \text{ s.t. } N^{-1} \Lambda' \Lambda = I_r$ where $\hat \Sigma_{XX}$ is the usual sample equivalent of the variance of $X$. This can be solved by setting $\hat \Lambda$ to eigenvectors of the $r$ largest eigenvalues of $\hat \Sigma_{XX}$.
 
 
+\newpage
+\section{Replication of \citet{bai2002determining} for $r=7$ and $r=9$}
+
+\label{bai ng information criteria}
+\begin{table}[h!]
+\caption{Replication of Table I of \citet{bai2002determining} for $r=7$}
+\center{
+	DGP: $X_{it} = \sum_{j=1}^r \lambda_{ij}F_{tj} + \sqrt{\theta}e_{it}, r=7$
+} \\
+
+\center
+
+\begin{tabular}{cc|lllllll}
+
+	N & T & $PC_{p1}$ & $PC_{p2}$ & $PC_{p3}$ & $IC_{p1}$ & $IC_{p2}$ & $IC_{p3}$\\
+	\hline
+		100 & 40 & 6.4 & 5.9 & 6.97 & 4.93 & 3.46 & 6.73 & \\ 
+		100 & 60 & 6.72 & 6.27 & 7.02 & 6.34 & 4.74 & 6.99 & \\ 
+		200 & 60 & 6.93 & 6.87 & 7.0 & 6.78 & 6.46 & 6.96 & \\ 
+		500 & 60 & 6.99 & 6.96 & 7.0 & 6.94 & 6.92 & 6.99 & \\ 
+		1000 & 60 & 7.0 & 6.99 & 7.0 & 6.99 & 6.97 & 7.0 & \\ 
+		2000 & 60 & 7.0 & 6.99 & 7.0 & 6.98 & 6.99 & 7.0 & \\ 
+		100 & 100 & 7.0 & 6.77 & 7.35 & 6.89 & 6.32 & 50.0 & \\ 
+		200 & 100 & 7.0 & 7.0 & 7.0 & 7.0 & 6.99 & 7.0 & \\ 
+		500 & 100 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & \\ 
+		1000 & 100 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & \\ 
+		2000 & 100 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & \\ 
+		40 & 100 & 6.39 & 6.12 & 7.02 & 4.86 & 3.49 & 6.78 & \\ 
+		60 & 100 & 6.79 & 6.37 & 7.01 & 6.01 & 5.0 & 7.0 & \\ 
+		60 & 200 & 6.93 & 6.85 & 7.0 & 6.82 & 6.58 & 6.98 & \\ 
+		60 & 500 & 6.96 & 6.97 & 7.0 & 6.97 & 6.9 & 6.99 & \\ 
+		60 & 1000 & 7.0 & 6.99 & 7.0 & 6.99 & 6.96 & 7.0 & \\ 
+		60 & 2000 & 7.0 & 7.0 & 7.0 & 6.97 & 6.98 & 6.99 & \\ 
+		4000 & 60 & 7.0 & 7.0 & 6.99 & 6.98 & 6.99 & 6.99 & \\ 
+		4000 & 100 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & \\ 
+		8000 & 60 & 6.99 & 7.0 & 7.0 & 7.0 & 6.98 & 7.0 & \\ 
+		8000 & 100 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & \\ 
+		60 & 4000 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & 6.99 & \\ 
+		100 & 4000 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & \\ 
+		60 & 8000 & 6.99 & 7.0 & 7.0 & 6.99 & 7.0 & 6.99 & \\ 
+		100 & 8000 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & 7.0 & \\ 
+	\hline
+		10 & 50 & 5.0 & 5.0 & 5.0 & 4.76 & 3.95 & 5.0 & \\ 
+		10 & 100 & 5.0 & 5.0 & 5.0 & 4.58 & 4.18 & 4.96 & \\ 
+		20 & 100 & 7.04 & 6.5 & 7.98 & 3.14 & 2.07 & 6.94 & \\ 
+		100 & 10 & 5.0 & 5.0 & 5.0 & 5.0 & 4.96 & 5.0 & \\ 
+		100 & 20 & 7.1 & 6.64 & 8.05 & 3.3 & 2.08 & 8.2 & \\ 
+	\hline
+	\hline
+	\\
+	\multicolumn{8}{l} {\begin{minipage}{9.5cm}
+		\small{\textbf{\textit{Notes:}} Estimated number of factors averaged over 1000 simulations. The true number of factors is $r$ and the maximum number of factors is $\text{ceil}(\min\{T, N\})/2)$.}
+	\end{minipage}} \\
+
+\end{tabular}
+\end{table}
+
+\begin{table}
+\caption{Replication of Table I of \citet{bai2002determining} for $r=9$}
+\center{
+	DGP: $X_{it} = \sum_{j=1}^r \lambda_{ij}F_{tj} + \sqrt{\theta}e_{it}, r=9$
+} \\
+\center{
+	see \citet{bai2002determining} for specification of the DGP
+}
+
+\center
+\begin{tabular}{cc|lllllll}
+	N & T & $PC_{p1}$ & $PC_{p2}$ & $PC_{p3}$ & $IC_{p1}$ & $IC_{p2}$ & $IC_{p3}$\\
+	\hline
+		100 & 40 & 6.51 & 5.93 & 8.06 & 3.55 & 1.49 & 7.89 & \\ 
+		100 & 60 & 7.02 & 6.25 & 8.77 & 5.4 & 2.74 & 8.9 & \\ 
+		200 & 60 & 7.74 & 7.31 & 8.65 & 7.33 & 6.26 & 8.74 & \\ 
+		500 & 60 & 8.09 & 8.02 & 8.52 & 8.18 & 7.97 & 8.58 & \\ 
+		1000 & 60 & 8.42 & 8.38 & 8.59 & 8.45 & 8.25 & 8.62 & \\ 
+		2000 & 60 & 8.47 & 8.32 & 8.59 & 8.67 & 8.56 & 8.64 & \\ 
+		100 & 100 & 8.03 & 6.93 & 9.01 & 7.68 & 4.85 & 50.0 & \\ 
+		200 & 100 & 8.85 & 8.48 & 8.99 & 8.92 & 8.58 & 9.0 & \\ 
+		500 & 100 & 9.0 & 8.99 & 9.0 & 9.0 & 8.99 & 9.0 & \\ 
+		1000 & 100 & 9.0 & 8.99 & 9.0 & 9.0 & 9.0 & 9.0 & \\ 
+		2000 & 100 & 9.0 & 9.0 & 9.0 & 9.0 & 9.0 & 9.0 & \\ 
+		40 & 100 & 6.63 & 6.06 & 8.08 & 3.38 & 1.66 & 7.79 & \\ 
+		60 & 100 & 7.03 & 6.33 & 8.85 & 5.51 & 2.68 & 8.94 & \\ 
+		60 & 200 & 7.79 & 7.43 & 8.6 & 7.1 & 6.05 & 8.73 & \\ 
+		60 & 500 & 8.16 & 7.98 & 8.61 & 8.28 & 7.96 & 8.66 & \\ 
+		60 & 1000 & 8.41 & 8.28 & 8.51 & 8.51 & 8.34 & 8.69 & \\ 
+		60 & 2000 & 8.4 & 8.4 & 8.58 & 8.57 & 8.56 & 8.74 & \\ 
+		4000 & 60 & 8.52 & 8.44 & 8.57 & 8.61 & 8.51 & 8.73 & \\ 
+		4000 & 100 & 9.0 & 9.0 & 9.0 & 9.0 & 9.0 & 9.0 & \\ 
+		8000 & 60 & 8.44 & 8.52 & 8.55 & 8.66 & 8.64 & 8.68 & \\ 
+		8000 & 100 & 9.0 & 9.0 & 9.0 & 9.0 & 9.0 & 9.0 & \\ 
+		60 & 4000 & 8.53 & 8.54 & 8.55 & 8.62 & 8.6 & 8.57 & \\ 
+		100 & 4000 & 9.0 & 9.0 & 9.0 & 9.0 & 9.0 & 9.0 & \\ 
+		60 & 8000 & 8.61 & 8.47 & 8.51 & 8.66 & 8.58 & 8.76 & \\ 
+		100 & 8000 & 9.0 & 9.0 & 9.0 & 9.0 & 9.0 & 9.0 & \\ 
+	\hline
+		10 & 50 & 5.0 & 5.0 & 5.0 & 4.66 & 3.29 & 5.0 & \\ 
+		10 & 100 & 5.0 & 5.0 & 5.0 & 4.32 & 3.59 & 4.77 & \\ 
+		20 & 100 & 7.25 & 6.84 & 8.1 & 1.76 & 1.28 & 7.21 & \\ 
+		100 & 10 & 5.0 & 5.0 & 5.0 & 4.96 & 4.74 & 5.0 & \\ 
+		100 & 20 & 7.37 & 7.02 & 8.28 & 1.92 & 1.25 & 8.89 & \\ 
+	\hline
+	\hline
+	\\
+	\multicolumn{8}{l} {\begin{minipage}{9.5cm}
+		\small{\textbf{\textit{Notes:}} Estimated number of factors averaged over 1000 simulations. The true number of factors is $r$ and the maximum number of factors is $\text{ceil}(\min\{T, N\})/2)$.}
+	\end{minipage}} \\
+\end{tabular}
+\end{table}
+
+
+\newpage
 \bibliographystyle{plainnat}
 \bibliography{/home/joi/workspace/latex/citations}
 \end{document}
