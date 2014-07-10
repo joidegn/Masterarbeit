@@ -21,11 +21,11 @@
 \section{Introduction}
 Factor models are used in a wide range of situations spanning from economic indices over prediction of high-dimensional datasets. The basic idea is that there are unobservable factors driving the change of the variables of interest. Put differently, it is assumed that the change of variables is composed of a common component affecting all variables in the set and an idiosyncratic component which is specific to the variable of interest.
 
-In a time-series framework an interesting question to ask is whether these common components are stable over time or if the relationship of the variables of interest with the underlying factors are prone to changes. While there are recent additions to the field, the behaviour of factor models under structural breaks is still somewhat under scrutiny.
-
 If the common factors can be derrived consistently they can prove to be a valuable and possibly less noisy set of predictors for the variables of interest than the whole set of available variables. Nowadays, typically the factors are estimated using principal components analysis. Resultingly factor models harbor similarity to principal component regression including the feature of dimensionality reduction which allows both models to be estimated even if the number of columns exceeds the number of rows. This is precisely what makes factor models appealing in a macroeconomic forecasting context. There exist many international macroeconomic variables some of which are not covered over a very long time horizon. With factor models all this information can be used directly.
 
-This thesis deals with testing for structural breaks in factor models and using factor models for forecasting in a situation where structural breaks might be present.
+In a time-series framework an interesting question to ask is whether these common components are stable over time or if the relationship of the variables of interest with the underlying factors are prone to changes. While there are recent additions to the field, the behaviour of factor models under structural breaks is still being researched. There are at least two reasons why structural breaks are interesting in an econometric model. If we assume that strcutural breaks imply a change in the coefficients of the model at a certain period, this can be interesting in itself especially if the coefficients and the factors are to be interpreted directly. Additionally, from a forecasting perspective it can be worthwhile to consider only the data after the structural break(s) has happened\footnote{Alternatively, instead of splitting the data into multiple periods for each break, a single forecasting equation can be constructed which includes the structural break by introducing a dummy variable.}. The hope is that the parameters of the model which are estimated relying only on the data after the last break might be closer to the true values which have generated the data to be forecast. This assumes that there will not be another structural break at the period which is be forecast. It should be notet that \citet{pesaran2007selection} have shown that it can be slightly better to include same observations before the last break.
+
+This thesis deals with testing for structural breaks in factor models and using factor models for forecasting in a situation where structural breaks might be present.\footnote{Structural breaks can refer to changes in the means and variances of variables or a change in the relationship of variables. I focus on the latter. More specificity will be added in section 3.} \\
 The contribution is twofold: Firstly, the influence of structural breaks on factor models is examined. To this end feasible testing procedures developed by \citet{breitung2011testing} are presented. Bootstrap versions of these chow type tests are developed and their performance is evaluated. Secondly, the information about the structural breaks is used for forecating. The performance of different model specifications is tested in the form of horse races. The competing models are:
 \begin{enumerate}
 	\item A static factor model with no structural breaks (but with more factors)
@@ -61,7 +61,7 @@ Most authors assume the idiosyncratic component to be a white noise process (i.e
 \subsubsection*{Approximate factor models}econo
 Approximate factor models losen the assumptions of strict factor models at the cost of assuming $N \to \infty$.
 $E(e_{it}e_{js})$ is allowed to be different from $0$ but only weakly. Similarly the factors $f_t$ and and the idiosyncratic error terms are allowed to be correlated but again only weakly, so that $E(f_t e_t')$ does not have to be $0$. But $N^{-1}\Lambda'\Lambda$ must converge to a positive definite limiting matrix $\Sigma_\Lambda$ which ensures that the factors influence each variable with a similar order of magnitude. Otherwise it could be that the loadings for some variables are $0$ \citep{breitung2006dynamic}. Similiary it is assumed about the factors that $T^{-1}\sum_{t=1}TF_tF_t' \overset{p}{\to} \Sigma_F$. This allows for stationary processes e.g. an ARMA process. \\
-Some more assumptions are necessary for the inferential theory\footnote{Most notably the results of \citet{bai2003inferential} are consistency and normality of the factor estimations. The rate of convergence is shown to be $\min(\sqrt{N}, \sqrt{T})$.} of \citet{bai2003inferential} to hold. Namely these assumptions are Assumptions A through D:
+Some more assumptions are necessary for the inferential theory\footnote{Most notably the results of \citet{bai2003inferential} are consistency and normality of the factor estimations. The rate of convergence is shown to be $\min(\sqrt{N}, \sqrt{T})$.} of \citet{bai2003inferential} to hold. Namely these assumptions are Assumptions A through D in \citet{bai2003inferential}:
 
 \begin{flalign*}
 	\textbf{Assumption A: } E||F_t||^4 \leq M < \infty \text{ and } T^{-1} \sum_{t=1}^TF_t F_t' \overset{p}{\to} \Sigma_F \text{ for some } r \times r \text{ positive matrix } \Sigma_F &\\
@@ -96,7 +96,7 @@ Apart from the distinction into strict or approximate factor models, a further d
 
 
 \subsection{Static Factor Models}
-For static factor models $X_t$ depends only on $f_t$ and not on lags of $f_t$ (i.e. factors enter only contemporaneously). Resultingly a static factor model is the case in which the lag order in equation (\ref{factor equation}) is 0.
+For static factor models $X_t$ depends only on $f_t$ and not on lags of $f_t$ i.e. factors enter only contemporaneously. Resultingly a static factor model is the case in which the lag order in equation (\ref{factor equation}) is 0.
 
 
 \begin{equation}
@@ -211,7 +211,7 @@ Factor models have been applied in a wide range of different domains apart from 
 TODO: see Bai (2003) page 1 for more examples!
 
 \section{Structural breaks}
-The treatment of structural breaks follows \citet{breitung2011testing} closely.
+The treatment of structural breaks follows \citet{breitung2011testing} closely.\footnote{In theory, we could also think of structural breaks as affecting the forecasting equation (\ref{forecasting equation}). I ignore this because structural breaks in equations of this type have been thoroughly researched.}
 
 The factor model under a structural breaks in period $T^*$ can be written as follows:
 \begin{equation}
@@ -225,7 +225,7 @@ The factor model under a structural breaks in period $T^*$ can be written as fol
 
 The intuition is the same as with simpler models: a structural break implies a different relationship between the variable of interest and the factors and hence different factor loadings for the periods before and after the breaks. Multiple structural breaks can be specified accordingly.
 
-Interestingly, estimating a static factor model without structural breaks if the true data generating process includes structural breaks yields an analogy to ignoring dynamic factors if they were present in the data generating process: the space estimated by the factors will be of higher dimension. This means that the number of factors $r$ predicted e.g. by the \citet{bai2002determining} information criteria will be higher than if no structural breaks were present. \citet{breitung2011testing} note that similar to dynamic factor models it is enough to increase the number of factors if one is primarily interested in decomposing the common component from the idiosyncratic component (that is to say if one is interested foremost in forecasting).
+Interestingly, estimating a static factor model without structural breaks if the true data generating process includes structural breaks, yields an analogy to ignoring dynamic factors if they were present in the data generating process: the space estimated by the factors will be of higher dimension. This means that the number of factors $r$ predicted e.g. by the \citet{bai2002determining} information criteria will be higher than if no structural breaks were present. \citet{breitung2011testing} note that similar to dynamic factor models it is enough to increase the number of factors if one is primarily interested in decomposing the common component from the idiosyncratic component (that is to say if one is interested foremost in forecasting).
 
 
 \citet{breitung2011testing} develop several Chow type tests for the static factor model under the assumptions of the strict factor model. They also develop Quandt-Andrews type supremum tests. The test statistics are as follows.
@@ -236,6 +236,10 @@ Interestingly, estimating a static factor model without structural breaks if the
 	\text{lr}_i = T [ \log(S_{0i}) - \log(S_{1i + S_{2i}}) ]
 \end{equation}
 
+Where $$S_{0i} = \sum_{t=1}^{T}(y_{it} - \hat{f_t'} \hat \lambda_i)^2 \text{, } S_{1i} = \sum_{t=1}^{T_1^*}(y_{it} - \hat{f_t'} \hat \lambda_i^{(1)})^2 \text{ and } S_{2i} = \sum_{t=T^*_i+1}^{T_1^*}(y_{it} - \hat{f_t'} \hat \lambda_i^{(2)})^2 $$
+denote the residual sum of squares for the whole date range, the first subperiod up until the structural break and the period from the break to the end of the sample respectively.
+$\hat \lambda^{(1)}$ and $\hat \lambda^{(2)}$ denote the esimated factor loadings calculated on the data before the break and after the break respectively.
+
 \begin{equation}
 	\label{LM-Statistic}
 	\text{lm}_i = T R^2_i \text{ where $R_i^2$ is the r-squared from a regression } \hat \varepsilon_{it} = \theta_i' \hat f_t + \phi \hat f_t^* + \tilde \varepsilon_{it}
@@ -245,6 +249,9 @@ Interestingly, estimating a static factor model without structural breaks if the
 	\label{Wald-Statistic}
 	\text{wald}_i = \text{ Wald statistic for $H_0: \Psi_i = 0$ in the regression } y_{it} = \lambda_i' \hat f_t + \psi \hat f_t^* + \nu_{it}
 \end{equation}
+
+Where 
+$$\hat f_t^* = \begin{cases} 0 \text{ for } t=1, ..., T_i^* \\ \hat f_t \text{ for } t=T_i^*+1, ..., T \end{cases}$$
 
 \begin{equation}
 	\label{LM-Statistic}
@@ -269,23 +276,54 @@ $$\hat \varepsilon_{it} = \varrho_{i, t-1} \hat u_{i, t-1} + ... + \varrho_{i, p
 Similar test statistics as above can then be applied to the results of the GLS regressions. \citet{breitung2011testing} only present the LM-statistic.
 $$\hat \varrho_i(L) y_{it} = \lambda_i' \left[\varrho_i(L) \hat f_t\right] + \psi_i' \left[\hat \varrho_i(L) \hat f_t^*\right] + \tilde \varepsilon^*_{it} \text{ for } t= p_i+1, ..., T_i$$
 
-Under heteroskedasticity regression has to be weighted by the covariance matrix. If we take account of the possibility of a break in the covariance matrix we get
+Under heteroskedasticity the regression has to be weighted by the covariance matrix. If we also take account of the possibility of a break in the covariance matrix we get two distinct regressions
 $$\frac{1}{\hat \sigma^{(1)}} \varrho_i(L) y_{it} = \lambda_i' \left[\frac{1}{\hat \sigma_i^{(1)}} \varrho_i(L) \hat f_t\right] + \left[\frac{1}{\hat \sigma_i^{(1)}} \varrho_i(L) \hat f_t^*\right] + \tilde \varepsilon^*_{it} \text{ for } t = p_i+1, ..., T^*_i$$
 $$\frac{1}{\hat \sigma^{(2)}} \varrho_i(L) y_{it} = \lambda_i' \left[\frac{1}{\hat \sigma_i^{(2)}} \varrho_i(L) \hat f_t\right] + \left[\frac{1}{\hat \sigma_i^{(2)}} \varrho_i(L) \hat f_t^*\right] + \tilde \varepsilon^*_{it} \text{ for } t = T_i*+1, ..., T$$
 
 
 
 \subsection{Bootstrapping \citet{breitung2011testing}}
+In order to test whether the properties of the above test statistics can be improved upon I have repeated the montecarlo study presented in \citet{breitung2011testing} tables 2 and 3 with the difference that the test statistics have been bootstrapped. \\
 
+The idea behind bootstrapping test statistics comes from the definition of the p-value. Denoting with $\tau$ the test statistic of interest, by $\hat \tau$ the realization of that test statistic given the observed data and by $F$ the cumulative distribution function $\tau$ under the null hypothesis we can borrow the notation from \citet{davidson2004econometric} and write the p-value as
+$$p(\hat \tau) = 1 - F(\hat \tau)$$
+Resultingly the p-value can be estimated by estimating $F(\hat \tau)$. To do this we will simulate new data which follows the DGP under $H_0$. The p-value is then the (estimated) probability of the test statistic exceeding the calculated value $\hat \tau$ if the hypothesis $H_0$ were true. \\
 
+Again following \citet{davidson2004econometric} we denote with stars, values that are calculated from simulated data, $B$ denotes the number of simulated samples. We can then estimate the cumulative distribution function as 
+$$\hat F^*(x) = \frac{1}{B} \sum_{j=1}^B I(\tau^*_j \leq x) \text{ and } \hat F^*(\hat \tau) = \frac{1}{B} \sum_{j=1}^B I(\tau^*_j \leq \hat \tau)$$
+Resultingly
+$$\hat p^*(\hat \tau) = 1 - \hat \hat F^*(\hat \tau) = 1 - \frac{1}{B} \sum_{j=1}^B I (\tau^*_j \leq \hat \tau) = \frac{1}{B}\sum_{j=1}^B I(\tau^*_j > \hat \tau)$$
 
+In the following two specifications of the bootstrap are considered. Firstly, the often used resampling of the residuals is applied. Secondly the wild bootstrap is used. 
 
+Resampling the residuals uses the definition of the factor equation (\ref{factor equation}) to generate new data. The innovation term $e_t$ is replaced with resampled residuals\footnote{Resampling is done with replacement to model the empirical distribution. So the resampled residuals $e_t^*$ are given by setting $\hat e_t^* = \hat e_s$ where $s$ is drawn from $\{1, ..., T\}$ with replacement.} gotten from the estimation of the model using the initial data. 
+
+\begin{equation}
+	\label{factor equation, bootstrapped}
+	X_t^* = \hat f_t \hat \Lambda' + \hat e_t^*
+\end{equation}
+
+The wild bootstrap serves to deal with heteroskedasticity. The idea is to rescale the residuals using a white noise random variable $\nu_t$.
+
+$$X_t^* = \hat f_t \hat \Lambda' + \hat e_t^+$$
+Where $\hat e_t^+$ is set such that to $\hat e_{it}^+ = \hat e_{it} \nu_{it}$ and $\nu_{it}$ is distributed with mean $0$ and variance $1$. For the application I choose $\nu$ to be standard normal.
 
 
 
 
 \section{Notes on the Literature}
 \citet{cragg1997inferring} shows in a Monte Carlo analysis that $T\rightarrow\infty$ and $N\rightarrow\infty$ makes that classical theory for predicting the number of factors performs badly. Resultingly information criteria as in \citet{bai2002determining} should be used. These results hold under heteroskedasticity and weak serial correlation. But: structural breaks! TODO!!
+
+
+
+
+\section{Empirical application}
+There are several ways to address the issue of structural breaks from a forecasting viewpoint. Firstly structural breaks can be ignored. As has been stated above, in this case factor models will tend to choose the a higher number of factors than if no structural breaks are present.
+
+
+\subsection{Data description}
+
+
 
 
 \newpage
