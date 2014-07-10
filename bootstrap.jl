@@ -35,9 +35,9 @@ montecarlo_test_size(R=1000, T=100, N=60, r=1, break_period=int(ceil(T/2))) = mo
 
 
 function bootstrap_test_statistics(fm, B, break_period=int(ceil(T/2)))
-    bootstrap_lrs = apply(hcat, [residual_bootstrap(fm, B, fm->LR_test(fm, break_period, i)) for i in 1:N])'
-    bootstrap_lms = apply(hcat, [residual_bootstrap(fm, B, fm->LM_test(fm, break_period, i)) for i in 1:N])'
-    bootstrap_walds = apply(hcat, [residual_bootstrap(fm, B, fm->Wald_test(fm, break_period, i)) for i in 1:N])'
+    bootstrap_lrs = apply(hcat, [residual_bootstrap(fm, B, fm->LR_test(fm, break_period, i)) for i in 1:size(fm.x, 2)])'
+    bootstrap_lms = apply(hcat, [residual_bootstrap(fm, B, fm->LM_test(fm, break_period, i)) for i in 1:size(fm.x, 2)])'
+    bootstrap_walds = apply(hcat, [residual_bootstrap(fm, B, fm->Wald_test(fm, break_period, i)) for i in 1:size(fm.x, 2)])'
     bootstrap_lrs, bootstrap_lms, bootstrap_walds
 end
 
@@ -85,7 +85,6 @@ function table2_montecarlo(R=1000, r=1, Ts=[50, 100, 150, 200], Ns=[20, 50, 100,
 end
 # get all test statistic values for table 2 (to check their distribution)
 table2_stats_montecarlo(R=1000, r=1, Ts=[50, 100, 150, 200], Ns=[20, 50, 100, 150, 200]) = [montecarlo_test_statistics(R, T, N, r) for T in Ts, N in Ns]
-
 
 # replicate table 3 of Breitung, Eickmeier 2011
 function table3_montecarlo(R=1000, r=1, Ts=[50, 100, 150, 200], bs=[0.1, 0.2, 0.3, 0.5], N=50)
@@ -143,10 +142,11 @@ Ns = [20, 50, 100, 150, 200]
 bs = [0.1, 0.2, 0.3, 0.5]
 
 table2_monte = table2_montecarlo()
-table2_stats_monte = table2_stats_montecarlo(1)
+table2_stats_monte = table2_stats_montecarlo(5)
+#table2_lrs = [table2_stats_monte[T_ind, N_ind][1] for T_ind in 1:length(Ts), N_ind in 1:length(Ns)]
 table3_monte = table3_montecarlo()
-table3_stats_monte = table3_stats_montecarlo(1)
+#table3_stats_monte = table3_stats_montecarlo(1)
 table2_boot = table2_bootstrap()
-table2_stats_boot = table2_stats_bootstrap()
+#table2_stats_boot = table2_stats_bootstrap()
 table3_boot = table3_bootstrap(10, 1)
-table3_stats_boot = table3_stats_bootstrap()
+#table3_stats_boot = table3_stats_bootstrap()
