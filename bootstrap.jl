@@ -38,7 +38,7 @@ function bootstrap_test_statistics(fm, B, break_period=int(ceil(T/2)))
     bootstrap_lrs = apply(hcat, [residual_bootstrap(fm, B, fm->LR_test(fm, break_period, i)) for i in 1:size(fm.x, 2)])'
     bootstrap_lms = apply(hcat, [residual_bootstrap(fm, B, fm->LM_test(fm, break_period, i)) for i in 1:size(fm.x, 2)])'
     bootstrap_walds = apply(hcat, [residual_bootstrap(fm, B, fm->Wald_test(fm, break_period, i)) for i in 1:size(fm.x, 2)])'
-    bootstrap_lrs, bootstrap_lms, bootstrap_walds
+    return (bootstrap_lrs, bootstrap_lms, bootstrap_walds, )
 end
 
 function bootstrap_test_rejections(R=1000, B=1000, T=100, N=60, r=1, b=0, break_period=int(ceil(T/2)))
@@ -46,6 +46,9 @@ function bootstrap_test_rejections(R=1000, B=1000, T=100, N=60, r=1, b=0, break_
     bootstrap_lrs = Array(Float64, (R, N, B))
     bootstrap_lms = Array(Float64, (R, N, B))
     bootstrap_walds = Array(Float64, (R, N, B))
+    bootstrap_lr_p_values = Array(Float64, (R, N))
+    bootstrap_lm_p_values = Array(Float64, (R, N))
+    bootstrap_wald_p_values = Array(Float64, (R, N))
     for rep in 1:R
         println("rep: ", rep, "(T, N): ", (T, N))
         y, x, f, lambda, epsilon_x = factor_model_DGP(T, N, r; model="Breitung_Eickmeier_2011", b=b)
@@ -54,12 +57,12 @@ function bootstrap_test_rejections(R=1000, B=1000, T=100, N=60, r=1, b=0, break_
         lm_stats = [LM_test(fm, break_period, i) for i in 1:N]
         wald_stats = [Wald_test(fm, break_period, i) for i in 1:N]
         bootstrap_lrs[rep, :, :], bootstrap_lms[rep, :, :], bootstrap_walds[rep, :, :] = bootstrap_test_statistics(fm, B, break_period)
+        bootstrap_lr_p_values[rep, :] = [mean(bootstrap_lrs[rep, i, :].>lr_stats[i]) for i in 1:N]  # estimated p_value as in Davidson - MacKinnon p. 158 (1 - F_hat(tau_hat) = 1/B * sum(tau_start .> tau_hat))
+        bootstrap_lm_p_values[rep, :] = [mean(bootstrap_lms[rep, i, :].>lm_stats[i]) for i in 1:N]  # estimated p_value as in Davidson - MacKinnon p. 158 (1 - F_hat(tau_hat) = 1/B * sum(tau_start .> tau_hat))
+        bootstrap_wald_p_values[rep, :] = [mean(bootstrap_walds[rep, i, :].>wald_stats[i]) for i in 1:N]  # estimated p_value as in Davidson - MacKinnon p. 158 (1 - F_hat(tau_hat) = 1/B * sum(tau_start .> tau_hat))
     end
-    bootstrap_lr_p_values = [mean(bootstrap_lrs[rep, i, :].>lr_stats[i]) for rep in 1:R, i in 1:N]  # estimated p_value as in Davidson - MacKinnon p. 158 (1 - F_hat(tau_hat) = 1/B * sum(tau_start .> tau_hat))
     bootstrap_lr_rejections = bootstrap_lr_p_values .< 0.05
-    bootstrap_lm_p_values = [mean(bootstrap_lms[rep, i, :].>lm_stats[i]) for rep in 1:R, i in 1:N]  # estimated p_value as in Davidson - MacKinnon p. 158 (1 - F_hat(tau_hat) = 1/B * sum(tau_start .> tau_hat))
     bootstrap_lm_rejections = bootstrap_lm_p_values .< 0.05
-    bootstrap_wald_p_values = [mean(bootstrap_walds[rep, i, :].>wald_stats[i]) for rep in 1:R, i in 1:N]  # estimated p_value as in Davidson - MacKinnon p. 158 (1 - F_hat(tau_hat) = 1/B * sum(tau_start .> tau_hat))
     bootstrap_wald_rejections = bootstrap_wald_p_values .< 0.05
     return (bootstrap_lr_rejections, bootstrap_lm_rejections, bootstrap_wald_rejections)
 end
