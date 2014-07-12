@@ -28,6 +28,6 @@ class BundesbankSpider(scrapy.Spider):
     def parse_csv(self, response):
         data_set = response.request.meta['data_set']
         data_set["csv_url"] = response.url
-        with open("data/%s.csv" % data_set["id"], "wb") as f:
+        with open("../../bundesbank/%s.csv" % data_set["id"], "wb") as f:
             f.write(response.body)
         yield data_set
