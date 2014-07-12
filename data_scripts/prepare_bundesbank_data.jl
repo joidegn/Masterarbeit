@@ -3,7 +3,7 @@
 
 using JSON
 
-load_set(id::String) = readcsv(string("data/bundesbank/", id, ".csv"))[6:end, :]
+load_set(id::String) = readcsv(string("../data/bundesbank/", id, ".csv"))[6:end, :]
 
 function get_set_by_id(id, data_sets)
     filter(set->set["id"]==id, data_sets)
@@ -43,7 +43,7 @@ end
 
 
 
-file = open("data/items.grouped.json")
+file = open("../data/items.grouped.json")
 json = JSON.parse(file)
 selected_ids = filter_data_sets(json)
 

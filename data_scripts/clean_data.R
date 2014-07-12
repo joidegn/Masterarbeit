@@ -25,6 +25,28 @@ sanitize.dates <- function(data.frm) {  # checks if dates are in format "2010-10
     return(data.frm)
 }
 
+remove.short.series <- function(data, min.length=100) {  # removes columns which have too few non NA values
+    lengths <- apply(data, 2, function(column) length(column) - sum(is.na(column)))
+    return(data[, which(lengths>min.length)])
+}
+
+cut.to.size <- function(data) {  # cuts whole data.frame or zoo thing to drop NA margins
+    start.index <- max(apply(data, 2, function(column) for (i in 1:length(column)) if (!is.na(column[i])) return(i-1)))  # count from bottom up until NA
+    end.index <- min(apply(data, 2, function(column) for (i in length(column):1) if (!is.na(column[i])) return(i+1)))  # count from top down until NA
+    if (end.index-start.index <= 0) {
+        warning(" no observations left!")
+        return(data.frame())
+    }
+    return(data[start.index:end.index, ])
+}
+
+remove.series.that.cost.observations <- function(data, max.margin.costs=c(10,10)) {  # some series have a bad time frame making it such that cut.to.size removes almost all observations
+    start.indices <- apply(data, 2, function(column) for (i in 1:length(column)) if (!is.na(column[i])) return(i-1))  # count from bottom up until NA
+    end.indices <- apply(data, 2, function(column) for (i in length(column):1) if (!is.na(column[i])) return(i+1))  # count from top down until NA
+    leftover <- data[, -unique(c(which(start.indices > max.margin.costs[2]+1), which(dim(data)[1] - end.indices > max.margin.costs[2])))]
+    return(leftover)
+}
+
 make.data.csv <- function(files, output.file=F) {  # merges all csv files into one by date, interpolates, demeans and normalized the data
     raw.data.sets <- lapply(files, function(file) sanitize.dates(read.csv(file, sep=" ", header=F)))  # read.zoo needs data everywhere and is oppinionated about csv structure
     # naive filter: checks if any dates are duplicates (this includes NAs and similar shenanigans)
@@ -70,3 +92,11 @@ bb.files <- Sys.glob("../data/bundesbank_selected/*.csv")
 fred.files <- Sys.glob("../data/FRED_selected/*.csv")
 
 all.files <- c(bb.files, fred.files)
+
+# I am only interested in the dates.
+data <- make.data.csv(all.files)
+selected.data <- window(data, start = as.Date("1995-01-01"))  # arbitrarily
+long.enough <- remove.series.that.cost.observations(remove.short.series(selected.data, 200), c(20,20))
+final.data <- cut.to.size(long.enough)
+
+#write.zoo(final.data, "../data/final_data.csv")
