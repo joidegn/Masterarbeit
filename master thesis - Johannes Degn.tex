@@ -194,7 +194,9 @@ The forecasting equation (\ref{forecasting equation}) can be estimated using a s
 The performance of factor models for forecasting purposes are most pronounced if the number of variables used in the factor equation is high \citep{stock2010dynamic}. This makes sense because more variables improve the fit of the factor equation. However, there is a trade-off between quantity and quality of variables\footnote{I.e. a smaller set of variables with a high predictive power can outperform a larger set of variables which includes the variables from the smaller set} that should not be ignored. This case will be adressed in the next subsection.
 
 \subsubsection{Targeted predictors}
-\citet{bai2008forecasting} follow the idea that if factor models are ultimately going to be used for forecasting it might make sense to "target" the set of predictors $X$ to the task of forecasting the variable of interest $y$. The idea stems from \citet{boivin2006more} who find that selecting only the "informative" variables can yield better results than taking a bigger set of variable which include the same "informative" variables but also additional ones. \citet{bai2008forecasting} thus provides a formal rule for which variables should be used for forecasting. To that end they use hard and soft thresholding rules to preselect among the predictors $X$ those that have a meassurable influence on $y$. For hard thresholding they regress $y_t^h$ on $W_{t-h}$ and $X_{it-h}$ for each $i=1, ..., N$\footnote{Note that the $N$ regressions include only the lags and single predictors $X_i$ as independent variables.}. Then they compare the resulting t-statistics to a threshold and discard those predictors whose t-statistics do not exceed that threshold. For soft thresholding \citet{bai2008forecasting} perform penalized regressions, LASSO, elastic net and Least Angle Regression (see \citet{tibshirani1996}, \citet{zou_hastie2005}, \citet{efron_hastie_johnstone_tibshirani2004} for details) using the fact that these regression specifications set the parameters of variables which are not important to $0$. \\
+\citet{bai2008forecasting} follow the idea that if factor models are ultimately going to be used for forecasting it might make sense to "target" the set of predictors $X_t$ to the task of forecasting the variable of interest $y_t$. The idea stems from \citet{boivin2006more} who find that selecting only the "informative" variables can yield better results than taking a bigger set of variable which include the same "informative" variables but also additional ones. \citet{bai2008forecasting} thus provides a formal rule for which variables should be used for forecasting. To that end they use hard and soft thresholding rules to preselect among the predictors $X_t$ those that have a meassurable influence on $y_t$. Resultingly, a subset $\tilde X_t \subset X_t$ is selected for estimating the factor equation, the hope being that then the factors are better suited for predicting $y_t$.
+
+ For hard thresholding they regress $y_t^h$ on $W_{t-h}$ and $X_{it-h}$ for each $i=1, ..., N$\footnote{Note that the $N$ regressions include only the lags and single predictors $X_i$ as independent variables.}. Then they compare the resulting t-statistics to a threshold and discard those predictors whose t-statistics do not exceed that threshold. For soft thresholding \citet{bai2008forecasting} perform penalized regressions, LASSO, elastic net and Least Angle Regression (see \citet{tibshirani1996}, \citet{zou_hastie2005}, \citet{efron_hastie_johnstone_tibshirani2004} for details) using the fact that these regression specifications set the parameters of variables which are not important to $0$. \\
 
 It should be noted that this approach, while attractive in principle, requires additional thought in the presence of structural breaks.
 
@@ -296,7 +298,7 @@ $$\hat p^*(\hat \tau) = 1 - \hat \hat F^*(\hat \tau) = 1 - \frac{1}{B} \sum_{j=1
 
 In the following two specifications of the bootstrap are considered. Firstly, the often used resampling of the residuals is applied. Secondly the wild bootstrap is used. 
 
-Resampling the residuals uses the definition of the factor equation (\ref{factor equation}) to generate new data. The innovation term $e_t$ is replaced with resampled residuals\footnote{Resampling is done with replacement to model the empirical distribution. So the resampled residuals $e_t^*$ are given by setting $\hat e_t^* = \hat e_s$ where $s$ is drawn from $\{1, ..., T\}$ with replacement.} gotten from the estimation of the model using the initial data. 
+Resampling the residuals uses the definition of the factor equation (\ref{factor equation}) to generate new data. The innovation term $e_t$ is replaced with resampled residuals\footnote{Resampling is done with replacement to model the empirical distribution. So the resampled residuals $e_t^*$ are given by setting $\hat e_t^* = \hat e_s$ where $s$ is drawn from $\{1, ..., T\}$ with replacement.} gotten from the estimation of the model using the initial data.
 
 \begin{equation}
 	\label{factor equation, bootstrapped}
@@ -318,11 +320,21 @@ Where $\hat e_t^+$ is set such that to $\hat e_{it}^+ = \hat e_{it} \nu_{it}$ an
 
 
 \section{Empirical application}
-There are several ways to address the issue of structural breaks from a forecasting viewpoint. Firstly structural breaks can be ignored. As has been stated above, in this case factor models will tend to choose the a higher number of factors than if no structural breaks are present.
+In this section I will approach the issue of forecasting economic time series in the presence of structural breaks.
+There are several ways to address the issue of structural breaks from a forecasting viewpoint. Firstly structural breaks can be ignored. As has been stated above, in this case factor models will tend to choose the a higher number of factors than if no structural breaks are present which is means that the space the factors span is of a higher dimension as the factors are orthogonal.\footnote{How this affects the information criteria of \citet{bai2002determining} can be seen in \citet{breitung2011testing}.}
+
+Secondly, structural breaks can be included in the model in the form of a dummy parameter interacting with the factor estimations $\hat f_t$. The forecasting equation of the model then results as
+\begin{equation}
+	\label{forecasting, structural breaks}
+	y^h_{t+h} = \alpha(L) W_t + \beta(L) \hat f_t + \gamma(L) \hat f_t^* + \varepsilon_{t+h}
+\end{equation}
+where $\hat f_t^*$ is defined as above.
+
+Thirdly, if predictors are to be targeted prior to estimating the factor equation it is conceivable to find that a subset of the predictors $\tilde X_t^{(1)} \subset X_t$ peforms well before and a different subset $\tilde X_t^{(2)} \subset X_t$ performs better after the structural break. This finding would imply that it could be beneficial to estimate the factor equation again using only the data after $T^*$ and discarding the rest.
 
 
 \subsection{Data description}
-
+\subsubsection{Data treatment}
 
 
 
