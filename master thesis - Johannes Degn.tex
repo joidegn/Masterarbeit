@@ -51,7 +51,7 @@ They are ususally written in the form of a factor equation (\ref{factor equation
 	y^h_{t+h} = \alpha(L) W_t + \beta(L) \hat f_t + \varepsilon_{t+h}
 \end{equation}
 	
-$X_t$ is a $N \times 1$ vector of potentially very many predictors. $\lambda(L)$ is a $N \times q$ matrix of lag polynomials, $f_t$ is a $q \times 1$ vector of latent factors. $e_t$ is a $N \times 1$ vector of idiosyncratic errors which may or may not be serially auto-correlated. $W_t$ consists of variables which the researcher knows to be sufficiently relevant to enter the forecasting equation directly. Usually $W_t$ is taken to consist of lags of $y_t$ and maybe a constant term. $\hat f_t$ is an estimate of the factors in the factor equation (\ref{factor equation}). Estimation of the factors is treated below.
+$X_t$ is a $N \times 1$ vector of potentially very many predictors. $\lambda(L)$ is a $N \times q$ matrix of lag polynomials, $f_t$ is a $q \times 1$ vector of latent factors. $e_t$ is a $N \times 1$ vector of idiosyncratic errors which may or may not be serially auto-correlated. $W_t$ consists of variables which the researcher knows to be sufficiently relevant to enter the forecasting equation directly. Usually $W_t$ is taken to consist of s lags of $y_t$ and a constant term. $\hat f_t$ is an estimate of the factors in the factor equation (\ref{factor equation}). Estimation of the factors is treated below.
 
 Most authors assume the idiosyncratic component to be a white noise process (i.e. independent and of mean 0), however "weak" dependence is also commonly assumed. In the vocabulary of factor models these are models with uncorrelated idiosyncratic components $e_t$ (more specifically $E(e_t e_t') = \Sigma = \text{diag}(\sigma_{e_1}^2, ..., \sigma_{e_N}^2)$ and $E(e_t) = 0$).
 
@@ -140,7 +140,7 @@ Dynamic factor models can be written as static factor models in a linear state s
 Solving the lag operator, we can write equation (\ref{factor equation}) in the form 
 \begin{equation}
 	\label{factor equation, solved lag polynomial}
-	X_{it} = \lambda_{i1}' f_t + ... + \lambda_{is}' f_{t-m} + e_{it}
+	X_{it} = \lambda_{i1}' f_t + ... + \lambda_{im}' f_{t-m} + e_{it}
 \end{equation}
 Following \citet{bai2002determining} this can be rewritten as 
 $$X_{it} = \Lambda_i^{*'} F_t + e_{it}$$
@@ -178,9 +178,9 @@ Note that the normalization $T^{-1}F'F = I_r$ requires us to calculate the eigen
 \textbf{The number of factors}
 One important issue that remains to be addressed is the question of how many factors should be used in the factor equation. There exist many different ways that this choice can be made. Firstly there are simple rules of thumb. E.g. some researchers only consider factors with eigenvalues greater than $1$. Then there are methods which rely on a similar idea but employ graphical methods. The idea is to inspect the resulting scree plots\footnote{Scree plots plot the ordered eigenvalues against the number of factors (i.e. eigenvalues and corresponding eigenvectors) which results in a falling curve.}. The intuition is to only take factors into account if the eigenvalue corresponding to the next factor is smaller by a sufficient amount. This idea is also behind the cut-off value of 1 for eigenvalues. Basing on this, formal tests have been derrived which rely on the eigenvalues calculated above \citep{stock2011dynamic}.
 
-The information criteria developed by \citet{bai2002determining} are perhaps more appealing as they formalize the costs and benefits of an additional factor explicitly \citep{stock2011dynamic}. \citet{bai2002determining} consider $6$ criteria, the first three of which they call $PCp$ criteria (Panel $C_p$ criteria). These criteria result from a generalization of Mallows' $C_p$ \citep{mallows1973some}. The second set of $3$ criteria refine the usual criteria used in time-series analysis to depend on both $N$ and $T$. \citet{bai2002determining} highlight that the criteria $IC_{p1}$, $IC_{p2}$, $PC_{p1}$ and $PC_{p2}$ are specifically suited for principal component estimation. \citet{bai2002determining} present a montecarlo study to highlight the differences between the criteria. Notably the $PC_{p}$ criteria require the specification of a maximum number of factors, the choice of which is quite arbitrary\footnote{In their montecarlo study \citet{bai2002determining} set the maximum number of factors to be $8$ noting that they used the rule in \citet{schwert2002tests} and that one could consider $kmax=\text{int}[(\min\left\{N, T\right\}/100)^{1/4}]$  Choosing a different $kmax$ can result in the $PC_p$ criteria to become quite unstable.}. Resultingly this paper uses the $IC_p$ criteria. Specifically the $IC_{p2}$ criterion because it seems to be more conservative (i.e. it usually underestimates $r$ whereas $IC_{p2}$ overestimates at times). 
+The information criteria developed by \citet{bai2002determining} are perhaps more appealing as they formalize the costs and benefits of an additional factor explicitly \citep{stock2011dynamic}. \citet{bai2002determining} consider $6$ criteria, the first three of which they call $PCp$ criteria (Panel $C_p$ criteria). These criteria result from a generalization of Mallows' $C_p$ \citep{mallows1973some}. The second set of $3$ criteria refine the usual criteria used in time-series analysis to depend on both $N$ and $T$. \citet{bai2002determining} highlight that the criteria $IC_{p1}$, $IC_{p2}$, $PC_{p1}$ and $PC_{p2}$ are specifically suited for principal component estimation. \citet{bai2002determining} present a montecarlo study to highlight the differences between the criteria. Notably the $PC_{p}$ criteria require the specification of a maximum number of factors, the choice of which is quite arbitrary\footnote{In their montecarlo study \citet{bai2002determining} set the maximum number of factors to be $8$ noting that they used the rule in \citet{schwert2002tests} and that one could consider $kmax=\text{int}[(\min\left\{N, T\right\}/100)^{1/4}]$. Tests which are not presented here show that choosing a different $kmax$ can result in the $PC_p$ criteria to become quite unstable. Especially high values of $kmax$ often result in the maximum number of factors chosen such that $r=kmax$}. Resultingly this paper uses the $IC_p$ criteria. Specifically the $IC_{p2}$ criterion because it seems to be more conservative (i.e. it usually underestimates $r$ whereas $IC_{p2}$ overestimates at times). 
 
-In order to understand the criteria better, tables 1 and 2 of \citet{bai2002determining} have been replicated using both different values for $r$ and $kmax$. If $r$ is chosen as in \citet{bai2002determining}, the replicated results are almost identical as the original calculations and thus are not reported\footnote{I.e. differences are so small that they can be explained by sampling variation.}. The results can be found in two tables in appendix \ref{bai ng information criteria}. Tables I through VIII in \citet{bai2002determining} in essence show $3$ points. Firstly, traditional criteria perform poorly in estimating the number of factors if compared to the $6$ presented criteria. Of the newly developed information criteria $PC_{p1}$, $PC_{p2}$, $IC_{p1}$ and $IC_{p2}$ perform well even under heteroskedasticity and autocorrelation. Secondly, if $\min\{N, T\}$ becomes too small, the performance of the criteria suffers which is highlighted by the bottom 5 results in the tables. Especially $PC_{p3}$ suffers in this regard. In the given specifications the cut-off value for $\min\{N, T\}$ appears to be 40 or 60 if the variance of the innovations is high. Thirdly, $PC_{p3}$ and $IC_{p3}$ are less robust to a small $\min\{N, T\}$. \\
+In order to understand the criteria better, tables 1 and 2 of \citet{bai2002determining} have been replicated using both different values for $r$ and $kmax$. If $r$ is chosen as in \citet{bai2002determining}, the replicated results are almost identical to the original calculations and thus are not reported\footnote{I.e. differences are so small that they can be explained by sampling variation.}. The results can be found in two tables in appendix \ref{bai ng information criteria}. Tables I through VIII in \citet{bai2002determining} in essence show $3$ points. Firstly, traditional criteria perform poorly in estimating the number of factors if compared to the $6$ presented criteria. Of the newly developed information criteria $PC_{p1}$, $PC_{p2}$, $IC_{p1}$ and $IC_{p2}$ perform well even under heteroskedasticity and autocorrelation. Secondly, if $\min\{N, T\}$ becomes too small, the performance of the criteria suffers which is highlighted by the bottom 5 results in the tables. Especially $PC_{p3}$ suffers in this regard. In the given specifications the cut-off value for $\min\{N, T\}$ appears to be 40 or 60 if the variance of the innovations is high. Thirdly, $PC_{p3}$ and $IC_{p3}$ are less robust to a small $\min\{N, T\}$. \\
 The replication results in appendix \citet{bai2002determining} harbor three additional insights. Firstly as $r$ increases, the requirements for $\min\{N, T\}$ are also higher. For $r=7$ and $r=9$ it seems $\min\{N, T\}$ should be at least $100$. Secondly the choice of $kmax$ can matter a lot. Especially for small samples the specification of $kmax=8$ used in \citet{bai2002determining} choose the maximum number of factors frequently when the $N$ and $T$ are too small. Almost all results in the last 5 rows set $\hat k=8$ whereas the replicated results often report a lower number of factors if $kmax=\text{ceil}(\min\{T, N\})$. Noticeably, this also happens in the replicated results for $r \in \{1, 3, 5\}$ and $kmax=\text{ceil}(\min\{T, N\})$. If $kmax=\text{ceil}(\min\{T, N\})$ $IC_{p3}$ predicts $\hat k=50$ in the $T=100, N=100$ case for $r \in \{1, 3, 5, 7, 9\}$. Thus, the choice of $kmax$ can have a huge impact on the prediction of the number of factors. Luckily it is typically easy to see when the information criteria choose all the factors. In those cases the plausibily of the results should be checked by hand. \\
 
 An interesting question if one is ultimately interested in forecasting is whether the "true" number of factors is of any interest at all or if the number of factors used in the forecasting equation (\ref{forecasting equation}) should perhaps be different from the predicted $r$ in the static model or $q$ in the dynamic model. The answer can not be easily given. Similar to \citet{bai2008forecasting} we can dodge this question somewhat by using the BIC criterion to choose a model among a list of models with differing number of factors (or number of lags of the variable of interest).
@@ -320,8 +320,9 @@ Where $\hat e_t^+$ is set such that to $\hat e_{it}^+ = \hat e_{it} \nu_{it}$ an
 
 
 \section{Empirical application}
-In this section I will approach the issue of forecasting economic time series in the presence of structural breaks.
-There are several ways to address the issue of structural breaks from a forecasting viewpoint. Firstly structural breaks can be ignored. As has been stated above, in this case factor models will tend to choose the a higher number of factors than if no structural breaks are present which is means that the space the factors span is of a higher dimension as the factors are orthogonal.\footnote{How this affects the information criteria of \citet{bai2002determining} can be seen in \citet{breitung2011testing}.}
+In this section I will approach the issue of forecasting economic time series in the presence of structural breaks. Specifically, I will focus on forecasting German GDP using German und US American macroeconomic time-series. The reason for including American time-series to predict German GDP is twofold. Firstly, Germany is active on international markets with the US being the second most important export market after France. Coupled with the big importance of the US American market in the world economy it is plausible that US data plays a role in predicting German economic development. Secondly, we are interested in forecasting time-series under structural breaks. There are at least two periods commonly associated with breaks in the world economy: the dot-com bubble of 2000 and the financial crisis of 2008, both of which originated in the US. The hope is that big ruptures in the world economy make a break of relationships between variables (and ultimately of the factor loadings) likely.
+
+There are several ways to address the issue of structural breaks from a forecasting viewpoint. Firstly structural breaks can be ignored. As has been stated above, in this case factor models will tend to choose the a higher number of factors than if no structural breaks are present which is means that the space the factors span is of a higher dimension as the factors are orthogonal.\footnote{How this affects the information criteria of \citet{bai2002determining} can be seen in table 1 of \citet{breitung2011testing}.}
 
 Secondly, structural breaks can be included in the model in the form of a dummy parameter interacting with the factor estimations $\hat f_t$. The forecasting equation of the model then results as
 \begin{equation}
@@ -333,9 +334,86 @@ where $\hat f_t^*$ is defined as above.
 Thirdly, if predictors are to be targeted prior to estimating the factor equation it is conceivable to find that a subset of the predictors $\tilde X_t^{(1)} \subset X_t$ peforms well before and a different subset $\tilde X_t^{(2)} \subset X_t$ performs better after the structural break. This finding would imply that it could be beneficial to estimate the factor equation again using only the data after $T^*$ and discarding the rest.
 
 
-\subsection{Data description}
-\subsubsection{Data treatment}
+\subsection{Data choice and treatment}
+The data used for the horse race has been collected from the German Bundesbank and the the American Federal Reserve Bank of St. Louis.\footnote{More specifically the FRED2 public API has been used to extract selected series. The data from the Bundesbank have been scraped from the Bundesbank website.}  It consists of $T=82$ observations from $N=169$ quarterly variables. The series are listed below in appendix \ref{Data series}. The series contain macroeconomic variables such as wages and salaries, employment levels and survey data from Germany and the US as well as financial variables.
 
+Additionally an emphasis has been put on selecting several time-series which are well known to be subjected to big changes in the abovementioned periods such as "Housing starts".
+
+
+They have been downloaded in seasonally adjusted form where appropriate. The data series have then been differenced (zero times, once or twice) until stationarity. To this end the number of differencing operations necessary to make the series stationary have been tested using the KPSS method developed in \citet{kwiatkowski1992testing}.\footnote{The method consists of constructing an LM-test for the hypothesis that the variance $\sigma^2_\varepsilon$ is 0 (or equivalently that $\mu_t$ is constant) in $$y_t = \beta'D_t + \mu_t + u_t$$ $$\mu_t = \mu_{t-1} + \varepsilon_t$$ where $\varepsilon_t \sim N(0, \sigma^2_\varepsilon)$ and $D_t$ captures deterministic components and time trends. This implies that the difference of $y_t$ denoted $\Delta y_t$ is stationary.}
+
+The series have been demeaned and normalized such that $\frac{1}{T}\sum_{t=1}^T X_{it} = 0 \ \forall i$ and $\frac{1}{T}\sum_{t=1}^T X_{it}^2 = 1 \Leftrightarrow \sum_{t=1}^T X_{it}^2 = T \ \forall i$. \\
+
+\subsection{Model evaluation}
+If the number of static factors and the number of factor lags in the forecasting is predetermined using criteria defined above the number of lags  of the variable of interest $y_t$ is still open. In the following I will refer to the number of lags of $y_t$ as $s$. We follow \citet{bai2008forecasting} in selecting among model candidated using the BIC criterion which is of course an in-sample criterion. We also consider out-of-sample forecasting performance. Since the point of the exercise is forecasting, the models' out-of-sample performance is monitored using the root mean squared error of one step ahead pseudo out-of-sample forecasts is computed.\footnote{Pseudo out-of-sample forecasts are a method to simulated a forecasting situation in that the forecaster does as if he would not know the true realizations of the data after $t$. The forecaster tries to predict the value $y_{t+h}$ given all the information up to $t$. $t$ is then successively moved one period ahead. Here we set $h=1$.} This evaluation method follows \citet{forni2005the} and \citet{bai2008forecasting} among others. The foreacasting window $w$ over which the pseudo out-of-sample-forecasts are performed is set to $w=10$ here. \\
+
+TODO: put BIC and FPE definitions here
+
+All models are compared to a benchmark model which consists of a simple moving average over the forecasting window $w$. The length of this window is set to $w=15$. While this is a very short forecasting horizon, it makes sure that we will have more observations than parameters for all possible models. Since the length of the data series is $T=82$ this leaves only $67$ observations for the first forecast in the pseudo out-of-sample procedure highlighting that factor models are adequate in a situation with $N>>T$.
+
+The first panel in table \ref{results static factor model RMSE} shows the results of the in sample selection procedure for a static factor model. Three variants for choosing the number of factors are considered. Firstly the IC$_{p2}$ criterion from \citet{bai2002determining} is used to estimate the number of static factors for both the factor equation and the forecasting equation. The information criteria (BIC and FPE) are then used to select $s$, the number of lags of $y_t$.
+As a second choice, the decision over the number of factors \textit{and} the number of lags of $y_t$ are left to the information criteria.\footnote{I.e. the information criteria are minimized over different choices of $r$ and $s$.}
+A third possibility consists of leaving the choice of the number of factors for the factor equation to a \citet{bai2002determining} criterion and using the BIC or FPE criterion to choose the number of static factors in the forecasting equation.
+
+Both the BIC and FPE as well as the $IC_{p2}$ criteria select a large number of factors. The RMSE of the resulting out-of-sample forecasts is very large with $1.30$ and $1.22$ respectively. Since the variance of the data series has been normalized to $1$ and the mean to $0$ the RMSE of the simple average can be expected to be close to $1$. The benchmark model of a moving average reports and RMSE of $0.86$ for the same time horizon.
+
+If BIC criterion for model selecting is replaced by the RMSE\footnote{I.e. the RMSE is minimized over choices of $r$ and $s$.}, both $r$ and $s$ are shrunken to $1$ which greatly reduces the RMSE.
+
+\begin{table}[ht]
+\centering
+\caption{Static factor model RMSE}
+\label{results static factor model, in-sample}
+\begin{tabular}{c|lll}
+  & $r$ & $s$ & RMSE\\
+  \hline
+  \hline
+    & \multicolumn{3}{c}{\textit{In-Sample}} \\
+	BIC & 13 & 5 & 1.30 \\
+	FPE & 15 & 5 & 1.23 \\
+	BIC and $IC_{p2}$ & 13 & 5 & 1.30 \\
+	FPE and $IC_{p2}$ & 15 & 5 & 1.23 \\
+	$IC_{p2}$ & 4 & 10 & 1.21 \\
+  \hline
+  \hline
+  & \multicolumn{3}{c}{\textit{Out-of-Sample}} \\ 
+   	RMSE & 1 & 1 & 0.71 \\
+   	RMSE and $IC_{p2}$ & 1 & 1 & 0.71 \\
+  \hline
+  \multicolumn{4}{l} {\rule{0pt}{8ex} \begin{minipage}{6cm}
+		\small{\textbf{\textit{Notes:}} Naturally, the IC$_{p2}$ criterion chooses $r=4$ factors for the factor equation for cases where BIC is used to choose the number of factors for the forecasting equation.}
+	\end{minipage}} \\
+\end{tabular}
+\end{table}
+
+Repeating the exercise but allowing for lags of the factors to enter the forecasting equation we get the results in table \ref{results dynamic factor model, in-sample}.
+
+\begin{table}[ht]
+\centering
+\caption{Dynamic factor model, in-sample model selection}
+\label{results dynamic factor model, in-sample}
+\begin{tabular}{c|llll}
+  & $r$ & $s$ & $q$ & RMSE\\
+ \hline
+ \hline
+	BIC & 2 & 3 & 1 & 0.58 \\
+	FPE & 10 & 10 & 2 & 0.82 \\
+	BIC and $IC_{p2}$ & 2 & 3 & 1 & 0.58 \\
+	FPE and $IC_{p2}$ & 10 & 10 & 2 & 0.82 \\
+	$IC_{p2}$ & 4 & 3 &  1 & 0.59 \\
+  \hline
+  & \multicolumn{3}{c}{\textit{Out-of-Sample}} \\ 
+   	RMSE & 7 & 1 & 2 & 0.55 \\
+   	RMSE and $IC_{p2}$ & 2 & 1 & 1 & 0.54 \\
+  \hline
+\multicolumn{5}{l} {\rule{0pt}{6ex} \begin{minipage}{6cm}
+		\small{\textbf{\textit{Notes:}} $q$ here refers to the number of lags of the factors in the forecasting equation, not to the number of dynamic factors as defined above.}
+	\end{minipage}} \\
+
+\end{tabular}
+\end{table}
+
+\subsection{Structural breaks}
+Structural breaks are estimated using the Quandt-Andrews type tests constructed in \citet{breitung2011testing}. \\
 
 
 \newpage
@@ -483,208 +561,600 @@ This is equivalent to the problem $\max_\Lambda \text{tr}\left\{(\Lambda'\Lambda
 
 \newpage
 \section{Data series}
-% latex table generated in R 3.1.0 by xtable 1.7-1 package
-% Sat Jul 12 12:50:07 2014
+\label{Data series}
+
 \begin{table}[ht]
+\label{Bundesbank data series}
+\caption{Bundesbank data series}
 \centering
-\begin{tabular}{rl}
+\begin{tabular}{rp{5cm}p{11cm}}
+& \textbf{Series Id} & \textbf{Series Title} \\
   \hline
- & x \\ 
   \hline
-1 & BBDE1.M.DE.N.AEA1.A2P300000.F.C.I10.L \\ 
-  2 & BBDE1.M.DE.N.BAA1.P2XF00000.G.C.I10.L \\ 
-  3 & BBDE1.M.DE.W.AEA1.A2P310000.F.V.I10.A \\ 
-  4 & BBDE1.M.DE.W.AEA1.P2XF00000.B2.V.I10.A \\ 
-  5 & BBDE1.M.DE.Y.AEA1.A2P300000.F.V.I10.A \\ 
-  6 & BBDE1.M.DE.Y.AEA1.A2R200050.F.V.I10.A \\ 
-  7 & BBDE1.M.DE.Y.AEA1.P2XF00000.B2.C.I10.A \\ 
-  8 & BBDE1.M.DE.Y.AEA1.P2XF02000.B2.V.I10.A \\ 
-  9 & BBDE1.M.DE.Y.AEB1.A2P310000.F.V.I10.A \\ 
-  10 & BBDE1.M.DE.Y.AEB1.N2C290000.F.C.I10.A \\ 
-  11 & BBDE1.M.DE.Y.AEB5.A2P300000.F.V.I10.A \\ 
-  12 & BBDE1.M.DE.Y.BA01.A2P200000.F.C.I10.A \\ 
-  13 & BBDE1.M.DE.Y.BAA1.A2P000000.G.C.I10.A \\ 
-  14 & BBDE1.M.DE.Y.BEA1.P2XF00000.BA.P.ABA.A \\ 
-  15 & BBDE1.M.DE.Y.JAA9.P2XF50100.C.V.ABA.A \\ 
-  16 & BBDP1.M.DE.N.APA1.G.GP09SA000000.I10.A \\ 
-  17 & BBDP1.M.DE.N.VPI.C.A00000.I10.L \\ 
-  18 & BBDP1.M.DE.Y.APA1.G.GP09SA000000.I10.A \\ 
-  19 & BBDP1.M.DE.Y.EPL.L.L1A00000000.I10.A \\ 
-  20 & BBEE1.M.DE.AAA.XY0B02.R.AACPB.M00 \\ 
-  21 & BBEE1.M.I7.AAA.XZE012.R.AACPE.M00 \\ 
-  22 & BBEX3.M.XAU.USD.EA.AC.C06 \\ 
-  23 & BBK01.BU1132 \\ 
-  24 & BBK01.DU7802 \\ 
-  25 & BBK01.EC7628 \\ 
-  26 & BBK01.ED0361 \\ 
-  27 & BBK01.ED0376 \\ 
-  28 & BBK01.ED0391 \\ 
-  29 & BBK01.ED0425 \\ 
-  30 & BBK01.ED1156 \\ 
-  31 & BBK01.ES4710 \\ 
-  32 & BBK01.EU2001 \\ 
-  33 & BBK01.EU4170 \\ 
-  34 & BBK01.EU4670 \\ 
-  35 & BBK01.EU4680 \\ 
-  36 & BBK01.JB5002 \\ 
-  37 & BBK01.JB5003 \\ 
-  38 & BBK01.JQ5001 \\ 
-  39 & BBK01.JQ5004 \\ 
-  40 & BBK01.JQ5005 \\ 
-  41 & BBK01.JQ5008 \\ 
-  42 & BBK01.OU0092 \\ 
-  43 & BBK01.OU0144 \\ 
-  44 & BBK01.OU0149 \\ 
-  45 & BBK01.OU0337 \\ 
-  46 & BBK01.OU0778 \\ 
-  47 & BBK01.OU1429 \\ 
-  48 & BBK01.OU1825 \\ 
-  49 & BBK01.OUA001 \\ 
-  50 & BBK01.PQ3022 \\ 
-  51 & BBK01.PQ8084 \\ 
-  52 & BBK01.TS5303O \\ 
-  53 & BBK01.TUD317 \\ 
-  54 & BBK01.TVS303J \\ 
-  55 & BBK01.TXI355 \\ 
-  56 & BBK01.US02CC \\ 
-  57 & BBK01.US0CC1 \\ 
-  58 & BBK01.USBA14 \\ 
-  59 & BBK01.UUCY01 \\ 
-  60 & BBK01.WU0028 \\ 
-  61 & BBK01.WU3141 \\ 
-  62 & BBK01.XS7085 \\ 
-  63 & BBK01.XU4204 \\ 
-  64 & BBK01.XU4205 \\ 
-  65 & BBK01.XU4206 \\ 
-  66 & BBK01.XX3739 \\ 
+1 & BBNA2.Q.DE.N.I. 021.CA.D.V.I05.A, & Actual earnings/ Overall economy/ Wages and salaries per employee (workplace concept)/ Index/ Germany \\ 
+  \hline
+  2 & BBK01.EA4220, & Balance on current account \\ 
+  \hline
+  3 & BBK01.DU7834, & Basic pay rates, overall economy, excluding ancillary benefits, excluding one-off payments, on a monthly basis, Germany \\ 
+  \hline
+  4 & BBXS1.A.I7.N.EUBUCS. MANU.MAN013.TT.PCT.I00 & Business and consumer surveys (European Commission) / Capacity utilization (man) / Euro area 18 (fixed composition) \\ 
+  \hline
+  5 & BBXS1.A.DE.N.EUBUCS. MANU.MAN013.TT.PCT.I00 & Business and consumer surveys (European Commission) / Capacity utilization (man) / Germany \\ 
+  \hline
+  6 & BBK01.OU7744, & Capital / Total / All categories of banks \\ 
+  \hline
+  7 & BBK01.BQ1351, & Central government debt - total debt \\ 
+  \hline
+  8 & BBDE1.M.DE.Y.JAA9. P2XF50500.CB.V.ABA.A & Construction permits - estimated construction cost / At current prices, flows / Germany / Total (including construction work on existing buildings) - residential and non-residential buildings, total \\ 
+  \hline
+  9 & BBXR1.M.HWWI.N.EURO. TOTNXNGY.INDBEU.HE.M00 & Construction price index / Germany / Unadjusted figure / Total \\ 
+  \hline
+  10 & BBK01.OXA8R3 & domestic Financial Vehicle Corporations - All categories of banks \\ 
+  \hline
+  11 & BBDP1.M.DE.Y.VPI. C.A00000.I10.L & Consumer price index / Germany / Unadjusted figure / Total \\ 
+  \hline
+  12 & BBK01.WX9141 & DAX price index / End 1987 = 1000 / End of month \\ 
+  \hline
+  13 & BBK01.WT4065 & DE0001102358 / Prices / 1,500 Bund 14/24 \\ 
+  \hline
+  14 & BBK01.SUD106S & Effective interest rates of German banks / New business (estimated) / Households' deposits, overnight \\ 
+  \hline
+  15 & BBK01.SUD210 & Effective interest rates of German banks / New business / Non-financial corporations' deposits, overnight \\ 
+  \hline
+  16 & BBDE1.M.DE.Y.GUA1. P2XF13020.BA.V.ABA.A & Employed persons (including proprietors and family workers) / Persons / Germany / Main construction industry \\ 
+  \hline
+  17 & BBK01.US8CA0 & Employees subject to social security contributions / Total / Eastern Germany \\ 
+  \hline
+  18 & BBK01.US80CA & Employees subject to social security contributions / Total / Western Germany \\ 
 \end{tabular}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{rp{5cm}p{11cm}}
+  & \textbf{Series Id} & \textbf{Series Title} \\
+  \hline
+  \hline
+
+  19 & BBK01.USCA80 & Employment in Germany / Employed persons in Germany / Germany \\ 
+  \hline
+  20 & BBK01.JAB938 & Enterprises \\ 
+  \hline
+  21 & BBXN1.A.I7.N.NAG. B1QG00.0000.Z0N.IND.I00 & Euro area 18 (fixed composition) / National accounts - Gross domestic product / Gross domestic product / Total / Indices \\ 
+  \hline
+  22 & BBK01.XS5609, & Exports / European countries \\ 
+  \hline
+  23 & BBK01.XX3382, & Exports of the Federal Republic of Germany / Special Trade / Total / 1 / 2 / \\ 
+  \hline
+  24 & BBK01.EU4370, & Financial transactions / Other investment / Balance \\ 
+  \hline
+  25 & BBK01.EU2518, & Foreign investment in Germany / Other investment / Total / Balance \\ 
+  26 & BBK01.EU4510 & Foreign trade / Exports (fob) \\ 
+  \hline
+  27 & BBMF1.M.D0.EUR. GOVT.WYWG.Y10.BID & Geldmenge M1 /                                                   Veränderung saisonbereinigt / Jahresrate / EWU \\ 
+  \hline
+  28 & BBK01.BQ2190 & General government budgetary position (Germany) - total revenue \\ 
+  \hline
+  29 & BBK01.BQM403 & General government debt - of which currency and deposits \\ 
+  30 & BBK01.BQM208 & General government debt - of which loans \\ 
+  \hline
+  31 & BBK01.BQ8068 & General government debt as defined in the Maastricht Treaty - Germany - overall \\ 
+  \hline
+  32 & BBK01.BJ8072 & General government deficit / surplus as defined in the Maastricht Treaty - Germany - overall \\ 
+  \hline
+  33 & BBK01.XS4204 & German exports / special trade / values / 1 / 2 / 3 / 4 \\ 
+  \hline
+  34 & BBK01.XS4206 & German foreign trade balance / special trade / values / 1 / 2 / 3 / 4 \\ 
+  \hline
+  35 & BBK01.XS4205 & German imports / special trade / values / 1 / 2 / 3 / 4 \\ 
+  \hline
+  36 & BBK01.EC7750 & German investment abroad / EU member states (28) / Total / Balance \\ 
+  \hline
+  37 & BBK01.ED9065 & German investment abroad / Emerging markets and developing countries / Total / Balance \\ 
+  \hline
+  38 & BBK01.ED9004 & German investment abroad / Euro-area member states / Total / Balance \\ 
+  \hline
+  39 & BBK01.ED9001 & German investment abroad / Europe / Total / Balance \\ 
+  \hline
+  40 & BBK01.ED1096 & German investment abroad / Other EU member states / Total / Balance \\   
+  \hline
+  41 & BBK01.ED9031 & German investment abroad / Other European countries / Total / Balance \\ 
+  \hline
+  42 & BBK01.JBA161 & Gross domestic product / at current prices / Seasonally and working-day adjusted \\ 
+  \hline
+  43 & BBK01.JAA026 & Gross national income (GNP) / at current prices \\ 
+  \hline
+  44 & BBK01.WU0042 & Gross sales of domestic debt securities at nominal value / Total \\ 
+  \hline
+  45 & BBK01.JAA327 & Gross wages and salaries \\ 
+  \hline
+  46 & BBXP1.M.U2.N.HICP. 000000.IND.I00 & Hamonized Index of Consumer Prices / Euro area (changing composition) / Overall index / Unadjusted figure / Monthly \\ 
+  \hline
+  47 & BBK01.TQ7162 & Households - Household debt to GDP FSI-I033 \\ 
+  \hline
+  48 & BBK01.XS8953 & Imports / Product Classification for Production / Statistics from 2009 Total excluding energy \\ 
+\end{tabular}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{rp{5cm}p{11cm}}
+& \textbf{Series Id} & \textbf{Series Title} \\
+  \hline
+  \hline
+  49 & BBK01.XS8857 & Imports / Value / Total, excluding energy \\ 
+  \hline
+  50 & BBK01.EU4169 & Income / Total / Receipts \\ 
+  \hline
+  51 & BBDE1.Q.DE.Y.LCB1. A2N200000.A.L.I08.A1 & Index of gross wages and salaries / Germany / Mining and quarrying, manufacturing and service activities (B-S) \\ 
+  \hline
+  52 & BBDE1.Q.DE.Y.LCA1. A2N200000.A.L.I08.A1 & Index of labour costs / Germany / Mining and quarrying, manufacturing and service activities (B-S) \\ 
+  \hline
+  53 & BBDE1.Q.DE.Y.LCC1. A2N200000.A.L.I08.A1 & Index of non-wage costs / Germany / Mining and quarrying, manufacturing and service activities (B-S) \\ 
+  \hline
+  54 & BBDP1.M.DE.Y. VPI.C.SVXR.I10.A & Index of producer prices of industrial products sold on the domestic market / Germany \\ 
+  \hline
+  55 & BBEE1.M.DE.AAA. XY0U12.R.AACPB.M00 & Indicator of the German economy's price competitiveness against 24 selected industrial countries, based on the deflators of total sales \\ 
+  \hline
+  56 & BBK01.XSC430 & Indices of foreign trade prices - exports, total / Germany \\ 
+  \hline
+  57 & BBXE1.M.I7.W. PROD.NS0020.IND.I00 & Industrieproduktion / Gesamte Industrie (ohne Baugewerbe) / Index / nur kalenderbereinigt / Euro-Währungsgebiet-18 \\ 
+  \hline
+  58 & BBK01.EB0057 & International Investment Position, all countries, net, total (from end 1997) \\ 
+  \hline
+  59 & BBK01.OEAA56G & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Baden-Württemberg \\ 
+  \hline
+  60 & BBK01.OEAA21H & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Bayern \\ 
+  \hline
+  61 & BBK01.OEAA03I & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Berlin \\ 
+  \hline
+  62 & BBK01.OEAA52S & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Brandenburg \\ 
+  \hline
+  63 & BBK01.OEAA56J & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Bremen \\ 
+  \hline
+  64 & BBK01.OEAA01K & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Hamburg \\ 
+  \hline
+  65 & BBK01.OEAA56L & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Hessen \\ 
+  \hline
+  66 & BBK01.OEAA37R & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Mecklenburg-Vorpommern \\ 
+  \hline
+  67 & BBK01.OEAA56M & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Niedersachsen \\ 
+  \hline
+  68 & BBK01.OEAA56N & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Nordrhein-Westfalen \\ 
+  \hline
+  69 & BBK01.OEAA03O & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Rheinland-Pfalz \\ 
+  \hline
+  70 & BBK01.OEAA03P & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Saarland \\ 
+  \hline
+  71 & BBK01.OEAA56V & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Sachsen \\ 
+  \hline
+  72 & BBK01.OEAA02T & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Sachsen-Anhalt \\ 
+
+ \end{tabular}
 \end{table}
 \begin{table}
 \centering
-\begin{tabular}
-  67 & A229RX0 \\ 
-  68 & AAA \\ 
-  69 & ACNGNO \\ 
-  70 & AHECONS \\ 
-  71 & AHEMAN \\ 
-  72 & AHETPI \\ 
-  73 & AWHMAN \\ 
-  74 & AWOTMAN \\ 
-  75 & BAA \\ 
-  76 & BOGMBASE \\ 
-  77 & BOGNONBR \\ 
-  78 & BUSLOANS \\ 
-  79 & BUSLOANSNSA \\ 
-  80 & CCRETT01USM661N \\ 
-  81 & CES0600000007 \\ 
-  82 & CES0600000008 \\ 
-  83 & CES2000000008 \\ 
-  84 & CES3000000008 \\ 
-  85 & CEU0500000008 \\ 
-  86 & CEU0600000007 \\ 
-  87 & CEU0600000008 \\ 
-  88 & CEU1000000001 \\ 
-  89 & CEU2000000001 \\ 
-  90 & CEU3000000001 \\ 
-  91 & CEU3000000007 \\ 
-  92 & CEU3000000009 \\ 
-  93 & CEU3100000001 \\ 
-  94 & CEU3200000001 \\ 
-  95 & CEU9000000001 \\ 
-  96 & CIVPART \\ 
-  97 & CLF16OV \\ 
-  98 & CPALTT01USM661S \\ 
-  99 & CPIAPPNS \\ 
-  100 & CPIAPPSL \\ 
-  101 & CPIAUCNS \\ 
-  102 & CPIAUCSL \\ 
-  103 & CPILFENS \\ 
-  104 & CPILFESL \\ 
-  105 & CPIMEDNS \\ 
-  106 & CPIMEDSL \\ 
-  107 & CPITRNNS \\ 
-  108 & CPITRNSL \\ 
-  109 & CURRNS \\ 
-  110 & CURRSL \\ 
-  111 & DGORDER \\ 
-  112 & DMANEMP \\ 
-  113 & EXCAUS \\ 
-  114 & EXJPUS \\ 
-  115 & EXSZUS \\ 
-  116 & EXUSUK \\ 
-  117 & FEDFUNDS \\ 
-  118 & GS1 \\ 
-  119 & GS5 \\ 
-  120 & HOUST \\ 
-  121 & HOUSTMW \\ 
-  122 & HOUSTMWNSA \\ 
-  123 & HOUSTNE \\ 
-  124 & HOUSTNSA \\ 
-  125 & HOUSTS \\ 
-  126 & HOUSTSNSA \\ 
-  127 & HOUSTW \\ 
-  128 & HOUSTWNSA \\ 
-  129 & INDPRO \\ 
-  130 & IPBUSEQ \\ 
-  131 & IPCONGD \\ 
-  132 & IPDCONGD \\ 
-  133 & IPDMAN \\ 
-  134 & IPFINAL \\ 
-  135 & IPFUELN \\ 
-  136 & IPFUELS \\ 
-  137 & IPMAN \\ 
-  138 & IPMAT \\ 
-  139 & IPMINE \\ 
-  140 & IPNCONGD \\ 
-  141 & ISRATIO \\ 
-  142 & LNS12032197 \\ 
-  143 & LNU01000000 \\ 
-  144 & LNU01300000 \\ 
-  145 & M1NS \\ 
-  146 & M1SL \\ 
-  147 & M2NS \\ 
-  148 & M2SL \\ 
-  149 & MABMM301USM189S \\ 
-  150 & MANEMP \\ 
-  151 & MCUMFN \\ 
-  152 & MICH \\ 
-  153 & NAPM \\ 
-  154 & NAPMEI \\ 
-  155 & NAPMII \\ 
-  156 & NAPMNOI \\ 
-  157 & NAPMPI \\ 
-  158 & NAPMSDI \\ 
-  159 & NDMANEMP \\ 
-  160 & NEWORDER \\ 
-  161 & PAYEMS \\ 
-  162 & PAYNSA \\ 
-  163 & PERMITNSA \\ 
-  164 & PPIACO \\ 
-  165 & PPICRM \\ 
-  166 & PPIFCF \\ 
-  167 & PPIFGS \\ 
-  168 & PPIITM \\ 
-  169 & RRSFS \\ 
-  170 & SRVPRD \\ 
-  171 & TB3MS \\ 
-  172 & TB6MS \\ 
-  173 & TCU \\ 
-  174 & TOTBUSIMNSA \\ 
-  175 & TOTBUSIRNSA \\ 
-  176 & UCNGNO \\ 
-  177 & UEMPMEAN \\ 
-  178 & UMCSENT \\ 
-  179 & UNEMPLOY \\ 
-  180 & UNRATE \\ 
-  181 & UNRATENSA \\ 
-  182 & USCONS \\ 
-  183 & USGOOD \\ 
-  184 & USGOVT \\ 
-  185 & USMINE \\ 
-  186 & W875RX1 \\ 
-   \hline
+\begin{tabular}{rp{5cm}p{11cm}}  
+& \textbf{Series Id} & \textbf{Series Title} \\
+  \hline
+  \hline
+
+  73 & BBK01.OEAA56Q & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Schleswig-Holstein \\ 
+  \hline
+  74 & BBK01.OEAA56U & Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Thüringen \\ 
+  \hline
+  75 & BBK01.OEAB01G & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt /  zusammen / Alle Bankengruppen / Baden-Württemberg \\ 
+  \hline
+  76 & BBK01.OEBB21H & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Bayern \\ 
+  \hline
+  77 & BBK01.OEAB01I & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Berlin \\ 
+  \hline
+  78 & BBK01.OEAB01S & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Brandenburg \\ 
+  \hline
+  79 & BBK01.OEAB01J & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Bremen \\ 
+  \hline
+  80 & BBK01.OEBB12K & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Hamburg \\ 
+  \hline
+  81 & BBK01.OELB02L & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Hessen \\ 
+  \hline
+  82 & BBK01.OEAB01R & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Mecklenburg-Vorpommern \\ 
+  \hline
+  83 & BBK01.OEAB01M & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Niedersachsen \\ 
+  \hline
+  84 & BBK01.OEAB01N & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Nordrhein-Westfalen \\ 
+  \hline
+  85 & BBK01.OELB03O & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Rheinland-Pfalz \\ 
+  \hline
+  86 & BBK01.OEAB01P & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Saarland \\ 
+  \hline
+  87 & BBK01.OEYB19V & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Sachsen \\ 
+  \hline
+  88 & BBK01.OEAB01T & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Sachsen-Anhalt \\ 
+  \hline
+  89 & BBK01.OEAB01Q & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Schleswig-Holstein \\ 
+  \hline
+  90 & BBK01.OEAB01U & Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Thüringen \\ 
+  \hline
+  91 & BBK01.SU0009 & Lending rates of banks / Current account credit less than EUR 100,000 / Average interest rate \\ 
+  \hline
+  92 & BBK01.SU0511 & Lending rates of banks / Long-term fixed-rate loans to enterprises and self-employed persons, EUR 100,000 and more but less than EUR 500,000, effective interest rate / Average interest rate \\ 
+  \hline
+  93 & BBK01.SU0012 & Lending rates of banks / Mortgage loans secured by residential real estate with interest rates fixed for 2 years, effective interest rate / Average interest rate \\ 
+  \hline
+  94 & BBK01.OU7677 & Lending to banks (MFIs) / Balances and loans / All categories of banks \\ 
 \end{tabular}
 \end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{rp{5cm}p{11cm}}
+& \textbf{Series Id} & \textbf{Series Title} \\
+  \hline
+  \hline
+  95 & BBK01.OU7676 & Lending to banks (MFIs) / Total / All categories of banks \\ 
+  \hline
+  96 & BBK01.PC3767 & Lending to computer and related activities, research and development / Total / All categories of banks \\ 
+  \hline
+  97 & BBK01.PC3723 & Lending to construction / Total/ All categories of banks \\ 
+  \hline
+  98 & BBK01.OU7712 & Lending to domestic banks (MFIs) / Credit balances and loans / All categories of banks \\ 
+  \hline
+  99 & BBK01.TUD364 & MONEY STOCK M1 (FROM 2002, EXCLUDING CURRENCY IN CIRCULATION) / GERMAN CONTRIBUTION \\ 
+  \hline
+  100 & BBK01.TQ7036 & Market liquidity - Average bid-ask spread in the securities market - government bills                          FSI-I035 \\ 
+  \hline
+  101 & BBK01.OU8045 & Medium and long-term lending / to general government / Securities / All categories of banks \\ 
+  \hline
+  102 & BBK01.OU8041 & Medium and long-term lending to general government / Loans / Long-term / All categories of banks \\ 
+  \hline
+  103 & BBK01.OU9829 & Medium and long-term lending to general government / Loans / Medium-term / All categories of banks \\ 
+  \hline
+  104 & BBK01.TS1303 & Monetary aggregate M3 (from January 2002, excluding currency in circulation; from June 2010, excluding repos with central counterparties) / German contribution / Outstanding amounts at the end of the month (stocks) \\ 
+  \hline
+  105 & BBK01.OUP001 & Money market paper issued by banks (MFIs) / All categories of banks \\ 
+  \hline
+  106 & BBK01.SU0295 & Money market rates / EONIA / Monthly average \\ 
+  \hline
+  107 & BBK01.SU0334G & Money market rates / EURIBOR three-month funds / Moving monthly average \\ 
+  \hline
+  108 & BBK01.TVE309 & Money stock M3 / EMU / Total / Changes \\ 
+  \hline
+  109 & BBK01.JB5001 & National accounts - domestic demand (price adjusted) \\ 
+  \hline  110 & BBK01.JB5007 & National accounts - employment / Germany / 1 / 2 / \\ 
+  \hline
+  111 & BBK01.JB5005 & National accounts - exports (price adjusted) / \\ 
+  \hline
+  112 & BBK01.JQ5003 & National accounts - government consumption (price adjusted) \\ 
+  \hline
+  113 & BBK01.JB5004 & National accounts - gross fixed capital formation (price adjusted) \\ 
+  \hline
+  114 & BBK01.JB5008 & National accounts - labour costs per employee / \\ 
+  \hline
+  115 & BBK01.JQ5002 & National accounts - private consumption (price adjusted) \\ 
+  \hline
+  116 & BBK01.BJ9195 & National accounts - total general government revenue (ESA 95) - Germany as a whole (western Germany up to and including 1990) \\ 
+  \hline
+  117 & BBK01.BJ9049 & National accounts - total general government revenue (GFS as defined by the ECB) - Germany as a whole \\ 
+  \hline
+  118 & BBNA2.Q.DE.N.I. 041.CA.D.V.I05.A & National accounts / Gross wages and salaries per hour worked by employees /  Whole economy / Germany \\ 
+  \hline
+  119 & BBK01.JJA327 & National accounts/Households' income/Germany/ Gross wages and salaries (residence concept) \\ 
+  \hline
+  120 & BBK01.JQA024 & National accounts/Labour productivity per hour worked by persons in employment/ Whole economy \\ 
+  \hline
+  121 & BBK01.JJB071 & National accounts/Origin of GDP/Chain-linked index/ Production sector (excluding construction) \\ 
+\end{tabular}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{rp{5cm}p{11cm}}
+& \textbf{Series Id} & \textbf{Series Title} \\
+  \hline
+  \hline
+  122 & BBK01.JQA001 & National accounts/Overall economic view/ Compensation of employees - residents \\ 
+  \hline
+  123 & BBK01.JQC000 & National accounts/Overall economic view/At current prices/ GDP \\ 
+  \hline
+  124 & BBK01.JJB949 & National accounts/Unit labour costs per hour/ Whole economy (excluding agriculture, forestry and fishing, public services, education and health and other services) \\ 
+  \hline
+  125 & BBK01.JQA111 & National accounts/Use of GDP/At current prices/ Private consumption \\ 
+  \hline
+  126 & BBK01.JQC111 & National accounts/Use of GDP/Price index/ Private consumption \\ 
+  \hline
+  127 & BBK01.OXA8T5 & off-balance true sale of domestic banks (MFIs) - All categories of banks \\ 
+  \hline
+  128 & BBEE1.A.I7.AAA. XZE021.R.AACPE.M00 & Nominal effective exchange rate of the euro against the currencies of the EER-20 group \\ 
+  \hline
+  129 & BBK01.TQ7032 & Non-financial corporations sector - Total debt to equity FSI-I028 \\ 
+  \hline
+  130 & BBDE1.M.DE.Y.AEA1. A2P300000.F.C.I10.L & Orders received / At constant prices / Germany / Industry / Unadjusted figure \\ 
+  \hline
+  131 & BBDE1.M.DE.Y.AEA1. P2XF04000.B2.C.I10.A & Orders received / At constant prices / Germany / Main construction industry \\ 
+  \hline
+  132 & BBDE1.M.DE.W.AEA1. A2P340000.F.V.I10.A & Orders received / At current prices / Germany / Industry / Calendar adjusted only \\ 
+  \hline
+  133 & BBDE1.M.DE.Y.AEA1. A2P300000.F.C.I10.A & Orders received / At current prices / Germany / Industry \\ 
+  \hline
+  134 & BBDE1.M.DE.Y.AEA1. A2Q501000.F.V.I10.A & Orders received / At current prices, flows / Germany / 20+21 Manufacture of chemicals, chemical products; basic pharmaceutical products and pharmaceutical preparations \\ 
+  \hline
+  135 & BBDE1.M.DE.W.AEA1. P2XF04000.B2.V.I10.A & Orders received / At current prices, flows / Germany / Main construction industry / Calendar adjusted only \\ 
+  \hline
+  136 & BBDE1.M.DE.Y.AEA1. P2XF13010.B2.V.I10.A & Orders received / At current prices, flows / Germany / Main construction industry \\ 
+  \hline
+  137 & BBDE1.M.DE.W.AEN1. A2P340000.F.V.I10.A & Orders received excluding large orders, domestic / At current prices, flows / Germany / Industry / Calendar adjusted only \\ 
+  \hline
+  138 & BBDE1.M.DE.Y.AEN1. A2P350000.F.C.I10.A & Orders received excluding large orders, domestic / At current prices, flows / Germany / Industry  \\ 
+  \hline
+  139 & BBDE1.M.DE.Y.AEP1. A2P350000.F.C.I10.A & Orders received excluding large orders, euro-area countries / At current prices, flows / Germany / Industry \\ 
+  \hline
+  140 & BBDE1.M.DE.W.AEN5. A2P340000.F.V.I10.A & Orders received excluding large orders, foreign / At current prices, flows / Germany / Industry / Calendar adjusted only \\ 
+  \hline
+  141 & BBDE1.M.DE.Y.AEN5. A2P350000.F.C.I10.A & Orders received excluding large orders, foreign / At current prices, flows / Germany / Industry \\ 
+  \hline
+  142 & BBDE1.M.DE.Y.AEP5. A2P350000.F.C.I10.A & Orders received excluding large orders, non-euro-area countries / At current prices, flows / Germany / Industry \\ 
+  \hline
+  143 & BBDE1.M.DE.W.AEM1. A2P340000.F.V.I10.A & Orders received excluding large orders, total / At current prices, flows / Germany / Industry / Calendar adjusted only \\ 
+  \hline
+  144 & BBDE1.M.DE.Y.AEM1. A2P350000.F.C.I10.A & Orders received excluding large orders, total / At current prices, flows / Germany / Industry \\ 
+
+\end{tabular}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{rp{5cm}p{11cm}}
+& \textbf{Series Id} & \textbf{Series Title} \\
+  \hline
+  \hline
+  145 & BBDE1.M.DE.Y.AEB5. A2P350000.F.C.I10.A & Orders received from abroad / At current prices / Germany / Industry \\ 
+  \hline
+  146 & BBDE1.M.DE.Y.AEB1. A2Q501000.F.C.I10.A & Orders received from the domestic market / At constant prices / Germany / 20+21 Manufacture of chemicals, chemical products; basic pharmaceutical products and pharmaceutical preparations \\ 
+  \hline
+  147 & BBDE1.M.DE.Y.AEB1. A2P350000.F.C.I10.A & Orders received from the domestic market / At current prices / Germany / Industry \\ 
+  \hline
+  148 & BBDE1.M.DE.Y.BAA1. P2XF00000.G.C.I10.L & Output in the production sector / At constant prices / Germany / Main construction industry / Unadjusted figure \\ 
+  \hline
+  149 & BBDE1.M.DE.Y.BAA1. A2P300000.G.C.I10.A & Output in the production sector / Germany / Production sector including construction (B -F) \\ 
+  \hline
+  150 & BBEX3.M.XAU. DEM.EA.AC.C02, & Price of gold in London / morning fixing * / 1 ounce of fine gold = USD ... \\ 
+  \hline
+  151 & BBDE1.M.DE.Y.FG30. A2P200000.F.N.I10.A & Produktionsergebnis je Beschäftigten / Deutschland / Bergbau und Gewinnung von Steinen und Erden sowie Verarbeitendes Gewerbe (B + C) / Angaben für fachliche Betriebsteile / kalender- und saisonbereinigt \\ 
+  \hline
+  152 & BBK01.TQ7040 & Real estate markets - Residential real estate loans to total loans                                        FSI-I039 \\ 
+  \hline
+  153 & BBK01.TXI362 & TOTAL ASSETS OR LIABILITIES / GERMAN CONTRIBUTION \\ 
+  \hline
+  154 & BBK01.TUB618 & Total assets \\ 
+  \hline
+  155 & BBK01.TUE365 & Total assets or liabilities / Euro area \\ 
+  \hline
+  156 & BBK01.TUB641 & Total liabilities \\ 
+  \hline
+  157 & BBK01.UJCY01 & Unemployment rate (unemployment as a percentage of the civilian labour force) / Germany \\ 
+\end{tabular}
+\end{table}
+
+
+
+\begin{table}
+\centering
+\label{FRED data series}
+\caption{FRED data series}
+\begin{tabular}{rp{5cm}p{11cm}}
+	& \textbf{Series Id} & \textbf{Series Title} \\
+  \hline
+  \hline
+	158 & A229RX0 & Real Disposable Personal Income: Per capita \\
+  \hline
+	159 & AAA & Moody's Seasoned Aaa Corporate Bond Yield© \\
+  \hline
+	160 & AHECONS & Average Hourly Earnings Of Production And Nonsupervisory Employees: Construction \\
+  \hline
+	161 & AHEMAN & Average Hourly Earnings Of Production And Nonsupervisory Employees: Manufacturing \\
+  \hline
+	162 & AWHMAN & Average Weekly Hours of Production and Nonsupervisory Employees: Manufacturing \\ 
+  \hline
+	163 & AWOTMAN & Average Weekly Overtime Hours of Production and Nonsupervisory Employees: Manufacturing \\
+  \hline
+	164 & BAA & Moody's Seasoned Baa Corporate Bond Yield© \\
+  \hline
+	165 & BOGMBASE & Monetary Base; Total \\
+  \hline
+	166 & BUSLOANS & Commercial and Industrial Loans, All Commercial Banks \\
+  \hline
+	167 & BUSLOANSNSA & Commercial and Industrial Loans, All Commercial Banks \\
+  \hline
+	168 & CES0600000007 & Average Weekly Hours of Production and Nonsupervisory Employees: Goods-Producing \\
+  \hline
+	169 & CES0600000008 & Average Hourly Earnings of Production and Nonsupervisory Employees: Goods-Producing \\
+  \hline
+	170 & CES2000000008 & Average Hourly Earnings of Production and Nonsupervisory Employees: Construction \\
+  \hline
+	171 & CES3000000008 & Average Hourly Earnings of Production and Nonsupervisory Employees: Manufacturing \\
+  \hline
+	172 & CEU0600000007 & Average Weekly Hours of Production and Nonsupervisory Employees: Goods-Producing \\
+  \hline
+	173 & CEU0600000008 & Average Hourly Earnings of Production and Nonsupervisory Employees: Goods-Producing \\
+  \hline
+	174 & CEU1000000001 & All Employees: Mining and Logging \\
+  \hline
+	175 & CEU2000000001 & All Employees: Construction \\
+  \hline
+	176 & CEU3000000001 & All Employees: Manufacturing \\
+  \hline
+	177 & CEU3000000007 & Average Weekly Hours of Production and Nonsupervisory Employees: Manufacturing \\
+  \hline
+	178 & CEU3000000009 & Average Weekly Overtime Hours of Production and Nonsupervisory Employees: Manufacturing \\
+  \hline
+	179 & CEU3100000001 & All Employees: Durable Goods \\
+  \hline
+	180 & CEU3200000001 & All Employees: Nondurable Goods \\
+  \hline
+	181 & CEU9000000001 & All Employees: Government \\
+  \hline
+	182 & CIVPART & Civilian Labor Force Participation Rate \\
+  \hline
+	183 & CLF16OV & Civilian Labor Force \\
+  \hline
+	184 & CPIAPPNS & Consumer Price Index for All Urban Consumers: Apparel \\
+  \hline
+	185 & CPIAPPSL & Consumer Price Index for All Urban Consumers: Apparel \\
+  \hline
+	186 & CPIAUCNS & Consumer Price Index for All Urban Consumers: All Items \\
+  \hline
+	187 & CPIAUCSL & Consumer Price Index for All Urban Consumers: All Items \\
+\end{tabular}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{rp{5cm}p{11cm}}
+	& \textbf{Series Id} & \textbf{Series Title} \\
+  \hline
+  \hline
+	188 & CPILFENS & Consumer Price Index for All Urban Consumers: All Items Less Food \& Energy \\
+  \hline
+	189 & CPILFESL & Consumer Price Index for All Urban Consumers: All Items Less Food \& Energy \\
+  \hline
+	190 & CPIMEDNS & Consumer Price Index for All Urban Consumers: Medical Care \\
+  \hline
+	191 & CPIMEDSL & Consumer Price Index for All Urban Consumers: Medical Care \\
+  \hline
+	192 & CPITRNNS & Consumer Price Index for All Urban Consumers: Transportation \\
+  \hline
+	193 & CPITRNSL & Consumer Price Index for All Urban Consumers: Transportation \\
+  \hline
+	194 & CURRNS & Currency Component of M1 \\
+  \hline
+	195 & CURRSL & Currency Component of M1 \\
+  \hline
+	196 & DMANEMP & All Employees: Durable goods \\
+  \hline
+	197 & FEDFUNDS & Effective Federal Funds Rate \\
+  \hline
+	198 & GS1 & 1-Year Treasury Constant Maturity Rate \\
+  \hline
+	199 & GS5 & 5-Year Treasury Constant Maturity Rate \\
+  \hline
+	200 & HOUST & Housing Starts: Total: New Privately Owned Housing Units Started \\
+  \hline
+	201 & HOUSTMW & Housing Starts in Midwest Census Region \\
+  \hline
+	202 & HOUSTMWNSA & Housing Starts in Midwest Census Region \\
+  \hline
+	203 & HOUSTNE & Housing Starts in Northeast Census Region \\
+  \hline
+	204 & HOUSTNSA & Housing Starts: Total: New Privately Owned Housing Units Started \\
+  \hline
+	205 & HOUSTS & Housing Starts in South Census Region \\
+  \hline
+	206 & HOUSTSNSA & Housing Starts in South Census Region \\
+  \hline
+	207 & HOUSTW & Housing Starts in West Census Region \\
+  \hline
+	208 & HOUSTWNSA & Housing Starts in West Census Region \\
+  \hline
+	209 & INDPRO & Industrial Production Index \\
+  \hline
+	210 & IPBUSEQ & Industrial Production: Business Equipment \\
+  \hline
+	211 & IPCONGD & Industrial Production: Consumer Goods \\
+  \hline
+	212 & IPDCONGD & Industrial Production: Durable Consumer Goods \\
+  \hline
+	213 & IPFINAL & Industrial Production: Final Products (Market Group) \\
+  \hline
+	214 & IPFUELN & Industrial Production: Fuels \\
+  \hline
+	215 & IPFUELS & Industrial Production: Fuels \\
+  \hline
+	216 & IPMAT & Industrial Production: Materials \\
+  \hline
+	217 &IPNCONGD & Industrial Production: Nondurable Consumer Goods \\
+  \hline
+	218 & LNS12032197 & Employment Level - Part-Time for Economic Reasons, Nonagricultural Industries \\
+  \hline
+	219 & LNU01000000 & Civilian Labor Force \\
+  \hline
+	220 & LNU01300000 & Civilian Labor Force Participation Rate \\
+  \hline
+	221 & M1NS & M1 Money Stock \\
+  \hline
+	222 & M1SL & M1 Money Stock \\
+  \hline
+	223 & M2NS & M2 Money Stock \\
+  \hline
+	224 & M2SL & M2 Money Stock \\
+  \hline
+	225 & MANEMP & All Employees: Manufacturing \\
+\end{tabular}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{rp{5cm}p{11cm}}
+	& \textbf{Series Id} & \textbf{Series Title} \\
+  \hline
+  \hline
+	226 & NAPM & ISM Manufacturing: PMI Composite Index© \\
+  \hline
+	227 & NAPMEI & ISM Manufacturing: Employment Index© \\
+  \hline
+	228 & NAPMII & ISM Manufacturing: Inventories Index© \\
+  \hline
+	229 & NAPMNOI & ISM Manufacturing: New Orders Index© \\
+  \hline
+	230 & NAPMPI & ISM Manufacturing: Production Index© \\
+  \hline
+	231 & NAPMSDI & ISM Manufacturing: Supplier Deliveries Index© \\
+  \hline
+	232 & NDMANEMP & All Employees: Nondurable goods \\
+  \hline
+	233 & PAYEMS & All Employees: Total nonfarm \\
+  \hline
+	234 & PAYNSA & All Employees: Total nonfarm \\
+  \hline
+	235 & PERMITNSA & New Privately-Owned Housing Units Authorized by Building Permits: Total \\
+  \hline
+	236 & PPIACO & Producer Price Index: All Commodities \\
+  \hline
+	237 & PPICRM & Producer Price Index: Crude Materials for Further Processing \\
+  \hline
+	238 & PPIFCF & Producer Price Index: Finished Consumer Foods \\
+  \hline
+	239 & PPIFGS & Producer Price Index: Finished Goods \\
+  \hline
+	240 & PPIITM & Producer Price Index: Intermediate Materials: Supplies \& Components \\
+  \hline
+	241 & SRVPRD & All Employees: Service-Providing Industries \\
+  \hline
+	242 & TB3MS & 3-Month Treasury Bill: Secondary Market Rate \\
+  \hline
+	243 & TB6MS & 6-Month Treasury Bill: Secondary Market Rate \\
+  \hline
+	244 & UEMPMEAN & Average (Mean) Duration of Unemployment \\
+  \hline
+	245 & UNEMPLOY & Unemployed \\
+  \hline
+	246 & UNRATE & Civilian Unemployment Rate \\
+  \hline
+	247 & UNRATENSA & Civilian Unemployment Rate \\
+  \hline
+	248 & USCONS & All Employees: Construction \\
+  \hline
+	249 & USGOOD & All Employees: Goods-Producing Industries \\
+  \hline
+	250 & USGOVT & All Employees: Government \\
+  \hline
+	251 & USMINE & All Employees: Mining and logging \\
+  \hline
+	252 & W875RX1 & Real personal income excluding current transfer receipts \\
+\end{tabular}
+\end{table}
+
+
+
 
 
 \newpage

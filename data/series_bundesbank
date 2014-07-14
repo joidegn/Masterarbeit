@@ -1,0 +1,471 @@
+BBNA2.Q.DE.N.I.021.CA.D.V.I05.A,
+Actual earnings/ Overall economy/ Wages and salaries per employee (workplace concept)/ Index/ Germany
+
+BBK01.EA4220,
+Balance on current account / Seasonally adjusted
+
+BBK01.DU7834,
+Basic pay rates, overall economy, excluding ancillary benefits, excluding one-off payments, on a monthly basis, Germany
+
+BBXS1.A.I7.N.EUBUCS.MANU.MAN013.TT.PCT.I00,
+Business and consumer surveys (European Commission) / Capacity utilization (man) / Seasonally adjusted only / Euro area 18 (fixed composition)
+
+BBXS1.A.DE.N.EUBUCS.MANU.MAN013.TT.PCT.I00,
+Business and consumer surveys (European Commission) / Capacity utilization (man) / Seasonally adjusted only / Germany
+
+BBK01.OU7744,
+Capital / Total / All categories of banks
+
+BBK01.BQ1351,
+Central government debt - total debt
+
+BBDE1.M.DE.Y.JAA9.P2XF50500.CB.V.ABA.A,
+Construction permits - estimated construction cost / At current prices, flows / Germany / Total (including construction work on existing buildings) - residential and non-residential buildings, total / Calendar and seasonally adjusted
+
+BBXR1.M.HWWI.N.EURO.TOTNXNGY.INDBEU.HE.M00,
+Construction price index / Germany / Unadjusted figure / Total
+
+BBK01.OXA8R3,
+domestic Financial Vehicle Corporations - All categories of banks
+
+BBDP1.M.DE.Y.VPI.C.A00000.I10.L,
+Consumer price index / Germany / Unadjusted figure / Total
+
+BBK01.WX9141,
+DAX price index / End 1987 = 1000 / End of month
+
+BBK01.WT4065,
+DE0001102358 / Prices / 1,500 Bund 14/24
+
+BBK01.SUD106S,
+Effective interest rates of German banks / New business (estimated) / Households' deposits, overnight
+
+BBK01.SUD210,
+Effective interest rates of German banks / New business / Non-financial corporations' deposits, overnight
+
+BBDE1.M.DE.Y.GUA1.P2XF13020.BA.V.ABA.A,
+Employed persons (including proprietors and family workers) / Persons / Germany / Main construction industry / Calendar and seasonally adjusted
+
+BBK01.US8CA0,
+Employees subject to social security contributions / Total / Eastern Germany / Seasonally adjusted / 1 / 2
+
+BBK01.US80CA,
+Employees subject to social security contributions / Total / Western Germany / Seasonally adjusted / 1 / 2
+
+BBK01.USCA80,
+Employment in Germany / Employed persons in Germany / Germany / Seasonally adjusted / 1 / 2
+
+BBK01.JAB938,
+Enterprises / Seasonally adjusted
+
+BBXN1.A.I7.N.NAG.B1QG00.0000.Z0N.IND.I00,
+Euro area 18 (fixed composition) / National accounts - Gross domestic product / Gross domestic product / Total / Calendar and seasonally adjusted / Indices
+
+BBK01.XS5609,
+Exports / European countries / Seasonally adjusted
+
+BBK01.XX3382,
+Exports of the Federal Republic of Germany / Special Trade / Total / 1 / 2 /
+
+BBK01.EU4370,
+Financial transactions / Other investment / Balance
+
+BBK01.EU2518,
+Foreign investment in Germany / Other investment / Total / Balance
+
+BBK01.EU4510,
+Foreign trade / Exports (fob)
+
+BBMF1.M.D0.EUR.GOVT.WYWG.Y10.BID,
+Geldmenge M1 /                                                   Veränderung saisonbereinigt / Jahresrate / EWU
+
+BBK01.BQ2190,
+General government budgetary position (Germany) - total revenue
+
+BBK01.BQM403,
+General government debt - of which currency and deposits
+
+BBK01.BQM208,
+General government debt - of which loans
+
+BBK01.BQ8068,
+General government debt as defined in the Maastricht Treaty - Germany - overall
+
+BBK01.BJ8072,
+General government deficit / surplus as defined in the Maastricht Treaty - Germany - overall
+
+BBK01.XS4204,
+German exports / special trade / values / 1 / 2 / 3 / 4
+
+BBK01.XS4206,
+German foreign trade balance / special trade / values / 1 / 2 / 3 / 4
+
+BBK01.XS4205,
+German imports / special trade / values / 1 / 2 / 3 / 4
+
+BBK01.EC7750,
+German investment abroad / EU member states (28) / Total / Balance
+
+BBK01.ED9065,
+German investment abroad / Emerging markets and developing countries / Total / Balance
+
+BBK01.ED9004,
+German investment abroad / Euro-area member states / Total / Balance
+
+BBK01.ED9001,
+German investment abroad / Europe / Total / Balance
+
+BBK01.ED1096,
+German investment abroad / Other EU member states / Total / Balance
+
+BBK01.ED9031,
+German investment abroad / Other European countries / Total / Balance
+
+BBK01.JBA161,
+Gross domestic product / at current prices / Seasonally and working-day adjusted
+
+BBK01.JAA026,
+Gross national income (GNP) / at current prices / Seasonally adjusted
+
+BBK01.WU0042,
+Gross sales of domestic debt securities at nominal value / Total
+
+BBK01.JAA327,
+Gross wages and salaries / Seasonally adjusted
+
+BBXP1.M.U2.N.HICP.000000.IND.I00,
+Hamonized Index of Consumer Prices / Euro area (changing composition) / Overall index / Unadjusted figure / Monthly
+
+BBK01.TQ7162,
+Households - Household debt to GDP FSI-I033
+
+BBK01.XS8953,
+Imports / Product Classification for Production / Statistics from 2009 Total excluding energy / Seasonally adjusted
+
+BBK01.XS8857,
+Imports / Value / Total, excluding energy / Seasonally adjusted
+
+BBK01.EU4169,
+Income / Total / Receipts
+
+BBDE1.Q.DE.Y.LCB1.A2N200000.A.L.I08.A1,
+Index of gross wages and salaries / Germany / Mining and quarrying, manufacturing and service activities (B-S) / Calendar and seasonally adjusted
+
+BBDE1.Q.DE.Y.LCA1.A2N200000.A.L.I08.A1,
+Index of labour costs / Germany / Mining and quarrying, manufacturing and service activities (B-S) / Calendar and seasonally adjusted
+
+BBDE1.Q.DE.Y.LCC1.A2N200000.A.L.I08.A1,
+Index of non-wage costs / Germany / Mining and quarrying, manufacturing and service activities (B-S) / Calendar and seasonally adjusted
+
+BBDP1.M.DE.Y.VPI.C.SVXR.I10.A,
+Index of producer prices of industrial products sold on the domestic market / Germany / Calendar and seasonally adjusted / Total
+
+BBEE1.M.DE.AAA.XY0U12.R.AACPB.M00,
+Indicator of the German economy's price competitiveness against 24 selected industrial countries, based on the deflators of total sales
+
+BBK01.XSC430,
+Indices of foreign trade prices - exports, total / Germany / Calendar and seasonally adjusted / Total
+
+BBXE1.M.I7.W.PROD.NS0020.IND.I00,
+Industrieproduktion / Gesamte Industrie (ohne Baugewerbe) / Index / nur kalenderbereinigt / Euro-Währungsgebiet-18
+
+BBK01.EB0057,
+International Investment Position, all countries, net, total (from end 1997)
+
+BBK01.OEAA56G,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Baden-Württemberg
+
+BBK01.OEAA21H,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Bayern
+
+BBK01.OEAA03I,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Berlin
+
+BBK01.OEAA52S,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Brandenburg
+
+BBK01.OEAA56J,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Bremen
+
+BBK01.OEAA01K,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Hamburg
+
+BBK01.OEAA56L,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Hessen
+
+BBK01.OEAA37R,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Mecklenburg-Vorpommern
+
+BBK01.OEAA56M,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Niedersachsen
+
+BBK01.OEAA56N,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Nordrhein-Westfalen
+
+BBK01.OEAA03O,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Rheinland-Pfalz
+
+BBK01.OEAA03P,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Saarland
+
+BBK01.OEAA56V,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Sachsen
+
+BBK01.OEAA02T,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Sachsen-Anhalt
+
+BBK01.OEAA56Q,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Schleswig-Holstein
+
+BBK01.OEAA56U,
+Kredite an Nichtbanken (Nicht-MFIs) / Nichtbanken (Nicht-MFIs) insgesamt / Kredite insgesamt / Thüringen
+
+BBK01.OEAB01G,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Baden-Württemberg
+
+BBK01.OEBB21H,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Bayern
+
+BBK01.OEAB01I,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Berlin
+
+BBK01.OEAB01S,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Brandenburg
+
+BBK01.OEAB01J,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Bremen
+
+BBK01.OEBB12K,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Hamburg
+
+BBK01.OELB02L,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Hessen
+
+BBK01.OEAB01R,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Mecklenburg-Vorpommern
+
+BBK01.OEAB01M,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Niedersachsen
+
+BBK01.OEAB01N,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Nordrhein-Westfalen
+
+BBK01.OELB03O,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Rheinland-Pfalz
+
+BBK01.OEAB01P,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Saarland
+
+BBK01.OEYB19V,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Sachsen
+
+BBK01.OEAB01T,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Sachsen-Anhalt
+
+BBK01.OEAB01Q,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Schleswig-Holstein
+
+BBK01.OEAB01U,
+Kredite an Nichtbanken (Nicht-MFIs) / insgesamt / zusammen / Alle Bankengruppen / Thüringen
+
+BBK01.SU0009,
+Lending rates of banks / Current account credit less than EUR 100,000 / Average interest rate
+
+BBK01.SU0511,
+Lending rates of banks / Long-term fixed-rate loans to enterprises and self-employed persons, EUR 100,000 and more but less than EUR 500,000, effective interest rate / Average interest rate
+
+BBK01.SU0012,
+Lending rates of banks / Mortgage loans secured by residential real estate with interest rates fixed for 2 years, effective interest rate / Average interest rate
+
+BBK01.OU7677,
+Lending to banks (MFIs) / Balances and loans / All categories of banks
+
+BBK01.OU7676,
+Lending to banks (MFIs) / Total / All categories of banks
+
+BBK01.PC3767,
+Lending to computer and related activities, research and development / Total / All categories of banks
+
+BBK01.PC3723,
+Lending to construction / Total/ All categories of banks
+
+BBK01.OU7712,
+Lending to domestic banks (MFIs) / Credit balances and loans / All categories of banks
+
+BBK01.TUD364,
+MONEY STOCK M1 (FROM 2002, EXCLUDING CURRENCY IN CIRCULATION) / GERMAN CONTRIBUTION
+
+BBK01.TQ7036,
+Market liquidity - Average bid-ask spread in the securities market - government bills                          FSI-I035
+
+BBK01.OU8045,
+Medium and long-term lending / to general government / Securities / All categories of banks
+
+BBK01.OU8041,
+Medium and long-term lending to general government / Loans / Long-term / All categories of banks
+
+BBK01.OU9829,
+Medium and long-term lending to general government / Loans / Medium-term / All categories of banks
+
+BBK01.TS1303,
+Monetary aggregate M3 (from January 2002, excluding currency in circulation; from June 2010, excluding repos with central counterparties) / German contribution / Outstanding amounts at the end of the month (stocks) / Seasonally adjusted
+
+BBK01.OUP001,
+Money market paper issued by banks (MFIs) / All categories of banks
+
+BBK01.SU0295,
+Money market rates / EONIA / Monthly average
+
+BBK01.SU0334G,
+Money market rates / EURIBOR three-month funds / Moving monthly average
+
+BBK01.TVE309,
+Money stock M3 / EMU / Total / Changes
+
+BBK01.JB5001,
+National accounts - domestic demand (price adjusted) / 1 / 2 / 3 /
+
+BBK01.JB5007,
+National accounts - employment / Germany / 1 / 2 /
+
+BBK01.JB5005,
+National accounts - exports (price adjusted) /
+
+BBK01.JQ5003,
+National accounts - government consumption (price adjusted) / 1 / 2 / 3 /
+
+BBK01.JB5004,
+National accounts - gross fixed capital formation (price adjusted) / 1 / 2 / 3 /
+
+BBK01.JB5008,
+National accounts - labour costs per employee /
+
+BBK01.JQ5002,
+National accounts - private consumption (price adjusted) / 1 / 2 / 3 /
+
+BBK01.BJ9195,
+National accounts - total general government revenue (ESA 95) - Germany as a whole (western Germany up to and including 1990)
+
+BBK01.BJ9049,
+National accounts - total general government revenue (GFS as defined by the ECB) - Germany as a whole
+
+BBNA2.Q.DE.N.I.041.CA.D.V.I05.A,
+National accounts / Gross wages and salaries per hour worked by employees /  Whole economy / Germany
+
+BBK01.JJA327,
+National accounts/Households' income/Germany/ Gross wages and salaries (residence concept)
+
+BBK01.JQA024,
+National accounts/Labour productivity per hour worked by persons in employment/ Whole economy
+
+BBK01.JJB071,
+National accounts/Origin of GDP/Chain-linked index/ Production sector (excluding construction)
+
+BBK01.JQA001,
+National accounts/Overall economic view/ Compensation of employees - residents
+
+BBK01.JQC000,
+National accounts/Overall economic view/At current prices/ GDP
+
+BBK01.JJB949,
+National accounts/Unit labour costs per hour/ Whole economy (excluding agriculture, forestry and fishing, public services, education and health and other services)
+
+BBK01.JQA111,
+National accounts/Use of GDP/At current prices/ Private consumption
+
+BBK01.JQC111,
+National accounts/Use of GDP/Price index/ Private consumption
+
+BBK01.OXA8T5,
+off-balance true sale of domestic banks (MFIs) - All categories of banks
+
+BBEE1.A.I7.AAA.XZE021.R.AACPE.M00,
+Nominal effective exchange rate of the euro against the currencies of the EER-20 group
+
+BBK01.TQ7032,
+Non-financial corporations sector - Total debt to equity FSI-I028
+
+BBDE1.M.DE.Y.AEA1.A2P300000.F.C.I10.L,
+Orders received / At constant prices / Germany / Industry / Unadjusted figure
+
+BBDE1.M.DE.Y.AEA1.P2XF04000.B2.C.I10.A,
+Orders received / At constant prices / Germany / Main construction industry / Calendar and seasonally adjusted
+
+BBDE1.M.DE.W.AEA1.A2P340000.F.V.I10.A,
+Orders received / At current prices / Germany / Industry / Calendar adjusted only
+
+BBDE1.M.DE.Y.AEA1.A2P300000.F.C.I10.A,
+Orders received / At current prices / Germany / Industry / Calendar and seasonally adjusted
+
+BBDE1.M.DE.Y.AEA1.A2Q501000.F.V.I10.A,
+Orders received / At current prices, flows / Germany / 20+21 Manufacture of chemicals, chemical products; basic pharmaceutical products and pharmaceutical preparations / Calendar and seasonally adjusted
+
+BBDE1.M.DE.W.AEA1.P2XF04000.B2.V.I10.A,
+Orders received / At current prices, flows / Germany / Main construction industry / Calendar adjusted only
+
+BBDE1.M.DE.Y.AEA1.P2XF13010.B2.V.I10.A,
+Orders received / At current prices, flows / Germany / Main construction industry / Calendar and seasonally adjusted
+
+BBDE1.M.DE.W.AEN1.A2P340000.F.V.I10.A,
+Orders received excluding large orders, domestic / At current prices, flows / Germany / Industry / Calendar adjusted only
+
+BBDE1.M.DE.Y.AEN1.A2P350000.F.C.I10.A,
+Orders received excluding large orders, domestic / At current prices, flows / Germany / Industry / Calendar and seasonally adjusted
+
+BBDE1.M.DE.Y.AEP1.A2P350000.F.C.I10.A,
+Orders received excluding large orders, euro-area countries / At current prices, flows / Germany / Industry / Calendar and seasonally adjusted
+
+BBDE1.M.DE.W.AEN5.A2P340000.F.V.I10.A,
+Orders received excluding large orders, foreign / At current prices, flows / Germany / Industry / Calendar adjusted only
+
+BBDE1.M.DE.Y.AEN5.A2P350000.F.C.I10.A,
+Orders received excluding large orders, foreign / At current prices, flows / Germany / Industry / Calendar and seasonally adjusted
+
+BBDE1.M.DE.Y.AEP5.A2P350000.F.C.I10.A,
+Orders received excluding large orders, non-euro-area countries / At current prices, flows / Germany / Industry / Calendar and seasonally adjusted
+
+BBDE1.M.DE.W.AEM1.A2P340000.F.V.I10.A,
+Orders received excluding large orders, total / At current prices, flows / Germany / Industry / Calendar adjusted only
+
+BBDE1.M.DE.Y.AEM1.A2P350000.F.C.I10.A,
+Orders received excluding large orders, total / At current prices, flows / Germany / Industry / Calendar and seasonally adjusted
+
+BBDE1.M.DE.Y.AEB5.A2P350000.F.C.I10.A,
+Orders received from abroad / At current prices / Germany / Industry / Calendar and seasonally adjusted
+
+BBDE1.M.DE.Y.AEB1.A2Q501000.F.C.I10.A,
+Orders received from the domestic market / At constant prices / Germany / 20+21 Manufacture of chemicals, chemical products; basic pharmaceutical products and pharmaceutical preparations / Calendar and seasonally adjusted
+
+BBDE1.M.DE.Y.AEB1.A2P350000.F.C.I10.A,
+Orders received from the domestic market / At current prices / Germany / Industry / Calendar and seasonally adjusted
+
+BBDE1.M.DE.Y.BAA1.P2XF00000.G.C.I10.L,
+Output in the production sector / At constant prices / Germany / Main construction industry / Unadjusted figure
+
+BBDE1.M.DE.Y.BAA1.A2P300000.G.C.I10.A,
+Output in the production sector / Germany / Production sector including construction (B -F) / Calendar and seasonally adjusted
+
+BBEX3.M.XAU.DEM.EA.AC.C02,
+Price of gold in London / morning fixing * / 1 ounce of fine gold = USD ...
+
+BBDE1.M.DE.Y.FG30.A2P200000.F.N.I10.A,
+Produktionsergebnis je Beschäftigten / Deutschland / Bergbau und Gewinnung von Steinen und Erden sowie Verarbeitendes Gewerbe (B + C) / Angaben für fachliche Betriebsteile / kalender- und saisonbereinigt
+
+BBK01.TQ7040,
+Real estate markets - Residential real estate loans to total loans                                        FSI-I039
+
+BBK01.TXI362,
+TOTAL ASSETS OR LIABILITIES / GERMAN CONTRIBUTION
+
+BBK01.TUB618,
+Total assets
+
+BBK01.TUE365,
+Total assets or liabilities / Euro area
+
+BBK01.TUB641,
+Total liabilities
+
+BBK01.UJCY01,
+Unemployment rate (unemployment as a percentage of the civilian labour force) / Germany / 1 / 2 / 3
+

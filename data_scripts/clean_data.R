@@ -1,4 +1,5 @@
 library(forecast)
+library(xts)
 library(zoo)
 
 normalize.data <- function(data) {  # takes csv file which will be demeaned, normalized and made stationary
@@ -12,7 +13,16 @@ normalize.data <- function(data) {  # takes csv file which will be demeaned, nor
         return(zoo(series, times[(ndiffs+1):length(times)]))  # return a zoo object and keep the time index intactrtaking account for the number of differences
     }
 
-    stationary.data <- do.call(merge, apply(data, 2, function(column) rescale(demean(make.stationary(column, names(column))))))
+    if (dim(data)[2] > 1)
+        stationary.data <- do.call(merge, apply(data, 2, function(column) rescale(demean(make.stationary(column, names(column))))))
+        #library(xtable)
+        #sink("../data/differences.tex")
+        #diffs <- matrix(sapply(data, function(col) ndiffs(col, alpha=0.05, test="kpss")), ncol=1)
+        #colnames(diffs) <- colnames(data)
+        #xtable(diffs)
+        #sink(NULL)
+    else
+        stationary.data <- rescale(demean(make.stationary(data[,1], index(data))))
     # TODO: choose data range!
     return(stationary.data)
 }
@@ -65,7 +75,6 @@ make.data.csv <- function(files, output.file=F) {  # merges all csv files into o
     data <- do.call(merge, data.sets)
     approximated.data <- na.approx(data, na.rm=F)  # interpolate interior NAs (this refers especially to columns which were quarterly)
     cat(sum(is.na(data)) - sum(is.na(approximated.data)), " NA values have been approximated\n")
-    data <- normalize.data(approximated.data)  # demean, rescale, make stationary, interpolate missings
     colnames(data) <- ids
     if (is.character(output.file))
         write.zoo(data, output.file)  # unfortunately whitespace delimited
@@ -95,8 +104,14 @@ all.files <- c(bb.files, fred.files)
 
 # I am only interested in the dates.
 data <- make.data.csv(all.files)
-selected.data <- window(data, start = as.Date("1995-01-01"))  # arbitrarily
+selected.data <- window(data, start = as.Date("1991-01-01"))  # arbitrarily
 long.enough <- remove.series.that.cost.observations(remove.short.series(selected.data, 200), c(20,20))
 final.data <- cut.to.size(long.enough)
+final.data <- xts(final.data, as.Date(as.yearmon(as.character(index(final.data)))))
 
+gdp <- read.csv("../data/BB-GDP_quarterly.csv", sep=" ", header=F)
+gdp.time.index <- as.Date(as.yearmon(as.character(gdp[,1])))
+gdp <- xts(gdp[,2], gdp.time.index)
+colnames(gdp) <- c("BBK01.JQA000")
+final.data <- na.trim(normalize.data(na.omit(merge(zoo(gdp), zoo(final.data)))))
 #write.zoo(final.data, "../data/final_data.csv")
