@@ -1,5 +1,7 @@
 using FactorModels
 using DataFrames
+using Datetime
+using DataStructures  # for ordered dict which makes reading easier
 
 
 # Models:
@@ -13,8 +15,8 @@ using DataFrames
 #data = readtable("data/final_data.csv", separator=' ', header=true)  # this is how it used to be
 #data_matrix = reduce(hcat, [convert(Array{Float64}, col) for col in data.columns[2:size(data.columns, 1)]])
 
-file = readdlm("data/final_data.csv")
-data, header, dates = file[2:end, 2:end], file[1, 2:end], file[2:end, 1]
+file = readcsv("data/final_data.csv")
+data, header, dates = convert(Array{Float64, 2}, file[2:end, 2:end]), file[1, 2:end], Date[date(dt) for dt in file[2:end, 1]]
 #ids = map(string, names(data)[2:end])
 #titles = series_titles(ids)  # TODO: does not work at the moment because ICU.jl and with it Requests.jl seems to be broken
 y_ind = 1
@@ -24,7 +26,7 @@ y = data[:, 1]
 BIC(mse::Float64, n::Int64, T) = log(mse) + n * log(T)/T  # Bayesian information criterion
 FPE(mse::Float64, n::Int64, T) = log(mse) + n * 2/T  # Fisher information criterion
 
-function pseudo_out_of_sample_forecasts(y_index::Int64, number_of_lags::Int64, number_of_factors::Int64, number_of_factors_criterion::String=""; num_predictions::Int=10)
+function pseudo_out_of_sample_forecasts(x::Array{Float64, 2}, y_index::Int64, number_of_lags::Int64, number_of_factors::Int64, number_of_factors_criterion::String=""; num_predictions::Int=10)
     # one step ahead pseudo out-of-sample forecasts
     # the number of factors is used for the forecasting equation not for the factor equation if a criterion is given
     T = size(x,1)
@@ -43,7 +45,7 @@ function pseudo_out_of_sample_forecasts(y_index::Int64, number_of_lags::Int64, n
     return(predictions, x[to_predict, y_index])
 end
 
-function pseudo_out_of_sample_forecasts(y_index::Int64, number_of_lags::Int64, number_of_factors::Int64, number_of_factor_lags::Int64, number_of_factors_criterion::String=""; num_predictions::Int64=10)
+function pseudo_out_of_sample_forecasts(x::Array{Float64, 2}, y_index::Int64, number_of_lags::Int64, number_of_factors::Int64, number_of_factor_lags::Int64, number_of_factors_criterion::String=""; num_predictions::Int64=10)
     # one step ahead pseudo out-of-sample forecasts for a dynamic model
     # the number of factors is used for the forecasting equation not for the factor equation if a criterion is given
     T = size(x,1)
@@ -75,12 +77,12 @@ number_of_forecasts = 15
 bench_forecasts, true_values = benchmark_forecasts(x, 1; num_predictions=number_of_forecasts, window=number_of_forecasts)
 rmse_bench = RMSE(bench_forecasts, true_values)
 
-bench_ar_forecasts, true_values_ = benchmark_ar(x[:, 1]; num_predictions=number_of_forecasts)
+bench_ar_forecasts, true_values_ = benchmark_ar(x[:, 1], 4; num_predictions=number_of_forecasts)
 rmse_bench_ar = RMSE(bench_ar_forecasts, true_values)
 
 
 
-function choose_static_factor_model_in_sample(information_criterion::Function=BIC, number_of_factors_criterion::String=""; bai_criterion=false)  # if bai_criterion is true number_of_factors_criterion is used in forecasting equation as well
+function choose_static_factor_model_in_sample(x::Array{Float64, 2}, information_criterion::Function=BIC, number_of_factors_criterion::String=""; bai_criterion=false)  # if bai_criterion is true number_of_factors_criterion is used in forecasting equation as well
     # choice of parameters according to in-sample criteria
     if length(number_of_factors_criterion) == 0
         residuals = [predict(FactorModel(x, number_of_factors), x[:, y_ind], 1, number_of_lags)[1] for number_of_factors in 1:max_factors, number_of_lags in 1:max_lags]
@@ -99,12 +101,12 @@ function choose_static_factor_model_in_sample(information_criterion::Function=BI
         info_criteria = [information_criterion(sum(residuals[number_of_factors, number_of_lags].^2), number_of_factors+number_of_lags+1, size(x, 2)-number_of_lags-1) for number_of_factors in 1:max_factors, number_of_lags in 1:max_lags]  # T is smaller because of lags and specificity of predict function
         number_of_factors, number_of_lags = ind2sub(size(info_criteria), indmin(info_criteria))
     end
-    rmse = apply(RMSE, pseudo_out_of_sample_forecasts(1, number_of_lags, number_of_factors; num_predictions=number_of_forecasts))
+    rmse = apply(RMSE, pseudo_out_of_sample_forecasts(x, 1, number_of_lags, number_of_factors; num_predictions=number_of_forecasts))
     return(number_of_factors, number_of_lags, rmse)
 end
-function choose_static_factor_model_out_of_sample(number_of_factors_criterion::String="")
+function choose_static_factor_model_out_of_sample(x::Array{Float64, 2}, number_of_factors_criterion::String="")
     # choice of parameters according to out-of-sample criteria
-    prediction_tuples = [pseudo_out_of_sample_forecasts(1, number_of_lags, number_of_factors; num_predictions=number_of_forecasts) for number_of_factors in 1:max_factors, number_of_lags in 1:max_lags]
+    prediction_tuples = [pseudo_out_of_sample_forecasts(x, 1, number_of_lags, number_of_factors; num_predictions=number_of_forecasts) for number_of_factors in 1:max_factors, number_of_lags in 1:max_lags]
     rmses = [RMSE(prediction_tuples[number_of_factors, number_of_lags][1], prediction_tuples[number_of_factors, number_of_lags][2]) for number_of_factors in 1:max_factors, number_of_lags in 1:max_lags]
     number_of_factors, number_of_lags = ind2sub(size(rmses), indmin(rmses))
     return(number_of_factors, number_of_lags, minimum(rmses))
@@ -112,7 +114,7 @@ end
 
 # dynamic factor model
 # in-sample choice
-function choose_dynamic_factor_model_in_sample(information_criterion::Function=BIC, number_of_factors_criterion::String=""; bai_criterion=false)
+function choose_dynamic_factor_model_in_sample(x::Array{Float64, 2}, information_criterion::Function=BIC, number_of_factors_criterion::String=""; bai_criterion=false)
     if length(number_of_factors_criterion) == 0
         residuals = [predict(DynamicFactorModel((x, number_of_factors), number_of_factor_lags), x[:, y_ind], 1, number_of_lags, number_of_factors)[1] for number_of_factors in 1:max_factors, number_of_lags in 1:max_lags, number_of_factor_lags in 1:max_factor_lags]
     else
@@ -131,13 +133,13 @@ function choose_dynamic_factor_model_in_sample(information_criterion::Function=B
         number_of_factors, number_of_lags, number_of_factor_lags = ind2sub(size(info_criteria), indmin(info_criteria))
     end
     #number_of_factors, number_of_lags, number_of_factor_lags = ind2sub(size(fpes), indmin(fpes))
-    forecasts, true_values1 = pseudo_out_of_sample_forecasts(1, number_of_lags, number_of_factors, number_of_factor_lags; num_predictions=number_of_forecasts)
+    forecasts, true_values1 = pseudo_out_of_sample_forecasts(x, 1, number_of_lags, number_of_factors, number_of_factor_lags; num_predictions=number_of_forecasts)
     rmse = RMSE(forecasts, true_values1)
     return (number_of_factors, number_of_lags, number_of_factor_lags, rmse)
 end
-function choose_dynamic_factor_model_out_of_sample(number_of_factors_criterion::String="")
+function choose_dynamic_factor_model_out_of_sample(x::Array{Float64, 2}, number_of_factors_criterion::String="")
     #out-of-sample choice
-    prediction_tuples = [pseudo_out_of_sample_forecasts(1, number_of_lags, number_of_factors, number_of_factor_lags, number_of_factors_criterion; num_predictions=number_of_forecasts) for number_of_factors in 1:max_factors, number_of_lags in 1:max_lags, number_of_factor_lags in 1:max_factor_lags]
+    prediction_tuples = [pseudo_out_of_sample_forecasts(x, 1, number_of_lags, number_of_factors, number_of_factor_lags, number_of_factors_criterion; num_predictions=number_of_forecasts) for number_of_factors in 1:max_factors, number_of_lags in 1:max_lags, number_of_factor_lags in 1:max_factor_lags]
     rmses = [RMSE(prediction_tuples[number_of_factors, number_of_lags, number_of_factor_lags][1], prediction_tuples[number_of_factors, number_of_lags][2]) for number_of_factors in 1:max_factors, number_of_lags in 1:max_lags, number_of_factor_lags in 1:max_factor_lags]
     number_of_factors, number_of_lags, number_of_factor_lags = ind2sub(size(rmses), indmin(rmses))
     return (number_of_factors, number_of_lags, number_of_factor_lags, minimum(rmses))
@@ -169,14 +171,62 @@ dynamic_model_out_of_sample_ICp2 = choose_dynamic_factor_model_out_of_sample("IC
 
 
 
-
-#predictions_frame = DataFrame(
-#    predictions=vcat(y[end-199:end], predictions, predictions_targeted, predictions_ols, predictions_average),
-#    method=split(^("true value,", 200) * ^("Static Factor Model,", 200) * ^("targeted Static Factor Model,", 200) * ^("OLS,", 200) * ^("Average,", 200), ",", 0, false)
-#)
-#set_default_plot_format(:png)
-#display(predictions_plot)
+# bootstrapping the tests:
+#residual_bootstrap(fm, 100, fm->LM_test(fm, t, i))
+#tests = [quandt_andrews(fm, LM_test_gls, i) for i in 1:size(x, 2)]
 
 
+
+# Structural break tests
+function sup_test(fm::FactorModel, significance_level=0.05)
+    tests = [quandt_andrews(fm, LM_test, i) for i in 1:size(fm.x, 2)]  # TODO: should use LM_test_gls here once it is bug free
+    periods_tested = sort(tests[1][1])
+    critical_value = quandt_andrews_critical_value(fm.number_of_factors, significance_level)
+    highest_statistic = [test[2][1] for test in tests]  # extract most likely break_date statistic (aka the period with highest test statistic)
+    highest_statistic_at = [test[1][1] for test in tests]  # extract most likely break_date (aka the period with highest test statistic)
+    significant_break_indices = highest_statistic_at[highest_statistic.>critical_value]
+    break_period_per_variable = highest_statistic_at .* (highest_statistic.>critical_value)
+    #break_counts = OrderedDict(periods_tested, [count(stat->stat==t, highest_statistic_at) for t in periods_tested])
+    significant_break_counts = OrderedDict(periods_tested, [count(stat->stat==i, significant_break_indices) for i in periods_tested])
+    break_period_per_variable, significant_break_counts, periods_tested
+end
+
+
+using Gadfly
+fm = FactorModel(x, "ICp2")
+break_period_per_variable, significant_break_counts, periods_tested = sup_test(fm)
+
+plt = plot(
+    layer(x=periods_tested, y=[i for i in values(significant_break_counts)], Geom.point),
+    layer(x=periods_tested, y=[i for i in values(significant_break_counts)], Geom.line),
+    layer(xintercept=[14, 69], Geom.vline(color="green")),
+    Guide.XLabel("period"), Guide.YLabel("number of breaks"),
+    Scale.y_continuous(minvalue=0, maxvalue=8)
+)
+#draw(PNG("graphs/structural_breaks.png", 20cm, 15cm), plt)
+
+# which variables have a break in period 25 and periods 62 to 65 which is when most variables have breaks
+series_idx_with_break_at25 = find(Bool[break_period_per_variable[i].==25 for i in 1:size(fm.x, 2)])
+series_id_with_break_at25 = header[series_idx_with_break_at25]
+series_idx_with_break_62_to_65 = find(Bool[65 .>= break_period_per_variable[i] .>= 62 for i in 1:size(fm.x, 2)])
+series_id_with_break_62_to_65 = header[series_idx_with_break_62_to_65]
+
+# as an answer to the structural breaks we change the window of observations considered  (period 47 is 2004-07-01, period 61 is 2008-01-01)
+# alternativel we can exclude the series with breaks around 2008
+# we do this to that we have something to compare
+
+fm_window = FactorModel(x[:, Bool[!in(series_id, series_idx_with_break_62_to_65) for series_id in 1:size(x, 2)]], "ICp2")
+break_period_per_variable_window, significant_break_counts_window, periods_tested_window = sup_test(fm_window, 0.05)
+
+plt = plot(
+    layer(x=periods_tested_window, y=[i for i in values(significant_break_counts_window)], Geom.point),
+    layer(x=periods_tested_window, y=[i for i in values(significant_break_counts_window)], Geom.line),
+    layer(xintercept=[minimum(periods_tested_window), maximum(periods_tested_window)], Geom.vline(color="green")),
+    Guide.XLabel("period"), Guide.YLabel("number of breaks"),
+    Scale.y_continuous(minvalue=0, maxvalue=10)
+)
+#draw(PNG("graphs/structural_breaks_less_variables_1percent.png", 20cm, 15cm), plt)
+# redo the out-of-sample forecasts with less variables
+dynamic_model_out_of_sample_ICp2 = choose_dynamic_factor_model_out_of_sample(x_window, "ICp2")
 
 

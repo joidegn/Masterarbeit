@@ -5,6 +5,9 @@
 \usepackage[authoryear, round]{natbib}
 \usepackage{graphicx}
 \usepackage[inner=2.5cm,outer=2.5cm,bottom=2cm]{geometry}
+\usepackage{mathrsfs}
+\usepackage{subfig}
+
 
 \title{\textbf{Predicting Economic Time-Series using Dynamic Factor Models under Structural Breaks}}
 \author{Johannes Degn}
@@ -13,10 +16,15 @@
 
 
 \maketitle
-
-\tableofcontents
-
 \newpage
+\tableofcontents
+\newpage
+\listoffigures
+\listoftables
+\newpage
+
+
+
 
 \section{Introduction}
 Factor models are used in a wide range of situations spanning from economic indices over prediction of high-dimensional datasets. The basic idea is that there are unobservable factors driving the change of the variables of interest. Put differently, it is assumed that the change of variables is composed of a common component affecting all variables in the set and an idiosyncratic component which is specific to the variable of interest.
@@ -86,7 +94,7 @@ Some more assumptions are necessary for the inferential theory\footnote{Most not
 	&\textbf{Assumption D: } E(\frac{1}{N} \sum_{i=1}^N || \frac{1}{\sqrt{N}}\sum_{t=1}^TF_t e_{it} || ^2) \leq M &\\
 \end{flalign*}
 
-Assumption C allows for some degree of dependence and heteroskedasticity among the innovation terms. \\
+Assumption C allows for some degree of dependence and heteroskedasticity among the innovation terms which will be used below to simplify the calculation of the dynamic factor model. \\
 
 
 As mentioned, an important advantage of factor models compared to simpler econometric models is that they do not necessarily suffer if the fraction $\frac{T}{N}$ becomes small whereas most models can not cope with more variables than observations. VAR models for example have the problem that the number of parameters to estimate becomes too high quickly if $N$ is high relative to $T$. 
@@ -101,23 +109,23 @@ For static factor models $X_t$ depends only on $f_t$ and not on lags of $f_t$ i.
 
 \begin{equation}
 	\label{factor equation, t indexed}
-	X_t = \Lambda F_t + e_t
+	X_t = \Lambda F_t + \bar e_t
 \end{equation}
 
-Where $X$ is a $T \times N$ Matrix of predictors. $F$ is a $T \times r$ factor matrix. $\Lambda$ is a $N \times r$ loadings matrix. $e$ is a $T \times N$ matrix of idiosyncratic errors. $C$ is called the common component.
+Where $X$ is a $T \times N$ Matrix of predictors. $F$ is a $T \times r$ factor matrix. $\Lambda$ is a $N \times r$ loadings matrix. $\bar e$ is a $T \times N$ matrix of idiosyncratic errors. $C$ is called the common component.
 Note that depending on whether authors index by row, column or both, several alternative ways of writing down the factor model equation are used in the literature.
 
 \begin{equation}
 	\label{factor equation, it indexed}
-	X_{it} = \Lambda_i' F_t + e_{it}
+	X_{it} = \Lambda_i' F_t + \bar e_{it}
 \end{equation}
 \begin{equation}
 	\label{static factor equation}
-	X = F \Lambda' + e = C + e
+	X = F \Lambda' + e = C + \bar e
 \end{equation}
 \begin{equation}
 	\label{factor equation, i indexed}
-	X_i = F_i \lambda + e_i
+	X_i = F_i \lambda + \bar e_i
 \end{equation}
 
 
@@ -125,13 +133,20 @@ Note that depending on whether authors index by row, column or both, several alt
 
 
 \subsection{Dynamic Factor Models}
-In applications there will usually be some kind of time dependence structure. Thus, dynamic factor models introduce a dynamic process into the factors. For the purpose of this paper we will assume the following VAR process for the factors.
+In applications there will usually be some kind of time dependence structure. Thus, dynamic factor models introduce a dynamic process into the factors.
 
 \begin{equation}
 	\label{time dependence of factors}
 	f_t = \Psi(L) f_{t-1} + \eta_t \text{\ \ \ \ \ (VAR representation)}
 \end{equation}
 
+In practice it is usually easier to ignore the dynamic process in the factors $f_t$ and follow e.g. \citet{stock2005implications} among others in assuming a dynamic proccess in the innovation term of the factor equation (\ref{factor equation}) instead. This captures the dynamic process while avoiding the technical difficulty in estimating the dynamic factors themselves. The underlying thought is that there will be some residual autocorrelation if the dynamic process of the factors is not modelled explicitely which can be caught by an AR(p) process for the innovation term \citep{breitung2011gls}. Additionally the lag polynomial $\lambda(L)$ in the factor equation (\ref{factor equation}) captures the noncontemporaneous interactions of the factors $f_t$ and $X_t$.
+
+For the purpose of this paper I assume the following AR processes for the innovation term of the dynamic factor models \citep{breitung2011testing}.
+\begin{equation}
+	\label{AR process innovation term}
+	e_{it} = \varrho_{i,1} e_{i, t-1} + ... + \varrho_{i, p_i} e_{i, t-p_i} + \xi_{it} \text{ where $\xi_{it}$ is white noise}
+\end{equation}
 
 
 \subsubsection{Static interpretation of dynamic factor models}
@@ -260,13 +275,21 @@ $$\hat f_t^* = \begin{cases} 0 \text{ for } t=1, ..., T_i^* \\ \hat f_t \text{ f
 	\text{LM}^* = \frac{\left( \sum_{i=1}^N s_i \right) -rN}{\sqrt{2rN}}
 \end{equation}
 
-The LM$^*$ statistic pertains to the joint test of no structural break in all the factor loadings. Note, however, that the assumptions required for the LM$^*$ statistic are those of a strict factor model, namely no interdependence in the error terms $e_t$ in (\ref{factor equation}). \\
+The LM$^*$ statistic pertains to the joint test of no structural break in all the factor loadings. Note, however, that the assumptions required for the LM$^*$ statistic are those of a strict factor model, namely no interdependence in the error terms $e_t$ in (\ref{factor equation}).
+
+The LR, LM and Wald statistics defined above can be used to define a test for a unknown break date as in \citet{andrews1993tests}. Under mild assumptions \citet{breitung2011testing} show that the supremum statistic defined over the LM statistics is distributed using the nonstandard distribution given in \citet{andrews1993tests} and tabulated again in \citet{andrews2003tests}.
+
+\begin{equation}
+\label{sup LM statistic}
+\mathscr{S}_{i,T}(\tau_0) = \sup_{\tau \in [\tau_0, 1-\tau_0]} (s_i^\tau) \text{ where $s_i^\tau$ refers to either the LR, LM or Wald statistic}
+\end{equation}
 
 
-We follow \citet{breitung2011testing} in assuming an AR(p) process for the innovation term as in equation (\ref{errors AR(p)}):
+
+As mentioned in the introduction of the dynamic factor model, I follow \citet{breitung2011testing} in assuming an AR(p) process for the innovation term as in equation (\ref{errors AR(p)}):
 \begin{equation}
 	\label{errors AR(p)}
-	u_{it} = \varrho_{i, 1} u_{i, t-1} + ... + \varrho_{i, p_i} u_{i, t-p_i} + \varepsilon_{it}
+	e_{it} = \varrho_{i, 1} e_{i, t-1} + ... + \varrho_{i, p_i} e_{i, t-p_i} + \xi_{it}
 \end{equation}
 This is in line with the assumptions of the approximate factor model introduced above.
 
@@ -344,40 +367,43 @@ They have been downloaded in seasonally adjusted form where appropriate. The dat
 
 The series have been demeaned and normalized such that $\frac{1}{T}\sum_{t=1}^T X_{it} = 0 \ \forall i$ and $\frac{1}{T}\sum_{t=1}^T X_{it}^2 = 1 \Leftrightarrow \sum_{t=1}^T X_{it}^2 = T \ \forall i$. \\
 
-\subsection{Model evaluation}
-If the number of static factors and the number of factor lags in the forecasting is predetermined using criteria defined above the number of lags  of the variable of interest $y_t$ is still open. In the following I will refer to the number of lags of $y_t$ as $s$. We follow \citet{bai2008forecasting} in selecting among model candidated using the BIC criterion which is of course an in-sample criterion. We also consider out-of-sample forecasting performance. Since the point of the exercise is forecasting, the models' out-of-sample performance is monitored using the root mean squared error of one step ahead pseudo out-of-sample forecasts is computed.\footnote{Pseudo out-of-sample forecasts are a method to simulated a forecasting situation in that the forecaster does as if he would not know the true realizations of the data after $t$. The forecaster tries to predict the value $y_{t+h}$ given all the information up to $t$. $t$ is then successively moved one period ahead. Here we set $h=1$.} This evaluation method follows \citet{forni2005the} and \citet{bai2008forecasting} among others. The foreacasting window $w$ over which the pseudo out-of-sample-forecasts are performed is set to $w=10$ here. \\
+
+\subsection{Model selection and evaluation}
+This section explores the different methods to selected and evaluate a model. The ultimate goal is always forecasting the true data as closely as possible. To this end I use the root mean squared forecasting error (RMSE) as an evaluation mechanism. $RMSE = \sqrt{\frac{1}{w}\sum_{s=t}^{t+h}[(y_s - \hat y_s)^2]}$ where $w$ denotes the length of the window to be forecasted and $t$ the period preceding the window being forecasted.
+
+If the number of static factors and the number of factor lags in the forecasting is predetermined using criteria defined above the number of lags  of the variable of interest $y_t$ is still open. In the following I refer to the number of lags of $y_t$ as $s$. I follow \citet{bai2008forecasting} in selecting among model candidated using the BIC criterion which is of course an in-sample criterion. In addition we also consider out-of-sample forecasting performance. Since the point of the exercise is forecasting, the models' out-of-sample performance is monitored using the root mean squared error of one step ahead pseudo out-of-sample forecasts is computed.\footnote{Pseudo out-of-sample forecasts are a method to simulated a forecasting situation in that the forecaster does as if he would not know the true realizations of the data after $t$. The forecaster tries to predict the value $y_{t+h}$ given all the information up to $t$. $t$ is then successively moved one period ahead. Here we set $h=1$.} This evaluation method follows \citet{forni2005the} and \citet{bai2008forecasting} among others. The foreacasting window $w$ over which the pseudo out-of-sample-forecasts are performed is set to $w=10$ here. \\
 
 TODO: put BIC and FPE definitions here
 
 All models are compared to a benchmark model which consists of a simple moving average over the forecasting window $w$. The length of this window is set to $w=15$. While this is a very short forecasting horizon, it makes sure that we will have more observations than parameters for all possible models. Since the length of the data series is $T=82$ this leaves only $67$ observations for the first forecast in the pseudo out-of-sample procedure highlighting that factor models are adequate in a situation with $N>>T$.
 
 The first panel in table \ref{results static factor model RMSE} shows the results of the in sample selection procedure for a static factor model. Three variants for choosing the number of factors are considered. Firstly the IC$_{p2}$ criterion from \citet{bai2002determining} is used to estimate the number of static factors for both the factor equation and the forecasting equation. The information criteria (BIC and FPE) are then used to select $s$, the number of lags of $y_t$.
-As a second choice, the decision over the number of factors \textit{and} the number of lags of $y_t$ are left to the information criteria.\footnote{I.e. the information criteria are minimized over different choices of $r$ and $s$.}
-A third possibility consists of leaving the choice of the number of factors for the factor equation to a \citet{bai2002determining} criterion and using the BIC or FPE criterion to choose the number of static factors in the forecasting equation.
+As a second choice, the decision over the number of factors \textit{and} the number of lags of $y_t$ in the forecasting equation are left to the information criteria. I.e. the information criteria are minimized over different choices of $r$ and $s$. The same number of factors is used in the factor equation.
+A third possibility consists of leaving the choice of the number of factors for the factor equation to a \citet{bai2002determining} criterion and using the BIC or FPE criterion to choose the number of static factors in the forecasting equation along with the number of lags of $y_t$. I.e. the BIC or FPE are minimized over $r$ and $s$.
 
-Both the BIC and FPE as well as the $IC_{p2}$ criteria select a large number of factors. The RMSE of the resulting out-of-sample forecasts is very large with $1.30$ and $1.22$ respectively. Since the variance of the data series has been normalized to $1$ and the mean to $0$ the RMSE of the simple average can be expected to be close to $1$. The benchmark model of a moving average reports and RMSE of $0.86$ for the same time horizon.
+Both the BIC and FPE as well as the $IC_{p2}$ criteria select a large number of factors. The fact that conventional information criteria should not be used for selecting the number of static factors has been extensively documented in the factor model literature and is no surprise. Since the variance of the data series has been normalized to $1$ and the mean to $0$ the RMSE of the simple average $y_t$ in the given window can be expected to be close to $1$. The RMSE of the resulting out-of-sample forecasts is very large with $1.30$ and $1.22$ respectively. The benchmark model of a moving average reports and RMSE of $0.86$ and an AR(4) model achieves an RMSE of $0.60$ for the same time horizon.
 
-If BIC criterion for model selecting is replaced by the RMSE\footnote{I.e. the RMSE is minimized over choices of $r$ and $s$.}, both $r$ and $s$ are shrunken to $1$ which greatly reduces the RMSE.
+The best performing static factor model in terms of forecasting can be got if the BIC criterion for model selecting is replaced by the RMSE as can be seen in the second panel. I.e. the RMSE is minimized over choices of $r$ and $s$ rather than the BIC. This implies using the out-of-sample performance as an evaluation criterion. In that case both $r$ and $s$ are shrunken to $1$ which greatly reduces the RMSE. While this outperforms the simple benchmark model, the fact that the most parsimonious static factor model performs best in out-of-sample prediction hints at possible performance increases if dynamic effects are allowed.
 
 \begin{table}[ht]
 \centering
-\caption{Static factor model RMSE}
+\caption{Static factor model, model selection}
 \label{results static factor model, in-sample}
-\begin{tabular}{c|lll}
-  & $r$ & $s$ & RMSE\\
+\begin{tabular}{c|llll}
+  & $r_{factor}$ & $r_{forecast}$ & $s$ & RMSE\\
   \hline
   \hline
     & \multicolumn{3}{c}{\textit{In-Sample}} \\
-	BIC & 13 & 5 & 1.30 \\
-	FPE & 15 & 5 & 1.23 \\
-	BIC and $IC_{p2}$ & 13 & 5 & 1.30 \\
-	FPE and $IC_{p2}$ & 15 & 5 & 1.23 \\
-	$IC_{p2}$ & 4 & 10 & 1.21 \\
+	BIC & 13 & 13 & 5 & 1.30 \\
+	FPE & 15 & 15 & 5 & 1.23 \\
+	BIC and $IC_{p2}$ & 4 & 13 & 5 & 1.30 \\
+	FPE and $IC_{p2}$ & 4 & 15 & 5 & 1.23 \\
+	$IC_{p2}$ & 4 & 4 & 10 & 1.21 \\
   \hline
   \hline
   & \multicolumn{3}{c}{\textit{Out-of-Sample}} \\ 
-   	RMSE & 1 & 1 & 0.71 \\
-   	RMSE and $IC_{p2}$ & 1 & 1 & 0.71 \\
+   	RMSE & 1 & 1 & 1 & 0.71 \\
+   	RMSE and $IC_{p2}$ & 4 & 1 & 1 & 0.71 \\
   \hline
   \multicolumn{4}{l} {\rule{0pt}{8ex} \begin{minipage}{6cm}
 		\small{\textbf{\textit{Notes:}} Naturally, the IC$_{p2}$ criterion chooses $r=4$ factors for the factor equation for cases where BIC is used to choose the number of factors for the forecasting equation.}
@@ -385,25 +411,27 @@ If BIC criterion for model selecting is replaced by the RMSE\footnote{I.e. the R
 \end{tabular}
 \end{table}
 
-Repeating the exercise but allowing for lags of the factors to enter the forecasting equation we get the results in table \ref{results dynamic factor model, in-sample}.
+Repeating the exercise but allowing for lags of the factors to enter the forecasting equation we get the results in table \ref{results dynamic factor model, in-sample}.\footnote{Essentially, table \ref{results static factor model, in-sample} uses the same models as are used in table \ref{results dynamic factor model, in-sample} while restricting $q=0$.} Since the data used for the exercise consists of time-series it makes sense that a dynamic factor model is better suited for prediction. In the case of the dynamic model the FPE criterion seems to select too many lags of $y_t$ which results in a higher RMSE. The $IC_{p2}$ criterion chooses $r=4$ for the factor equation. For the forecasting equation, however, it seems to be better to reduce the number of factors to $2$ if the factors are also lagged once in the forecasting equation. This can be seen in the row showing the results for the BIC and the $IC_{p2}$. The resulting RMSE is RMSE$=0.58$ which is slightly lower thatn $0.59$, the RMSE for $r=4$ factors in the forecasting equation. While the difference is small, this shows that it can be optimal to choose a different number of factors in the forecasting equation than in the factor equation.
+
+In both the static and the dynamic factor model, choosing the number of static factors using the IC$_{p2}$ criterion has at least slightly outperformed the other methods in terms of forecasting accuracy.
 
 \begin{table}[ht]
 \centering
-\caption{Dynamic factor model, in-sample model selection}
+\caption{Dynamic factor model, model selection}
 \label{results dynamic factor model, in-sample}
-\begin{tabular}{c|llll}
-  & $r$ & $s$ & $q$ & RMSE\\
+\begin{tabular}{c|lllll}
+  & $r_{factor}$ & $r_{forecast}$ & $s$ & $q$ & RMSE\\
  \hline
  \hline
-	BIC & 2 & 3 & 1 & 0.58 \\
-	FPE & 10 & 10 & 2 & 0.82 \\
-	BIC and $IC_{p2}$ & 2 & 3 & 1 & 0.58 \\
-	FPE and $IC_{p2}$ & 10 & 10 & 2 & 0.82 \\
-	$IC_{p2}$ & 4 & 3 &  1 & 0.59 \\
+	BIC & 2 & 2 & 3 & 1 & 0.58 \\
+	FPE & 10 & 10 & 10 & 2 & 0.82 \\
+	BIC and $IC_{p2}$ & 4 & 2 & 3 & 1 & 0.58 \\
+	FPE and $IC_{p2}$ & 4 & 10 & 10 & 2 & 0.82 \\
+	$IC_{p2}$ & 4 & 4 & 3 & 1 & 0.59 \\
   \hline
   & \multicolumn{3}{c}{\textit{Out-of-Sample}} \\ 
-   	RMSE & 7 & 1 & 2 & 0.55 \\
-   	RMSE and $IC_{p2}$ & 2 & 1 & 1 & 0.54 \\
+   	RMSE & 7 & 7 & 1 & 2 & 0.55 \\
+   	RMSE and $IC_{p2}$ & 4 & 2 & 1 & 1 & 0.54 \\
   \hline
 \multicolumn{5}{l} {\rule{0pt}{6ex} \begin{minipage}{6cm}
 		\small{\textbf{\textit{Notes:}} $q$ here refers to the number of lags of the factors in the forecasting equation, not to the number of dynamic factors as defined above.}
@@ -413,7 +441,61 @@ Repeating the exercise but allowing for lags of the factors to enter the forecas
 \end{table}
 
 \subsection{Structural breaks}
-Structural breaks are estimated using the Quandt-Andrews type tests constructed in \citet{breitung2011testing}. \\
+Structural breaks are estimated using Quandt-Andrews type supremum tests as defined above. The critival values for the test statistics are given in table I of \citet{andrews2003tests}. The results can be seen in table \ref{breaks per period}. 
+
+It is apparent that there are two periods with major changes in the loadings. Firstly, there are structural breaks reported in the loadings of $8$ variables in the first quarter of 1999 which coincides approximately with the Russian default of 1998 and maybe the aftermath of the Asian financial crisis in 1997. Secondly, a total of $22$ changes in the loadings are reported for the period of the second quatal of 2008 until the second quarter of the 2009. TODO: talk about the series that are most affected (for that I need to fix the variable indices)
+\\
+
+\begin{table}[ht]
+\caption{Number of variable breaks per period}
+\label{breaks per period}
+\centering
+\begin{tabular}{llllllllllllllll}
+	\hline
+	96:1 & 96:3 & 97:2 & 97:3 & 98:2 & 98:4 & 99:1 & 99:2 & 00:1 & 00:2 & 00:3 & 01:1 & 01:2 & 03:2 & 04:3 & 04:3 \\
+	 2 & 1 & 2 & 1 & 1 & 1 & 8 & 1 & 1 & 2 & 1 & 3 & 1 & 1 & 1 & 2  \\
+	\hline
+	\hline
+	05:1 & 05:2 & 05:3 & 07:1 & 07:2 & 07:3 & 07:4 & 08:1 & 08:2 & 08:3 & 08:4 & 09:1 & 09:2 & 09:3 & 09:4 & 10:1 \\
+	1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 4 & 2 & 7 & 7 & 2 & 1 & 1 & 3 \\
+	\multicolumn{16}{l} {\rule{0pt}{6ex} \begin{minipage}{16cm}
+		\small{\textbf{\textit{Notes:}} The entries report how many of the $169$ variables are predicted to undergo a structural break by period. Reported are the numbers of significant values of $\mathscr{S}_{i,T}$ at the $5\%$ significance level. The total number of structural breaks found in the $169$ variables is $64$.}
+	\end{minipage}} \\
+\end{tabular}
+\end{table}
+
+
+\begin{figure}[htp]
+\centering
+\label{structural breaks per period}
+\caption{Structural breaks per quarter}
+\subfloat[5\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks.png}}
+\subfloat[1\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_1percent.png}}
+
+
+\end{figure}
+
+Given this situations we can not cut off the values before the break and re-estimate the model using data on the period after the break as was proposed above because we have strong indications that there are at least $2$ periods in the data with structural breaks, each of which affects a different set of factor loadings. We could treat both periods as structural breaks in the sense that only data after both structural breaks is used. This, however, would leave us with $17$ observations of which we have to remove another $15$ for the frist step in the pseudo out-of-sample forecasts. 
+
+I propose three methods to overcome this issue. As a first way we can remember that some of the data series are monthly series which have been merged into the quarterly data set, dropping two thirds of the observations. We could in principle cast the data back into the monthly form interpolating the missing data. While this method solves our problem in a technical sense\footnote{For the first step of the pseudo out-of-sample period there are only $8$ data points for estimation. For every quarterly step of the pseudo out-of-sample procedure there are an additional $4$ observations. Thus, the ratio of observations to predictors improves quickly.}, it has several drawbacks: firstly no additional information is added although it appears to the model as if there are more observations. At the same time the imputation adds additional uncertainty. Traditional standard error estimates do not account for this and resultingly they may be downward biased (cf. \citet[chapter~25]{gelman2006missing}. As a result it is likely that prediction based on this short data set performs badly in a forecasting sense. On the other hand, if predictions resulting from this shaved data set should perform better, it would constitute a strong indication that the structural breaks uncovered by the tests should not be ignored. In this case doing so clearly leads to a significant degradation of forecasting results.
+
+
+
+Since the data set is very wide and we only have relatively few series undergoing a structural break around 2008 we can also drop the series which are affected and redo the predictions exercise from above based on this limited data set. For the purpose of this paper we are interested in the performance of factor models which ignore structural breaks versus factor models which take the structural breaks into account. In the following both models will be compared in terms of forecasting precision based on the reduced data set.
+
+Figure \ref{breaks per period, reduced data set} shows that the sup LM statistic $\mathscr{S}_{i,T}$ reports one clear period where most structural breaks are centered for the reduced data set.
+
+
+Reestimating TODO:: continue here!
+
+
+\begin{figure}[htp]
+\centering
+\caption{Structural breaks per quarter, reduced data set}
+\label{breaks per period, reduced data set}
+\subfloat[5\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_less_variables.png}}
+\subfloat[1\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_less_variables_1percent.png}}
+\end{figure}
 
 
 \newpage
