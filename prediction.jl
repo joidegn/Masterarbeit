@@ -138,7 +138,11 @@ end
 bench_forecasts, true_values = benchmark_forecasts(x, 1; num_predictions=number_of_forecasts, window=number_of_forecasts)
 rmse_bench = RMSE(bench_forecasts, true_values)
 
-bench_ar_forecasts, true_values_ = benchmark_ar(x[:, 1], 4; num_predictions=number_of_forecasts)
+different_ar_forecasts = [benchmark_ar(x[:, 1], i; num_predictions=number_of_forecasts)[1] for i in 1:10]
+bench_ar_forecasts, true_values_ = benchmark_ar(x[:, 1], 4; num_predictions=number_of_forecasts)  # lazy way to get the true values
+rmses = [RMSE(ar_forecasts, true_values) for ar_forecasts in different_ar_forecasts]
+num_lags = indmin(rmses)
+bench_ar_forecasts, true_values_ = benchmark_ar(x[:, 1], 6; num_predictions=number_of_forecasts)
 rmse_bench_ar = RMSE(bench_ar_forecasts, true_values)
 
 
@@ -246,3 +250,101 @@ plt = plot(
 # redo the out-of-sample forecasts with even less variables
 dynamic_model_out_of_sample_window2 = choose_dynamic_factor_model_out_of_sample(x_window2)
 dynamic_model_out_of_sample_ICp2_window2 = choose_dynamic_factor_model_out_of_sample(x_window2, "ICp2")
+
+
+x_window3 = x[:, break_period_per_variable.==0]
+fm_window3 = FactorModel(x_window3, "ICp2")
+break_period_per_variable_window3, significant_break_counts_window3, periods_tested_window3 = sup_test(fm_window3, 0.05)
+
+plt = plot(
+    layer(x=periods_tested_window3, y=[i for i in values(significant_break_counts_window3)], Geom.point),
+    layer(x=periods_tested_window3, y=[i for i in values(significant_break_counts_window3)], Geom.line),
+    layer(xintercept=[minimum(periods_tested_window3), maximum(periods_tested_window3)], Geom.vline(color="green")),
+    Guide.XLabel("period"), Guide.YLabel("number of breaks"),
+    Scale.y_continuous(minvalue=0, maxvalue=10)
+)
+#draw(PNG("graphs/structural_breaks_all_breaks_removed_1percent.png", 20cm, 15cm), plt)
+# redo the out-of-sample forecasts with even less variables
+dynamic_model_out_of_sample_window3 = choose_dynamic_factor_model_out_of_sample(x_window3)
+dynamic_model_out_of_sample_ICp2_window3 = choose_dynamic_factor_model_out_of_sample(x_window3, "ICp2")
+
+
+x_window35 = x[:, break_period_per_variable.==0][:, break_period_per_variable_window3.>0]  # only testing if removing breaks again improves RMSE again
+fm_window35 = FactorModel(x_window35, "ICp2")
+break_period_per_variable_window35, significant_break_counts_window35, periods_tested_window35 = sup_test(fm_window35, 0.05)
+
+plt = plot(
+    layer(x=periods_tested_window35, y=[i for i in values(significant_break_counts_window35)], Geom.point),
+    layer(x=periods_tested_window35, y=[i for i in values(significant_break_counts_window35)], Geom.line),
+    layer(xintercept=[minimum(periods_tested_window35), maximum(periods_tested_window35)], Geom.vline(color="green")),
+    Guide.XLabel("period"), Guide.YLabel("number of breaks"),
+    Scale.y_continuous(minvalue=0, maxvalue=10)
+)
+#draw(PNG("graphs/structural_breaks_all_breaks_removed_1percent.png", 20cm, 15cm), plt)
+# redo the out-of-sample forecasts with even less variables
+dynamic_model_out_of_sample_window35 = choose_dynamic_factor_model_out_of_sample(x_window35; max_factors=10, max_factor_lags=3, max_lags=10)
+dynamic_model_out_of_sample_ICp2_window35 = choose_dynamic_factor_model_out_of_sample(x_window35, "ICp2"; max_factors=10, max_factor_lags=3, max_lags=10)
+
+
+x_window4 = x[26:end, Bool[!in(series_id, series_idx_with_break_62_to_65) for series_id in 1:size(x, 2)]]  # drop observations in and before first cluster and variables in second cluster
+fm_window4 = FactorModel(x_window4, "ICp2")
+break_period_per_variable_window4, significant_break_counts_window4, periods_tested_window4 = sup_test(fm_window4, 0.05)
+
+plt = plot(
+    layer(x=periods_tested_window4, y=[i for i in values(significant_break_counts_window4)], Geom.point),
+    layer(x=periods_tested_window4, y=[i for i in values(significant_break_counts_window4)], Geom.line),
+    layer(xintercept=[minimum(periods_tested_window4), maximum(periods_tested_window4)], Geom.vline(color="green")),
+    Guide.XLabel("period"), Guide.YLabel("number of breaks"),
+    Scale.y_continuous(minvalue=0, maxvalue=10)
+)
+#draw(PNG("graphs/structural_breaks_second_cluster_and_obs_removed.png", 20cm, 15cm), plt)
+# redo the out-of-sample forecasts with even less variables
+dynamic_model_out_of_sample_window4 = choose_dynamic_factor_model_out_of_sample(x_window4)
+dynamic_model_out_of_sample_ICp2_window4 = choose_dynamic_factor_model_out_of_sample(x_window4, "ICp2")
+
+
+
+
+# Robustnes check: same procedure but with predictors targeted for predicting y beforehand
+targeted_predictors(1, x, 6; thresholding="hard")
+
+fm = FactorModel(x, "ICp2")
+break_period_per_variable, significant_break_counts, periods_tested = sup_test(fm)
+
+plt = plot(
+    layer(x=periods_tested, y=[i for i in values(significant_break_counts)], Geom.point),
+    layer(x=periods_tested, y=[i for i in values(significant_break_counts)], Geom.line),
+    layer(xintercept=[14, 69], Geom.vline(color="green")),
+    Guide.XLabel("period"), Guide.YLabel("number of breaks"),
+    Scale.y_continuous(minvalue=0, maxvalue=8)
+)
+#draw(PNG("graphs/structural_breaks.png", 20cm, 15cm), plt)
+
+# which variables have a break in period 25 and periods 62 to 65 which is when most variables have breaks
+series_idx_with_break_at25 = find(Bool[break_period_per_variable[i].==25 for i in 1:size(fm.x, 2)])
+series_id_with_break_at25 = header[series_idx_with_break_at25]
+series_idx_with_break_62_to_65 = find(Bool[65 .>= break_period_per_variable[i] .>= 62 for i in 1:size(fm.x, 2)])
+series_id_with_break_62_to_65 = header[series_idx_with_break_62_to_65]
+
+# as an answer to the structural breaks we change the window of observations considered  (period 47 is 2004-07-01, period 61 is 2008-01-01)
+# alternativel we can exclude the series with breaks around 2008
+# we do this to that we have something to compare
+
+x_window = x[:, Bool[!in(series_id, series_idx_with_break_62_to_65) for series_id in 1:size(x, 2)]]
+fm_window = FactorModel(x_window, "ICp2")
+break_period_per_variable_window, significant_break_counts_window, periods_tested_window = sup_test(fm_window, 0.05)
+
+plt = plot(
+    layer(x=periods_tested_window, y=[i for i in values(significant_break_counts_window)], Geom.point),
+    layer(x=periods_tested_window, y=[i for i in values(significant_break_counts_window)], Geom.line),
+    layer(xintercept=[minimum(periods_tested_window), maximum(periods_tested_window)], Geom.vline(color="green")),
+    Guide.XLabel("period"), Guide.YLabel("number of breaks"),
+    Scale.y_continuous(minvalue=0, maxvalue=10)
+)
+#draw(PNG("graphs/structural_breaks_less_variables_1percent.png", 20cm, 15cm), plt)
+# redo the out-of-sample forecasts with less variables
+dynamic_model_out_of_sample_ICp2_window = choose_dynamic_factor_model_out_of_sample(x_window, "ICp2")
+
+dynamic_model_out_of_sample_window = choose_dynamic_factor_model_out_of_sample(x_window, "ICp2")
+dynamic_model_out_of_sample_ICp2_window = choose_dynamic_factor_model_out_of_sample(x_window)
+

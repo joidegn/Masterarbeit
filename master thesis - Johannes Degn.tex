@@ -17,7 +17,7 @@
 
 \maketitle
 \thispagestyle{empty}
-\setcounter{page}{0fac}
+\setcounter{page}{0}
 
 \newpage
 \tableofcontents
@@ -376,21 +376,36 @@ The series have been demeaned and normalized such that $\frac{1}{T}\sum_{t=1}^T 
 
 
 \subsection{Model selection and evaluation}
-This section explores the different methods to selected and evaluate a model. The ultimate goal is always forecasting the true data as closely as possible. To this end I use the root mean squared forecasting error (RMSE) as an evaluation mechanism. $RMSE = \sqrt{\frac{1}{w}\sum_{s=t}^{t+h}[(y_s - \hat y_s)^2]}$ where $w$ denotes the length of the window to be forecasted and $t$ the period preceding the window being forecasted.
+This section explores the different methods to selected and evaluate a model. The ultimate goal is always forecasting the true data as closely as possible. To this end I use the root mean squared forecasting error (RMSE) as an evaluation mechanism. $RMSE = \sqrt{\frac{1}{w}\sum_{s=t}^{t+h}[(y_s - \hat y_s)^2]}$ where $w$ denotes the length of the window to be forecasted and $t$ the period preceding the window being forecasted. The estimates $\hat y_t$ are gotten from estimating the forecasting equation and predicting $h$ steps into the future.
 
-If the number of static factors and the number of factor lags in the forecasting is predetermined using criteria defined above the number of lags  of the variable of interest $y_t$ is still open. In the following I refer to the number of lags of $y_t$ as $s$. I follow \citet{bai2008forecasting} in selecting among model candidated using the BIC criterion which is of course an in-sample criterion. In addition we also consider out-of-sample forecasting performance. Since the point of the exercise is forecasting, the models' out-of-sample performance is monitored using the root mean squared error of one step ahead pseudo out-of-sample forecasts is computed.\footnote{Pseudo out-of-sample forecasts are a method to simulated a forecasting situation in that the forecaster does as if he would not know the true realizations of the data after $t$. The forecaster tries to predict the value $y_{t+h}$ given all the information up to $t$. $t$ is then successively moved one period ahead. Here we set $h=1$.} This evaluation method follows \citet{forni2005the} and \citet{bai2008forecasting} among others. The foreacasting window $w$ over which the pseudo out-of-sample-forecasts are performed is set to $w=10$ here. \\
+If the number of static factors in the forecasting equation is predetermined using criteria defined above, the number of lags of the variable of interest $y_t$ and the number of lags of the static factors are still open. In the following I refer to the number of lags of $y_t$ as $s$. 
 
-TODO: put BIC and FPE definitions here
+I follow \citet{bai2008forecasting} in selecting among model candidates using the BIC and the FPE criterion which are of course in-sample criteria. 
 
-All models are compared to a benchmark model which consists of a simple moving average over the forecasting window $w$. The length of this window is set to $w=15$. While this is a very short forecasting horizon, it makes sure that we will have more observations than parameters for all possible models. Since the length of the data series is $T=82$ this leaves only $67$ observations for the first forecast in the pseudo out-of-sample procedure highlighting that factor models are adequate in a situation with $N>>T$.
+\citet{bai2008forecasting} write the BIC and FPE criteria as follows
 
-The first panel in table \ref{results static factor model RMSE} shows the results of the in sample selection procedure for a static factor model. Three variants for choosing the number of factors are considered. Firstly the IC$_{p2}$ criterion from \citet{bai2002determining} is used to estimate the number of static factors for both the factor equation and the forecasting equation. The information criteria (BIC and FPE) are then used to select $s$, the number of lags of $y_t$.
+\begin{equation}
+\label{information criteria}
+\begin{split}
+	& \text{BIC} = \log(\hat \sigma_n^2) + n \frac{\log T}{T} \\ 
+	& \text{FPE} = \log(\hat \sigma_n^2) + n \frac{2}{T}
+\end{split}
+\end{equation}
+
+Where $\hat \sigma_n^2$ is the residual variance $\hat e'e$ from an estimation of the factor equation using $n$ predictors.
+
+Since the point of the exercise is forecasting, additionally, the best model in terms of out-of-sample forecasting performance is calculated. This is done by calculating the root mean squared error of one step ahead pseudo out-of-sample forecasts.\footnote{Pseudo out-of-sample forecasts are a method to simulated a forecasting situation in that the forecaster does as if he would not know the true realizations of the data after $t$. The forecaster tries to predict the value $y_{t+h}$ given all the information up to $t$. $t$ is then successively moved one period ahead. Here we set $h=1$.} This evaluation method follows \citet{forni2005the} and \citet{bai2008forecasting} among others. The foreacasting window $w$ over which the pseudo out-of-sample-forecasts are performed is set to $w=15$ here. \\
+
+
+All models are compared to a benchmark model which consists of a simple moving average over the forecasting window $w$. This forecasting window makes sure that there are more observations than parameters for all possible models. Since the length of the data series is $T=82$ this leaves $67$ observations for the first forecast in the pseudo out-of-sample procedure. The maximum number of factors is set to $15$ for static models and $10$ for dynamic models. The maximum number of lags of $y_t$ is set to $10$. This brings the maximal number of parameters to $n_{max} = 25$ for static models and $n_{max} = 50$ for dynamic models. The original number of predictors is $N = 169$ which highlights that factor models are are an appropriate way to deal with the situation of $N>>T$ in this data set.
+
+The first panel in table \ref{results static factor model} shows the results of the in sample selection procedure for a static factor model. Three variants for choosing the number of factors are considered. Firstly the IC$_{p2}$ criterion from \citet{bai2002determining} is used to estimate the number of static factors for both the factor equation and the forecasting equation. The information criteria (BIC and FPE) are then used to select $s$, the number of lags of $y_t$.
 As a second choice, the decision over the number of factors \textit{and} the number of lags of $y_t$ in the forecasting equation are left to the information criteria. I.e. the information criteria are minimized over different choices of $r$ and $s$. The same number of factors is used in the factor equation.
 A third possibility consists of leaving the choice of the number of factors for the factor equation to a \citet{bai2002determining} criterion and using the BIC or FPE criterion to choose the number of static factors in the forecasting equation along with the number of lags of $y_t$. I.e. the BIC or FPE are minimized over $r$ and $s$.
 
-Both the BIC and FPE as well as the $IC_{p2}$ criteria select a large number of factors. The fact that conventional information criteria should not be used for selecting the number of static factors has been extensively documented in the factor model literature and is no surprise. Another approach to model selection for forecasting consists of testing the model in an out-of-sample forecasting situation and selecting the best performing model in terms of the forecasting error. The results of optimal forecasting model are reported in the second panel of table \ref{results static factor model RMSE}.
+Both the BIC and FPE as well as the $IC_{p2}$ criteria select a large number of factors. The fact that conventional information criteria should not be used for selecting the number of static factors has been extensively documented in the factor model literature and is no surprise. Another approach to model selection for forecasting consists of testing the model in an out-of-sample forecasting situation and selecting the best performing model in terms of the forecasting error. The results of optimal forecasting model are reported in the second panel of table \ref{results static factor model}.
 
-Since the variance of the data series has been normalized to $1$ and the mean to $0$ the RMSE of the simple average $y_t$ in the given window can be expected to be close to $1$. The RMSE of the resulting out-of-sample forecasts is very large with $1.30$ and $1.22$ respectively. The benchmark model of a moving average reports and RMSE of $0.86$ and an AR(4) model achieves an RMSE of $0.60$ for the same time horizon.
+Since the variance of the data series has been normalized to $1$ and the mean to $0$ the RMSE of the simple average $y_t$ in the given window can be expected to be close to $1$. The RMSE of the resulting out-of-sample forecasts is very large with $1.30$ and $1.22$ respectively. The benchmark model of a moving average reports an RMSE of $0.86$ and an AR(6) model achieves an RMSE of $0.50$ for the same time horizon.\footnote{$6$ is the optimal lag number in terms of RMSE.}
 
 The best performing static factor model in terms of forecasting can be got if the BIC criterion for model selecting is replaced by the RMSE as can be seen in the second panel. I.e. the RMSE is minimized over choices of $r$ and $s$ rather than the BIC. This implies using the out-of-sample performance as an evaluation criterion. In that case both $r$ and $s$ are shrunken to $1$. While this outperforms the simple benchmark model, the fact that the most parsimonious static factor model performs best in out-of-sample prediction hints at possible performance increases if dynamic effects are allowed.
 
@@ -504,79 +519,74 @@ TODO: talk about the series that are most affected (for that I need to fix the v
 \subfloat[1\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_1percent.png}}
 \end{figure}
 
-In the following the question of how to react to the presence of structural breaks is approached as in section 2 above. Either the length of the series is reduced by estimating the model only on data which is not subjected to structural breaks or the width of the data is reduced by removing the variables which are subjected to the structural break or a combination thereof. For the purpose of this paper we are interested in forecasting performance of factor models which ignore structural breaks versus factor models which take the structural breaks into account. Thus the results of models which restrict the amount of data to reduce the effect of structural breaks are compared with those that do not. It is worth noting that the comparison is not perfect because as has been argued in section $2$ it can be better to reduce the number of predictors to a set which is "targeted" towards the prediction of the variable of interest. It is possible that removing the variables with structural breaks accidentally targets the set of variables towards predicting the variable of interest. In other words an improved result is not necessarily only due to the structural breaks being removed but might be due to a noisy predictor being removed.
+In the following the question of how to react to the presence of structural breaks is approached as in section 2 above. Either the length of the series is reduced by estimating the model only on data which is not subjected to structural breaks or the width of the data is reduced by removing the variables which are subjected to the structural break or a combination thereof. For the purpose of this paper we are interested in forecasting performance of factor models which ignore structural breaks versus factor models which take the structural breaks into account. Thus the results of models which restrict the amount of data to reduce the effect of structural breaks are compared with those that do not. It is worth noting that the comparison is not perfect because as has been argued in section $2$ it can be better to reduce the number of predictors to a set which is "targeted" towards the prediction of the variable of interest. It is possible that removing the variables with structural breaks "accidentally" targets the set of variables towards predicting the variable of interest independent of the structural break. In other words an improved result is not necessarily only due to the structural breaks being removed but might be due to a noisy predictor being removed. To be precise a series with a structural break could be considered a noisy predictor as well. However, it might be noisy independent of the structural breaks.
 Resultingly, a robustness check consists of targeting the set of variables for both approaches prior to the estimation to remove that effect.
 
-A practical difficulty has to be addressed before the results are presented. Given the fact there are two periods where a majority of structural breaks occur, each of which affects a different set of factor loadings, cutting off the values before the significant break periods would leave very few observations for estimating the new model.
+A practical difficulty has to be addressed before the results are presented. Given the fact that there are two periods where a majority of structural breaks occur, each of which affects a different set of factor loadings, cutting off the values before the significant break periods would leave very few observations for estimating the new model.
 
-If both periods with major structural breaks are treated be treated in a way that only data after the structural breaks is used, this would leave at most $17$ observations of which another $15$ have to be removed for the first step in the pseudo out-of-sample forecasts.
+If both periods with major structural breaks are treated in a way that only data after the structural breaks is used, this would leave at most $17$ observations of which another $15$ have to be removed for the first step in the pseudo out-of-sample forecasts.
 
-In principle there is a simple ways to overcome this issue. It can be remembered that some of the data series are monthly series which have been merged into the quarterly data set by dropping two thirds of the observations. The data could be cast back into monthly form. Most of the series will have missing data which can be interpolated (e.g. GDP is only reported quarterly). While this method solves the problem in a technical sense\footnote{For the first step of the pseudo out-of-sample period there are only $8$ data points for estimation. For every quarterly step of the pseudo out-of-sample procedure there are an additional $3$ observations. Thus, the ratio of observations to predictors improves quickly with each step of the pseudo out-of-sample prediction.}, it has several drawbacks: firstly no additional information is added by the interpolation  although it appears to the model as if there are more observations. At the same time the imputation adds additional uncertainty. Traditional standard error estimates do not account for this and resultingly they may be downward biased (cf. \citet[chapter~25]{gelman2006missing}. It is thus likely that prediction based on this short data set performs badly in a forecasting sense. On the other hand, if predictions resulting from this shaved data set should perform better, it would constitute a strong indication that the structural breaks uncovered by the tests should not be ignored. In this case doing so clearly leads to a significant degradation of forecasting results. This has not been tested here. 
+In principle there is a simple way to overcome this issue. It can be remembered that some of the data columns are monthly series which have been merged into the quarterly data set by dropping two thirds of the observations. The data could be cast back into monthly form. Most of the series will have missing data which can be interpolated (e.g. GDP is only reported quarterly). While this method solves the problem in a technical sense\footnote{For the first step of the pseudo out-of-sample period there are only $8$ data points for estimation. For every quarterly step of the pseudo out-of-sample procedure there are an additional $3$ observations. Thus, the ratio of observations to predictors improves quickly with each step of the pseudo out-of-sample prediction.}, it has several drawbacks: firstly no additional information is added by the interpolation although there are more observations available to the model. At the same time the imputation adds additional uncertainty. Traditional standard error estimates do not account for this and resultingly they may be downward biased (cf. \citet[chapter~25]{gelman2006missing}. It is thus likely that prediction based on this short data set performs badly in a forecasting sense. On the other hand, if predictions resulting from this shaved data set should perform better, it would constitute a strong indication that the structural breaks uncovered by the tests should not be ignored. In this case doing so clearly leads to a significant degradation of forecasting results. This has not been tested here. 
 
-Instead three approaches to removing the effects of structural breaks from the data are taken. First the variables in the second cluster of structural breaks between the second quarter of 2008 and the first quarter of 2009 are removed which adds up to 20 variables. 
-Because this approaches ignores the first cluster of structural breaks in the first quarter of 1999, a second model is estimated to explore what happens if these series are excluded as well. A third model leaves the \textit{variables} with breaks in the first cluster in 1999 in the model but removes \textit{observations} in the first quarter of 1999 and before. For all three approaches the best performing dynamic factor model in terms of RMSE is reported where the number of static factors in the factor equation is calculated using the IC$_{p2}$ criterion and the number of factors in the forecasting equation as well as the number of factor lags is chosen according to the minimum of the RMSE of out-of-sample forecasts.
+Instead four approaches to removing the effects of structural breaks from the data are considered. First the variables in the second cluster of structural breaks between the second quarter of 2008 and the first quarter of 2009 are removed. Because this approaches ignores the first cluster of structural breaks in the first quarter of 1999, a second model is estimated to explore what happens if these series are excluded as well. A third model removes all series with structural breaks in the loadings. Finally, the fourth model leaves the \textit{variables} with breaks in the first cluster in 1999 in the model but removes \textit{observations} prior to the second quarter of 1999. 
 
-Figure \ref{breaks per period, reduced data set, removed second breaks} shows that if the variables with structural breaks in 2008 are removed, the sup LM statistic $\mathscr{S}_{i,T}$ still shows the first cluster of structural breaks to be there. The reason to check for this is that the estimation of the factor equation changes with a reduced set of variables which has an impact on the statistics of the structural break tests.
-Table \ref{results dynamic factor model, second break cluster removed} shows that the exclusion improves the RMSE from the level in table \ref{results dynamic factor model}.
+For all four approaches the best performing dynamic factor model in terms of RMSE is reported where the number of static factors in the factor equation is calculated using the IC$_{p2}$ criterion and the number of factors in the forecasting equation as well as the number of factor lags is chosen according to the minimum of the RMSE of out-of-sample forecasts. Structural breaks are detected at the $5\%$ significance level.
 
-\begin{figure}[htp]
-	\centering
-	\caption{Structural breaks per quarter, reduced data set, removed second break cluster}
-	\label{breaks per period, reduced data set, removed second breaks}
-	\subfloat[5\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_less_variables.png}}
-	\subfloat[1\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_less_variables_1percent.png}}
-\end{figure}
+The figures in appendix \ref{structural breaks, reduced data sets} show the number of significant structural breaks left if the above adjustements to the data have been made. The reason to check for structural breaks again after some variables have been removed or the observations prior to the second quarter of 1999 have been removed, is that the estimation of the factor equation changes with a reduced set of variables which has an impact on the statistics of the structural break tests.
 
+Table \ref{results dynamic factor model, reduced data sets} shows that the exclusion of variables improves the RMSE considerably compared to ignoring the structural breaks. For this data set, the more variables with structural breaks at the 5\% significance level are removed, the lower the RMSE becomes.
 
 \begin{table}[ht]
-	\caption{Dynamic factor model, second break cluster removed}
-	\label{results dynamic factor model, first break cluster removed}
 	\centering
 	\begin{tabular}{c|lllll}
-		  & $r_{factor}$ & $r_{forecast}$ & $s$ & $q$ & RMSE\\
+		   & $r_{factor}$ & $r_{forecast}$ & $s$ & $q$ & RMSE\\
 		 \hline
 		 \hline
-
-		  & \multicolumn{3}{c}{\textit{Out-of-Sample}} \\ 
+		  & \multicolumn{3}{c}{\textit{Second break cluster removed}} \\ 
+			& & \multicolumn{3}{c}{$T=82, N=149$} \\
+		  \hline
 		   	RMSE & 7 & 7 & 1 & 3 & 0.45 \\
 		   	RMSE \& $IC_{p2}$ & 3 & 7 & 1 & 3 & 0.45 \\
 		  \hline
-	\end{tabular}
-\end{table}
-
-
-
-
-
-
-
-
-\begin{figure}[htp]
-	\centering
-	\caption{Structural breaks per quarter, reduced data set, removed first and second breaks}
-	\label{breaks per period, reduced data set, removed first breaks}
-	%\subfloat[5\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_even_less_variables.png}}
-	\subfloat[1\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_even_less_variables_1percent.png}}
-\end{figure}
-
-\begin{table}[ht]
-	\caption{Dynamic factor model, first and second break cluster removed}
-	\label{results dynamic factor model, first and second break cluster removed}
-	\centering
-	\begin{tabular}{c|lllll}
-		  & $r_{factor}$ & $r_{forecast}$ & $s$ & $q$ & RMSE\\
-		 \hline
-		 \hline
-
-		  & \multicolumn{3}{c}{\textit{Out-of-Sample}} \\ 
-		   	RMSE & 7 & 7 & 1 & 3 & 0.45 \\
-		   	RMSE \& $IC_{p2}$ & 3 & 7 & 1 & 3 & 0.45 \\
 		  \hline
+		  & \multicolumn{5}{c}{\textit{First and second break cluster removed}} \\ 
+			& & \multicolumn{3}{c}{$T=82, N=141$} \\
+		  \hline
+		   	RMSE & 6 & 6 & 4 & 2 & 0.44 \\
+		   	RMSE \& $IC_{p2}$ & 3 & 6 & 4 & 2 & 0.44 \\
+		  \hline
+		  \hline
+	  	  & \multicolumn{5}{c}{\textit{All variables with breaks removed}} \\ 
+			& & \multicolumn{3}{c}{$T=82, N=105$} \\
+          \hline
+		   	RMSE & 6 & 6 & 3 & 2 & 0.39 \\
+		   	RMSE \& $IC_{p2}$ & 3 & 3 & 4 & 2 & 0.40 \\
+		  \hline
+		  \hline
+		  & \multicolumn{5}{c}{\textit{Second break cluster removed, length trimmed}} \\
+			& & \multicolumn{3}{c}{$T=57, N=149$} \\
+		  \hline
+		   	RMSE & 1 & 1 & 5 & 1 & 0.51 \\
+		   	RMSE \& $IC_{p2}$ & 4 & 1 & 5 & 1 & 0.51 \\
+		  \hline
+		  \hline		  
 	\end{tabular}
+	\caption{Dynamic factor model, data adjusted for structural breaks}
+	\label{results dynamic factor model, reduced data sets}
 \end{table}
 
 
+Figures for the number of structural breaks per period after variables have been dropped or the data length has been trimmed can be found in appendix \ref{structural breaks, reduced data sets}. Notably figure \ref{reduced data set, all variables with breaks removed} shows a modest number of structural breaks at the 5\% significance level although all structural breaks had been removed from the data set. Iterating the procedure by removing the variables with structural breaks again increases the RMSE to $0.72$ which makes clear that blindly removing all variables with structural breaks in them need not be a good idea although table \ref{results dynamic factor model, reduced data sets} indicates that removing as many variables with structural breaks as possible has a positive effect on RMSE.
 
+\subsubsection{Targeted predictors}
+
+
+
+
+
+
+
+\clearpage
 \newpage
 \appendix
 \section*{Apendix}
@@ -719,7 +729,45 @@ This is equivalent to the problem $\max_\Lambda \text{tr}\left\{(\Lambda'\Lambda
 \end{tabular}
 \end{table}
 
+\newpage
 
+\section{Reestimation of structural break tests after reducing data sets}
+\label{structural breaks, reduced data sets}
+
+\begin{figure}[htp]
+	\centering
+	\subfloat[5\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_less_variables.png}}
+	\subfloat[1\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_less_variables_1percent.png}}
+	\caption{Second cluster removed}
+	\label{reduced data set, second cluster removed}
+\end{figure}
+	
+\begin{figure}[htp]
+	\subfloat[5\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_even_less_variables.png}}
+	\subfloat[1\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_even_less_variables_1percent.png}}
+	\caption{First and second cluster removed}
+	\label{reduced data set, first and second cluster removed}
+\end{figure}
+
+\begin{figure}[htp]
+	\centering
+	\subfloat[5\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_all_breaks_removed.png}}
+	\subfloat[1\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_all_breaks_removed_1percent.png}}
+	\caption{All variables with breaks removed}
+	\label{reduced data set, all variables with breaks removed}
+\end{figure}
+
+\begin{figure}[htp]
+	\centering
+	\subfloat[5\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_second_cluster_and_obs_removed.png}}
+	\subfloat[1\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_second_cluster_and_obs_removed_1percent.png}}
+	\caption{Second cluster removed, data set trimmed before 1991 quarter 1}
+	\label{reduced data set, second cluster removed, data set trimmed}
+\end{figure}
+
+
+
+\clearpage
 \newpage
 \section{Data series}
 \label{Data series}
