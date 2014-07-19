@@ -1,12 +1,28 @@
-\documentclass[11pt]{article}
-%Gummi|063|=)
+\documentclass[12pt]{article}
 \usepackage{amsmath}
 \usepackage[utf8]{inputenc}
 \usepackage[authoryear, round]{natbib}
 \usepackage{graphicx}
-\usepackage[inner=2.5cm,outer=2.5cm,bottom=2cm]{geometry}
+\usepackage[left=4cm,right=2cm,outer=2cm,bottom=2cm,top=2cm]{geometry}
 \usepackage{mathrsfs}
 \usepackage{subfig}
+\usepackage[onehalfspacing]{setspace}
+
+\usepackage{scrpage2}
+\ifoot[]{}
+\cfoot[]{}
+\ofoot[\pagemark]{\pagemark}
+
+\pagestyle{scrplain}
+
+\linespread{1.5}
+\let\oldfootnotesize\footnotesize
+\renewcommand*{\footnotesize}{\oldfootnotesize\fontsize{10pt}{0}\selectfont}
+
+
+
+\pagenumbering{roman}
+
 
 
 \title{\textbf{Predicting Economic Time-Series using Dynamic Factor Models under Structural Breaks}}
@@ -17,18 +33,23 @@
 
 \maketitle
 \thispagestyle{empty}
-\setcounter{page}{0}
+\setcounter{page}{1}
 
 \newpage
 \tableofcontents
 \newpage
+
+\cleardoublepage
+\addcontentsline{toc}{section}{\listfigurename}
 \listoffigures
+\cleardoublepage
+\addcontentsline{toc}{section}{\listtablename}
 \listoftables
 \newpage
 
 
 
-
+\pagenumbering{arabic}
 \section{Introduction}
 Factor models are used in a wide range of situations spanning from economic indices over prediction of high-dimensional datasets. The basic idea is that there are unobservable factors driving the change of the variables of interest. Put differently, it is assumed that the change of variables is composed of a common component affecting all variables in the set and an idiosyncratic component which is specific to the variable of interest.
 
@@ -429,9 +450,9 @@ The best performing static factor model in terms of forecasting can be got if th
    	RMSE & 1 & 1 & 1 & 0.71 \\
    	RMSE \& $IC_{p2}$ & 4 & 1 & 1 & 0.71 \\
   \hline
-  \multicolumn{5}{l} {\rule{0pt}{2cm} \begin{minipage}{8cm}
-		\small{\textbf{\textit{Notes:}} The results are derrived by minimizing the information criteria in the first column. If both an \citet{bai2002determining} criterion and a standard information criterion is given the former is applied to the factor equation and the latter to the forecasting equation. The maximum number of factors $r$ is set to $15$. The maximum number number of the lags of the variable of interest $s$ is set to $10$.}
-	\end{minipage}} \\
+  \multicolumn{5}{l} {\rule{0pt}{2.5cm} \begin{minipage}{8cm}
+		\small{\textbf{\textit{Notes:}} The results are derrived by minimizing the criteria in the first column. If both an \citet{bai2002determining} criterion and a standard information criterion is given the former is applied to the factor equation and the latter to the forecasting equation. The maximum number of factors $r$ is set to $15$. The maximum number number of the lags of the variable of interest $s$ is set to $10$.}
+  \end{minipage}} \\
 \end{tabular}
 \end{table}
 
@@ -461,6 +482,7 @@ In both the static and the dynamic factor model, choosing the number of static f
 		  \hline
 		\end{tabular}
 	}
+
 	\subfloat[Maximum number of factor lags $q$ set to 4]{
 		\begin{tabular}{c|lllll}
 		  & $r_{factor}$ & $r_{forecast}$ & $s$ & $q$ & RMSE\\
@@ -481,7 +503,7 @@ In both the static and the dynamic factor model, choosing the number of static f
 	}
 
 	\begin{minipage}{15cm}
-		\small{\textbf{\textit{Notes:}} The results are derrived by minimizing the information criteria in the first column. If both an \citet{bai2002determining} criterion and a standard information criterion is given the former is applied to the factor equation and the latter to the forecasting equation. The maximum number of factors $r$ is set to $10$. The maximum number number of the lags of the variable of interest $s$ is set to $10$. $q$ here refers to the number of lags of the factors in the forecasting equation, not to the number of dynamic factors as defined above. The maximum number of the factor lags $q$ is set to 3. The results using the traditional information criteria hinge on the maximum number of factor lags.}
+		\small{\textbf{\textit{Notes:}} The results are derrived by minimizing the criteria in the first column. If both an \citet{bai2002determining} criterion and a standard information criterion is given the former is applied to the factor equation and the latter to the forecasting equation. The maximum number of factors $r$ is set to $10$. The maximum number number of the lags of the variable of interest $s$ is set to $10$. $q$ here refers to the number of lags of the factors in the forecasting equation, not to the number of dynamic factors as defined above. The maximum number of the factor lags $q$ is set to 3 and 4 respectively. The results using the traditional information criteria hinge on the maximum number of factor lags.}
 	\end{minipage}
 \end{table}
 
@@ -519,6 +541,8 @@ TODO: talk about the series that are most affected (for that I need to fix the v
 \subfloat[1\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_1percent.png}}
 \end{figure}
 
+\subsubsection{Removing the effect of structural breaks}
+
 In the following the question of how to react to the presence of structural breaks is approached as in section 2 above. Either the length of the series is reduced by estimating the model only on data which is not subjected to structural breaks or the width of the data is reduced by removing the variables which are subjected to the structural break or a combination thereof. For the purpose of this paper we are interested in forecasting performance of factor models which ignore structural breaks versus factor models which take the structural breaks into account. Thus the results of models which restrict the amount of data to reduce the effect of structural breaks are compared with those that do not. It is worth noting that the comparison is not perfect because as has been argued in section $2$ it can be better to reduce the number of predictors to a set which is "targeted" towards the prediction of the variable of interest. It is possible that removing the variables with structural breaks "accidentally" targets the set of variables towards predicting the variable of interest independent of the structural break. In other words an improved result is not necessarily only due to the structural breaks being removed but might be due to a noisy predictor being removed. To be precise a series with a structural break could be considered a noisy predictor as well. However, it might be noisy independent of the structural breaks.
 Resultingly, a robustness check consists of targeting the set of variables for both approaches prior to the estimation to remove that effect.
 
@@ -539,10 +563,10 @@ Table \ref{results dynamic factor model, reduced data sets} shows that the exclu
 \begin{table}[ht]
 	\centering
 	\begin{tabular}{c|lllll}
-		   & $r_{factor}$ & $r_{forecast}$ & $s$ & $q$ & RMSE\\
+		   & $r_{factor}$ & $r_{forecast}$ & $s$ & $q$ & RMSE \\
 		 \hline
 		 \hline
-		  & \multicolumn{3}{c}{\textit{Second break cluster removed}} \\ 
+		    & & \multicolumn{3}{c}{\textit{Second break cluster removed}} \\
 			& & \multicolumn{3}{c}{$T=82, N=149$} \\
 		  \hline
 		   	RMSE & 7 & 7 & 1 & 3 & 0.45 \\
@@ -576,14 +600,92 @@ Table \ref{results dynamic factor model, reduced data sets} shows that the exclu
 \end{table}
 
 
-Figures for the number of structural breaks per period after variables have been dropped or the data length has been trimmed can be found in appendix \ref{structural breaks, reduced data sets}. Notably figure \ref{reduced data set, all variables with breaks removed} shows a modest number of structural breaks at the 5\% significance level although all structural breaks had been removed from the data set. Iterating the procedure by removing the variables with structural breaks again increases the RMSE to $0.72$ which makes clear that blindly removing all variables with structural breaks in them need not be a good idea although table \ref{results dynamic factor model, reduced data sets} indicates that removing as many variables with structural breaks as possible has a positive effect on RMSE.
+Figures for the number of structural breaks per period after variables have been dropped or the data length has been trimmed can be found in appendix \ref{structural breaks, reduced data sets}. Notably figure \ref{reduced data set, all variables with breaks removed} shows a modest number of structural breaks at the 5\% significance level \textit{after} all structural breaks had been removed from the data set. Iterating the procedure by removing the variables with structural breaks again increases the RMSE to $0.72$ which makes clear that blindly removing all variables which contain structural breaks need not be a good idea even though the previous results in table \ref{results dynamic factor model, reduced data sets} seemed to indicate that removing as many variables with structural breaks as possible has a positive effect on RMSE.
 
 \subsubsection{Targeted predictors}
+Targeting the predictors using hard thresholding at the 5\% significance level (see \citet{bai2008forecasting} for details) leaves $78$ variables in the data set. Figure \ref{structural breaks per period, targeted predictors} shows that targetting the data removes a part of the two clusters of structural breaks found in the original data. It can be inspected in table \ref{results dynamic factor model, targeted data sets} that the MSE is higher than it was for the original data set. For the complete data set the optimal model achieved an RMSE of $0.47$.
 
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{c|lllll}
+		   & $r_{factor}$ & $r_{forecast}$ & $s$ & $q$ & RMSE\\
+		 \hline
+		 \hline
+		  & \multicolumn{5}{c}{\textit{Hard Thresholding $\alpha=0.1$}} \\ 
+		  & \multicolumn{5}{c}{$T=82, N=85$} \\
+		  \hline
+		   	RMSE & 1 & 1 & 5 & 2 & 0.50 \\
+		   	RMSE \& $IC_{p2}$ & 6 & 1 & 5 & 2 & 0.50 \\
+		 \hline
+ 		 \hline
+		  & \multicolumn{5}{c}{\textit{Hard Thresholding $\alpha=0.05$}} \\ 
+ 		 & \multicolumn{5}{c}{$T=82, N=78$} \\
+		  \hline
+		   	RMSE & 1 & 1 & 5 & 2 & 0.50 \\
+		   	RMSE \& $IC_{p2}$ & 6 & 1 & 5 & 2 & 0.50 \\
+		 \hline
+ 		 \hline
+ 		 & \multicolumn{5}{c}{\textit{Hard Thresholding $\alpha=0.01$}} \\ 
+ 		 & \multicolumn{5}{c}{$T=82, N=43$} \\
+		  \hline
+		   	RMSE & 1 & 1 & 5 & 2 & 0.49 \\
+		   	RMSE \& $IC_{p2}$ & 7 & 1 & 5 & 2 & 0.49 \\
+		 \hline
+ 		 \hline
+ 		 
+	\end{tabular}
+	\caption{Dynamic factor model, Targeted data}
+	\label{results dynamic factor model, targeted data sets}
+\end{table}
 
+\begin{figure}[htp]
+\centering
+\subfloat[5\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_targeted.png}}
+\subfloat[1\% significance level]{\includegraphics[width=8cm]{graphs/structural_breaks_targeted_1percent.png}}
+\caption{Structural breaks per quarter, targeted predictors}
+\label{structural breaks per period, targeted predictors}
+\end{figure}
 
+\clearpage
 
+It was found before that removing all variables with structural breaks can improve the forecasting performance. To test if targetting the predictors and removing the structural breaks has a similar effect the variables with structural breaks are removed from the targeted data set.
+This leaves $N = 51$ variables in the model. The estimation results are very similar and can be seen in table \ref{results dynamic factor model, reduced targeted data sets} which indicates that the removal of structural breaks after the data set has been targeted does not further improve the forecasting accuracy.
 
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{c|llllll}
+		   & $r_{factor}$ & $r_{forecast}$ & $s$ & $q$ & RMSE & $\Delta$ \\
+		 \hline
+		 \hline
+		    & & \multicolumn{3}{c}{\textit{Hard thresholding $\alpha = 0.1$, breaks removed}} \\ 
+			& & \multicolumn{3}{c}{$T=82, N=51$} \\
+		  \hline
+		   	RMSE & 11 & 11 & 2 & 1 & 0.44 & 0.06 \\
+		   	RMSE \& $IC_{p2}$ & 4 & 11 & 2 & 1 & 0.44 & 0.06\\
+		 \hline
+		 \hline
+		    & & \multicolumn{3}{c}{\textit{Hard thresholding $\alpha = 0.05$, breaks removed}} \\ 
+			& & \multicolumn{3}{c}{$T=82, N=51$} \\
+		  \hline
+		   	RMSE & 1 & 1 & 5 & 2 & 0.50 & 0 \\
+		   	RMSE \& $IC_{p2}$ & 4 & 1 & 5 & 2 & 0.50 & 0\\
+		 \hline
+ 		 \hline
+ 		    & & \multicolumn{3}{c}{\textit{Hard thresholding $\alpha = 0.01$, breaks removed}} \\ 
+			& & \multicolumn{3}{c}{$T=82, N=51$} \\
+		  \hline
+		   	RMSE & 1 & 1 & 3 & 1 & 0.59 & -0.09 \\
+		   	RMSE \& $IC_{p2}$ & 14 & 1 & 3 & 1 & 0.59 & -0.09 \\
+		 \hline
+ 		 \hline
+ 		 
+		 \multicolumn{6}{l} {\rule{0pt}{2cm} \begin{minipage}{14cm}
+			\small{\textbf{\textit{Notes:}}  All variables with evidence of structural breaks found at the 5\% level using the sup LM test have been removed. The column denoted Difference calculates the difference between the RMSE of the best factor model calculated on the targeted data with structural breaks removed and the results from table \ref{results dynamic factor model, targeted data sets} where the structural breaks have not been removed. Note that the set of variables for hard thresholding with $\alpha=0.01$ and $\alpha=0.05$ differs although the number of variables coincides.}
+		 \end{minipage}} \\
+	\end{tabular}
+	\caption{Dynamic factor model, Targeted data, Structural breaks removed}
+	\label{results dynamic factor model, reduced targeted data sets}
+\end{table}
 
 
 \clearpage
@@ -1365,7 +1467,7 @@ This is equivalent to the problem $\max_\Lambda \text{tr}\left\{(\Lambda'\Lambda
 
 
 
-
+\clearpage
 \newpage
 \bibliographystyle{plainnat}
 \bibliography{/home/joi/workspace/latex/citations}
