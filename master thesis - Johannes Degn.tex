@@ -18,7 +18,7 @@
 \linespread{1.5}
 \let\oldfootnotesize\footnotesize
 \renewcommand*{\footnotesize}{\oldfootnotesize\fontsize{10pt}{0}\selectfont}
-
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 
 
 \pagenumbering{roman}
@@ -30,10 +30,57 @@
 \date{07.07.2014}
 \begin{document}
 
-
-\maketitle
+\titlepage
 \thispagestyle{empty}
-\setcounter{page}{1}
+\setcounter{page}{0}
+
+\begin{titlepage}
+\begin{center}
+	University of Konstanz
+
+	\vspace{2cm}
+	\HRule
+	\vspace{1cm}
+	\large{Predicting Economic Time-Series using Dynamic Factor Models under Structural Breaks}
+	\vspace{1cm}
+	\HRule
+    \vspace{1cm}
+    
+	\begin{minipage}{0.4\textwidth}
+		\begin{flushleft}
+			\emph{Author:} \\
+			Johannes Degn
+		\end{flushleft}
+	\end{minipage}
+	\begin{minipage}{0.4\textwidth}
+		\begin{flushright}
+			\emph{Supervisor:} \\
+			Ralf Brüggemann
+		\end{flushright}
+	\end{minipage}
+    \vspace{8cm}
+	 
+	\textit{A thesis submitted in fulfilment of the requirements\\ for the Masters degree}
+	\textit{at the}\\[0.4cm]
+	Department of Economics of the University of Konstanz
+	 
+	{\large \today}\\[4cm]
+	 
+	\vfill
+
+
+\end{center}
+\end{titlepage}
+
+
+
+\newpage
+
+
+
+
+
+
 
 \newpage
 \tableofcontents
@@ -50,30 +97,50 @@
 
 
 \pagenumbering{arabic}
-\section{Introduction}
-Factor models are used in a wide range of situations spanning from economic indices over prediction of high-dimensional datasets. The basic idea is that there are unobservable factors driving the change of the variables of interest. Put differently, it is assumed that the change of variables is composed of a common component affecting all variables in the set and an idiosyncratic component which is specific to the variable of interest.
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+This thesis applies recently developed methods for finding structural breaks in factor models. Bootstrap versions of the tests are considered which are shown to have improved power and size properties in low dimensional data sets. It is found that removing variables which have breaks in the corresponding factor loadings has a considerable positive effect on the root mean squared forecasting error. This improvement is consistent but less pronounced if noisy predictors are removed beforehand using the method of targeted predictors introduced by \citet{bai2008forecasting}. Structural break tests can thus be considered a promising preselection mechanism which can complement other variable selection methods such as targeted predictors.
 
-If the common factors can be derrived consistently they can prove to be a valuable and possibly less noisy set of predictors for the variables of interest than the whole set of available variables. Nowadays, typically the factors are estimated using principal components analysis. Resultingly factor models harbor similarity to principal component regression including the feature of dimensionality reduction which allows both models to be estimated even if the number of columns exceeds the number of rows. This is precisely what makes factor models appealing in a macroeconomic forecasting context. There exist many international macroeconomic variables some of which are not covered over a very long time horizon. With factor models all this information can be used directly.
+\section*{Introduction}
+\addcontentsline{toc}{section}{Introduction}
+Factor models are used in a wide range of situations spanning from economic indicators over prediction of high-dimensional datasets. The basic idea is that there are unobservable factors driving the change of all variables in the data set. Put differently, it is assumed that the change of variables is composed of a common component affecting all variables in the set and an idiosyncratic component which is specific all variables in the set.
 
-In a time-series framework an interesting question to ask is whether these common components are stable over time or if the relationship of the variables of interest with the underlying factors are prone to changes. While there are recent additions to the field, the behaviour of factor models under structural breaks is still being researched. There are at least two reasons why structural breaks are interesting in an econometric model. If we assume that strcutural breaks imply a change in the coefficients of the model at a certain period, this can be interesting in itself especially if the coefficients and the factors are to be interpreted directly. Additionally, from a forecasting perspective it can be worthwhile to consider only the data after the structural break(s) has happened\footnote{Alternatively, instead of splitting the data into multiple periods for each break, a single forecasting equation can be constructed which includes the structural break by introducing a dummy variable.}. The hope is that the parameters of the model which are estimated relying only on the data after the last break might be closer to the true values which have generated the data to be forecast. This assumes that there will not be another structural break at the period which is be forecast. It should be notet that \citet{pesaran2007selection} have shown that it can be slightly better to include same observations before the last break.
+If the common factors can be derrived consistently they prove to be a valuable and more practical set of predictors for the variables of interest than the whole set of available variables. Nowadays, typically the factors are estimated using principal components analysis. Resultingly factor models harbor similarity to principal component regression\footnote{In essence factor models calculated using principal components are the same as principal component regressions applied to a time-series context.} including the feature of dimensionality reduction which allows both models to be estimated even if the number of columns exceeds the number of rows. This is precisely what makes factor models appealing in a macroeconomic forecasting context. There exist many international macroeconomic variables some of which are not covered over a very long time horizon. With factor models all this information can be used indirectly.
 
-This thesis deals with testing for structural breaks in factor models and using factor models for forecasting in a situation where structural breaks might be present.\footnote{Structural breaks can refer to changes in the means and variances of variables or a change in the relationship of variables. I focus on the latter. More specificity will be added in section 3.} \\
+In a time-series framework an interesting question to ask is whether these common components are stable over time or if the relationship of the variables of interest with the underlying factors is prone to changes. While there are recent additions to the field, the behaviour of factor models under structural breaks is still being researched. There are at least two reasons why structural breaks are interesting in an econometric model. If we assume that strcutural breaks imply a change in the coefficients of the model at a certain period, this can be interesting in and off itself especially if the coefficients and the factors are to be interpreted directly. Additionally, from a forecasting perspective it can be worthwhile to consider only the data after the structural break(s) has happened\footnote{Alternatively, instead of splitting the data into multiple periods for each break, a single forecasting equation can be constructed which includes the structural break by introducing a dummy variable.}. The hope is that the parameters of the model which are estimated relying only on the data after the last break might be closer to the true values which have generated the data to be forecast. This assumes that there will not be another structural break at the period which is be forecast. It should be notet that \citet{pesaran2007selection} have shown that it can be slightly better to include same observations before the last break. Instead of cutting the length of the data set by excluding observations before the structural break, the width of the data set can be decreased by excluding variables which harbor an unstable relationship with the factors\footnote{As will be made explicit, factor models assume the variable of interest to depend on the factors which in turn depend on the complete data set. If there is a structural break in the relationship of one of the variables with the factors, it is conceivable that this break propagates to the relationship between the factors and the variable of interest. Resultingly removing the variable with the break can help to keep the relationship stable.}.
+
+Structural breaks can be thought of as adding noise to the predictors. There exist already methods to deal with reducing the number of uninformative predictors prior to the estimation of factor models. \citet{bai2008forecasting} have developed the method of targeted predictors which is in essence a preselection tool for the predictors based on relevance for forecasting a variable of interest.
+
+This thesis deals with testing for structural breaks in factor models and using factor models for forecasting in a situation where structural breaks are present.\footnote{Structural breaks can refer to changes in the means and variances of variables or a change in the relationship of variables. I focus on the latter. From now on when I refer to structural breaks it is always assumed to mean breaks in the parameters of the forecasting equation (\ref{forecasting equation}). More specificity will be added in section 3.} \\
 The contribution is twofold: Firstly, the influence of structural breaks on factor models is examined. To this end feasible testing procedures developed by \citet{breitung2011testing} are presented. Bootstrap versions of these chow type tests are developed and their performance is evaluated. Secondly, the information about the structural breaks is used for forecating. The performance of different model specifications is tested in the form of horse races. The competing models are:
+
 \begin{enumerate}
-	\item A static factor model with no structural breaks (but with more factors)
-	\item A static factor model with structural break(s)
-	\item A dynamic factor model with no structural breaks
-	\item A dynamic factor model with structural break(s)
+	\item A static factor model ignoring structural breaks
+	\item A dynamic factor model ignoring structural breaks
+	\item A dynamic factor model taking structural breaks into account
+	\item Targeted dynamic factor models ignoring structural breaks
+		\begin{enumerate}
+			\item Under hard thresholding
+			\item Under soft thresholding
+		\end{enumerate}
+	\item Targeted dynamic factor model taking structural breaks into account
+		\begin{enumerate}
+			\item Under hard thresholding
+			\item Under soft thresholding
+		\end{enumerate}
 \end{enumerate}
 
-The paper is structured into X parts. Firstly factor models are introduced. Both static and dynamic models are presented along with some theory and estimation methods. Secondly structural breaks are introduced, their effects on the factors and loadings are looked at and testing methods are considered. Thirdly aforementioned models are estimated using both syntetic and real data. Finally the fourth part concludes. \\
+The empirical section shows that removing variables with associated breaks in the relationship improves the forecasting accuracy considerably. This improvement is reduced if the data set is targeted prior to estimation.
 
-Throughout this thesis I will assume that $X$ is a matrix of potentially very many predictors. To stay consistent with existing literature I will index $X$ with $i$ or $t$ interchangeably where $i$ stands for the column index and $t$ for the row index. Also as is customary, throughout this paper capital letters denote matrices while lower case letters denote vectors except for innovation terms which are always in lower case letters. All variables containing data are assumed to be demeaned and normalized to have unit variance\footnote{I.e. every variable $y_t$ is derrived as $y_t = \frac{y_t^* - \bar y_t}{\sigma_{y}}$ where $y_t^*$ is the vector containing the original data and $\sigma_{y}$ is the (sample) standard deviation of $y$}.
+%TODO: check if this is true
+The remainder of this paper is structured into 4 parts. Firstly factor models are introduced. Both static and dynamic models are presented along with some theory and estimation methods. Secondly structural breaks are introduced into the framework, their effects on the factors and loadings are looked at and testing methods are considered. Thirdly an empirical application is presented. Aforementioned models are estimated using a set of German and US American variables and prediction accuracy is compared. Finally the fourth part concludes. \\
+
+Some notes on notation are in order. Throughout this thesis I refer to $X$ as a $T \times N$ matrix of potentially very many predictors. To stay consistent with existing literature I index $X$ with $i$ or $t$ interchangeably where $i$ stands for the column index and $t$ for the row index. In other words $X_t$ is the $N \times 1$ data vector for observation $t$ i.e. $t$ indexes along the longitudinal dimension, $X_i$ is the $T \times 1$ data vector for variable $i$ or $i$ indexes along the cross-sectional dimension. Also as is customary, throughout this paper unindexed capital letters denote matrices while unindexed lower case letters denote vectors except for innovation terms which are always in lower case letters. All variables containing data are assumed to be demeaned and normalized to have unit variance\footnote{I.e. every variable $y_t$ is derrived as $y_t = \frac{y_t^* - \bar y_t}{\sigma_{y}}$ where $y_t^*$ is the vector containing the original data and $\sigma_{y}$ is the (sample) standard deviation of $y$}.
 
 \section{Factor Models}
-As mentioned, the idea behind factor models or diffusion index models is that there are underlying latent factors which explain the evolution of the observable variables $X$. 
+As mentioned in the introduction, the idea behind factor models or diffusion index models is that there are underlying latent factors which explain the evolution of the observable variables $X$. 
 
-They are ususally written in the form of a factor equation (\ref{factor equation}) and a forecasting equation (\ref{forecasting equation}). 
+They are ususally written in the form of a factor equation (\ref{factor equation}) and a forecasting equation (\ref{forecasting equation}).
 \begin{equation}
 	\label{factor equation}
 	X_t = \lambda(L) f_t + e_t
@@ -85,22 +152,23 @@ They are ususally written in the form of a factor equation (\ref{factor equation
 	
 $X_t$ is a $N \times 1$ vector of potentially very many predictors. $\lambda(L)$ is a $N \times q$ matrix of lag polynomials, $f_t$ is a $q \times 1$ vector of latent factors. $e_t$ is a $N \times 1$ vector of idiosyncratic errors which may or may not be serially auto-correlated. $W_t$ consists of variables which the researcher knows to be sufficiently relevant to enter the forecasting equation directly. Usually $W_t$ is taken to consist of s lags of $y_t$ and a constant term. $\hat f_t$ is an estimate of the factors in the factor equation (\ref{factor equation}). Estimation of the factors is treated below.
 
-Most authors assume the idiosyncratic component to be a white noise process (i.e. independent and of mean 0), however "weak" dependence is also commonly assumed. In the vocabulary of factor models these are models with uncorrelated idiosyncratic components $e_t$ (more specifically $E(e_t e_t') = \Sigma = \text{diag}(\sigma_{e_1}^2, ..., \sigma_{e_N}^2)$ and $E(e_t) = 0$).
-
-\citet{geweke1977dynamic} and \citet{sargent1977business} distinguish between exact or strict Factor Models and approximate Factor Models. In essence the difference is composed of different assumptions for the error terms. Approximated factor models allow for limited correlatedness of the idiosyncratic innovations $e_{it}$ between periods while strict factor models do not. More precise deifinitions follow now and are taken from \citet{breitung2006dynamic}
+Most authors assume the idiosyncratic component to be a white noise process (i.e. independent and of mean 0). In the vocabulary of factor models these are models with uncorrelated idiosyncratic components $e_t$ (more specifically $E(e_t e_t') = \Sigma = \text{diag}(\sigma_{e_1}^2, ..., \sigma_{e_N}^2)$ and $E(e_t) = 0$).
+However, "weak" dependence is also commonly assumed. Concretely, \citet{geweke1977dynamic} and \citet{sargent1977business} distinguish between exact or strict Factor Models and approximate Factor Models. In essence the difference is composed of different assumptions for the error terms. Approximated factor models allow for limited correlatedness of the idiosyncratic innovations $e_{it}$ between periods while strict factor models do not. More precise deifinitions follow now and are taken from \citet{breitung2006dynamic}
 \subsubsection*{Strict factor models}
-\citet{breitung2006dynamic} list the assumptions for strict factor models as follows: For the innovations it is assumed $E(e_t) = 0$ and $E(e_te_t') = \sigma = \text{diag}(\sigma_1^2, ..., \sigma_N^2)$. Also $E(f_t) = 0$ and $E(f_tf_t') = \Omega$. If $E(f_t) = 0$ it follows that $E(X_t) = 0$ which is enforced by demeaning the variables. Additionally $E(f_t e_t') = 0$ i.e. the innovations and the error terms are uncorrelated. It follows directly that $E(X_tX_t') = \Lambda \Omega \Lambda' + \Sigma$\footnote{$E(X_tX_t') = E[(\Lambda f_t +e_t) (\Lambda f_t + e_t)'] = E(\Lambda f_t f_t' \Lambda' + \Lambda f_t e_t' + e_t f_t' \Lambda' + e_t e_t') = \Lambda \Omega \Lambda' + \Sigma$}
-\subsubsection*{Approximate factor models}econo
+\citet{breitung2006dynamic} list the assumptions for strict factor models as follows: For the innovations it is assumed $E(e_t) = 0$ and $E(e_te_t') = \sigma = \text{diag}(\sigma_1^2, ..., \sigma_N^2)$. Also $E(f_t) = 0$ and $E(f_tf_t') = \Omega$. If $E(f_t) = 0$ it follows that $E(X_t) = 0$ which is enforced by demeaning the variables. Additionally $E(f_t e_t') = 0$ i.e. the innovations and the error terms are uncorrelated. It follows directly that $E(X_tX_t') = E[(\Lambda f_t +e_t) (\Lambda f_t + e_t)'] = E(\Lambda f_t f_t' \Lambda' + \Lambda f_t e_t' + e_t f_t' \Lambda' + e_t e_t') = \Lambda \Omega \Lambda' + \Sigma$ 
+\subsubsection*{Approximate factor models}
 Approximate factor models losen the assumptions of strict factor models at the cost of assuming $N \to \infty$.
 $E(e_{it}e_{js})$ is allowed to be different from $0$ but only weakly. Similarly the factors $f_t$ and and the idiosyncratic error terms are allowed to be correlated but again only weakly, so that $E(f_t e_t')$ does not have to be $0$. But $N^{-1}\Lambda'\Lambda$ must converge to a positive definite limiting matrix $\Sigma_\Lambda$ which ensures that the factors influence each variable with a similar order of magnitude. Otherwise it could be that the loadings for some variables are $0$ \citep{breitung2006dynamic}. Similiary it is assumed about the factors that $T^{-1}\sum_{t=1}TF_tF_t' \overset{p}{\to} \Sigma_F$. This allows for stationary processes e.g. an ARMA process. \\
 Some more assumptions are necessary for the inferential theory\footnote{Most notably the results of \citet{bai2003inferential} are consistency and normality of the factor estimations. The rate of convergence is shown to be $\min(\sqrt{N}, \sqrt{T})$.} of \citet{bai2003inferential} to hold. Namely these assumptions are Assumptions A through D in \citet{bai2003inferential}:
 
 \begin{flalign*}
-	\textbf{Assumption A: } E||F_t||^4 \leq M < \infty \text{ and } T^{-1} \sum_{t=1}^TF_t F_t' \overset{p}{\to} \Sigma_F \text{ for some } r \times r \text{ positive matrix } \Sigma_F &\\
+	& \textbf{Assumption A: } E||F_t||^4 \leq M < \infty \text{ and } T^{-1} \sum_{t=1}^TF_t F_t' \overset{p}{\to} \Sigma_F \text{ for some } r \times r \\
+	& \text{ positive matrix } \Sigma_F
 \end{flalign*}
 
 \begin{flalign*}
-	\textbf{Assumption B: } ||\lambda_1|| \leq \bar \lambda < \infty, \text{ and } || \Lambda' \Lambda/N - \Sigma_\Lambda|| \to 0 \text{ for some } r\times r \text{ positive definite matrix } \Sigma_\Lambda & \\
+	& \textbf{Assumption B: } ||\lambda_1|| \leq \bar \lambda < \infty, \text{ and } || \Lambda' \Lambda/N - \Sigma_\Lambda|| \to 0 \text{ for some } r\times r \\
+	& \text{ positive definite matrix } \Sigma_\Lambda
 \end{flalign*}
 
 \begin{flalign*}
@@ -173,7 +241,7 @@ For the purpose of this paper I assume the following AR processes for the innova
 \end{equation}
 
 
-\subsubsection{Static interpretation of dynamic factor models}
+\subsubsection{Static interpretation of Dynamic factor models}
 Dynamic factor models can be written as static factor models in a linear state space environment. This gives the static factor equation (\ref{factor equation, t indexed}) and $\Phi(L) F_t = G \eta_t$ where $\Phi(L)$ is defined such that equivalence to (\ref{time dependence of factors}) holds and $F_t$ is defined below as the stacked lagged dynamic factors $f_t$ (\citet{stock2011dynamic}). \\
 
 Solving the lag operator, we can write equation (\ref{factor equation}) in the form 
@@ -190,41 +258,47 @@ It can be seen that the dimension of the resulting stacked vector of "static" fa
 
 There exist several ways to identify the dynamic factors from there\footnote{Note that identifying the dynamic factors might not be of interest for forecasting but rather that it is a necessary condition in order to interpret the factors in a dynamic factor model. For forecasting purposes, in order to choose the number of factors and the number of the factor lags used in the forecasting equation (\ref{forecasting equation}) one can also follow \citet{bai2008forecasting} in using the BIC criterion to choose both simultaneously. }. Firstly \citet{giannone2002tracking} suggest estimating the VAR $F_t = C F_{t-1} + \kappa_t$ and then to apply principal component analysis on an estimate of the residual covariance matrix (see \citet{breitung2004identification} or \citet{giannone2002tracking} for details). \citet{breitung2004identification} exploit the relationship between $q$ and $r$ in order to find information criteria which can determine $q$ and the lag order of the $\lambda$. This paper does not estimate the dynamic factors directly as in the application the factors are primarily used for the second stage regression. \\
 
-Imagine the true data would be generated by a dynamic factor model. If instead of using the dynamic factor model specification and finding the dynamic factors from the static factors, a researcher simply estimates a static factor model it can be seen above that the number of factors $r$ will be larger than the number of dynamic factors $q$.
+Imagine the true data has been generated by a dynamic factor model. If instead of using the dynamic factor model specification and finding the dynamic factors from the static factors, a researcher simply estimates a static factor model it can be seen above that the number of factors $r$ will be larger than the number of dynamic factors $q$.
 
 \subsection{Estimation of the factors}
 \subsubsection{Static factors}
-There exist now a number of ways to estimate the static factors $F$ in (\ref{static factor equation}). Ultimately what we are looking for is a solution to the minimization of the squared error.
+There exist now a number of ways to estimate the static factors $F$ in (\ref{static factor equation}). Ultimately what is looked for is a solution to the minimization of the squared error.
 \begin{equation}
 	\label{factor equation minimization problem}
 	\min_{F_1, ..., F_T, \Lambda} \frac{1}{NT} \sum_{t=1}^T (X_t - \Lambda F_t)'(X_t - \Lambda F_t)
 \end{equation}
 
-Since both $\Lambda$ and $F_t$ are unspecified, there are infinitely many solutions to (\ref{factor equation minimization problem}) and the problem is not identified. To achieve identification assumptions can most conveniently be put on either $\Lambda$ or $F_t$\footnote{\citet{bai2013principal} consider several alternative normalizations. They also show that direct interpretation of the factors and loading matrices are possible if one is willing to additionally assume diagonality of $\Lambda'\Lambda$ or that $\Lambda$ is a block matrix of 2 submatrices with one submatrix being triangular.}. Usually $\Lambda$ is normalized such that $N^{-1} \Lambda'\Lambda = I_r$. Alternatively $T^{-1}F'F = I_r$ is also frequently used. The choice of normalization can have a noticeable impact on the computational demand of calculating a solution for the minimization problem in (\ref{factor equation minimization problem}). The columns spaces spanned by the estimates of $F$ are equivalent with both normalizations \citep{stock2011dynamic}.
+Since both $\Lambda$ and $F_t$ are unspecified, there are infinitely many solutions to (\ref{factor equation minimization problem}) and the problem is not uniquely identified. To achieve identification assumptions can most conveniently be put on either $\Lambda$ or $F_t$\footnote{\citet{bai2013principal} consider several alternative normalizations. They also show that direct interpretation of the factors and loading matrices are possible if one is willing to additionally assume diagonality of $\Lambda'\Lambda$ or that $\Lambda$ is a block matrix of 2 submatrices with one submatrix being triangular.}. Usually $\Lambda$ is normalized such that $N^{-1} \Lambda'\Lambda = I_r$. Alternatively $T^{-1}F'F = I_r$ is also frequently used. The choice of normalization can have a noticeable impact on the computational demand of calculating a solution for the minimization problem in (\ref{factor equation minimization problem}). The columns spaces spanned by the estimates of $F$ are equivalent with both normalizations \citep{stock2011dynamic}.
 
-\citet{stock2011dynamic} list four ways which are being applied in the literature to get a solution $\hat F$ and $\hat \Lambda$ to the minimization problem (\ref{factor equation minimization problem}). Firstly a Gaussian process can be assumed which allows for maximum likelihood estimation using the Kalman filter. To do this a dynamic factor can be rewritten as a static factor model in a linear state space writing as mentioned above. \\
-Secondly principal components (and other nonparametric averaging methods) can be used to estimate both $\hat F$ and $\hat \Lambda$ at the same time. This requires relatively weak assumptions and is particularly easy to and computationally efficient which explains both the popularity of this approach and why this approach is applied in this thesis. Additionally the principal component estimation can be generalized by weighting the minimization problem with the variance matrix of the error term to take account of error variances which are not prooportional to the identity matrix (see \citet{stock2011dynamic} for details). Evidence of performance improvements by using the generalized principal components approach over the standard principal components estimator are mixed. Resultingly the simpler principal components estimator will be used. It will be described in more detail below. An unattractive feature of principal component estimation is thaint it can not identify the "true" factors $f_t$ but rather a transformation $Q f_t$ for some undefined rotation matrix $Q$ which results in some difficulty in interpreting the factors directly. \citet{bai2013principal} show a minimum set of assumptions which are required in order to make valid interpretations of the estimated factor and loading matrices.
+\citet{stock2011dynamic} list four ways which are being applied in the literature to get a solution $\hat F$ and $\hat \Lambda$ to the minimization problem (\ref{factor equation minimization problem}). Firstly a Gaussian process can be assumed which allows for maximum likelihood estimation using the Kalman filter. To do this a dynamic factor model can be rewritten as a static factor model in a linear state space form as introduced above. \\
+Secondly principal components (and other nonparametric averaging methods) can be used to estimate both $\hat F$ and $\hat \Lambda$ at the same time. This requires relatively weak assumptions and is particularly easy and computationally efficient to implement which explains the popularity of this approach. This is also the approach taken in this thesis. Additionally the principal component estimation can be generalized by weighting the minimization problem with the variance matrix of the error term to take account of error variances which are not prooportional to the identity matrix (see \citet{stock2011dynamic} for details). Evidence of performance improvements by using the generalized principal components approach over the standard principal components estimator are mixed. Resultingly the simpler principal components estimator is used here. It is described in more detail below and in appendix \ref{Derrivation of Principal Components}. As mentioned above, an unattractive feature of principal component estimation is that it can not identify the "true" factors $f_t$ but rather a transformation $Q f_t$ for some undefined rotation matrix $Q$ which results in some difficulty in interpreting the factors directly. This is due to the solution of the minimization problem not being unique. If the factors are used for forecasting this feature is not of much importance however.
 
-Principal Components estimation of the factors is asymptotically equivalent to maximum likelihood estimation if normality is assumed \citep{bai2003inferential}. \\
+It should be noted that principal components estimation of the factors is asymptotically equivalent to maximum likelihood estimation if normality of the error terms is assumed \citep{bai2003inferential}. \\
 Thirdly mixture approaches between the two methods from above can be constructed. \\
-Fourthly and finally Bayesian methods can be used to get estimations of the factors and loadings which can have computational advantages over the maximum likelihood approach and can be useful if the assumption of Gaussian error terms is unappealing. \\
+Fourthly and finally Bayesian methods can be used to get estimations of the factors and loadings. These can have computational advantages over the maximum likelihood approach and can be useful if the assumption of Gaussian error terms is unappealing \citep{stock2011dynamic}. \\
 
-The principal component method estimates $\hat F$ and $\hat \Lambda$ as follows. Normalizing $F$ such that $T^{-1}F'F = I_r$ gives $\hat F = \sqrt{T} * eigenvectors_r(XX')$ where $eigenvectors_i(A)$ returns the i eigenvectors corresponding to the i largest eigenvalues of a square matrix $A$. Since $\hat X = \hat F' \hat \Lambda$, it follows directly that we can estimate $\Lambda$ by $\hat \Lambda' = (\hat F' \hat F)^{-1} \hat F'X$. due to the normalization $\hat F' \hat F = T$ and we can write $\hat \Lambda = X' \hat F / T$. \\
+The principal component method estimates $\hat F$ and $\hat \Lambda$ as follows. Normalizing $F$ such that $T^{-1}F'F = I_r$ gives $\hat F = \sqrt{T} * eigenvectors_r(XX')$ where $eigenvectors_i(A)$ returns the i eigenvectors corresponding to the i largest eigenvalues of a square matrix $A$\footnote{Eigenvalues and eigenvectors can be calculated with most standard statistical packages. The analytical solution can be seen in appendix \ref{Derrivation of Principal Components}.}. Since $\hat X = \hat F' \hat \Lambda$, it follows directly that we can estimate $\Lambda$ by $\hat \Lambda' = (\hat F' \hat F)^{-1} \hat F'X$. due to the normalization $\hat F' \hat F = T$ and we can write $\hat \Lambda = X' \hat F / T$. \\
 If, alternatively, we apply the normalization $N^{-1}\Lambda'\Lambda = I_r$ the solution to (\ref{factor equation minimization problem}) becomes $\hat \Lambda = \sqrt{N} * eigenvectors_r(X'X)$. This solution to the optimization problem is shown in appendix \ref{Estimation of the Factor Equation}). Then we can follow from $\hat X = \hat F \hat \Lambda'$ that $\hat F = X \hat \Lambda (\hat \Lambda' \hat \Lambda)^{-1}$. Again due to the normalization $\Lambda' \Lambda = N$ and we can write $\hat F = X \hat \Lambda / N$.
 
 Note that the normalization $T^{-1}F'F = I_r$ requires us to calculate the eigenvectors of $XX'$ which has dimension $T \times T$ while the alternative $N^{-1}\Lambda'\Lambda = I_r$ requires us to calculate the eigenvectors of $X'X$ which is $N \times N$. Depending on the relative sizes of $T$ and $N$ it can make a considerable difference in terms of computational burden which method is applied. \\
 
-\textbf{The number of factors}
-One important issue that remains to be addressed is the question of how many factors should be used in the factor equation. There exist many different ways that this choice can be made. Firstly there are simple rules of thumb. E.g. some researchers only consider factors with eigenvalues greater than $1$. Then there are methods which rely on a similar idea but employ graphical methods. The idea is to inspect the resulting scree plots\footnote{Scree plots plot the ordered eigenvalues against the number of factors (i.e. eigenvalues and corresponding eigenvectors) which results in a falling curve.}. The intuition is to only take factors into account if the eigenvalue corresponding to the next factor is smaller by a sufficient amount. This idea is also behind the cut-off value of 1 for eigenvalues. Basing on this, formal tests have been derrived which rely on the eigenvalues calculated above \citep{stock2011dynamic}.
 
-The information criteria developed by \citet{bai2002determining} are perhaps more appealing as they formalize the costs and benefits of an additional factor explicitly \citep{stock2011dynamic}. \citet{bai2002determining} consider $6$ criteria, the first three of which they call $PCp$ criteria (Panel $C_p$ criteria). These criteria result from a generalization of Mallows' $C_p$ \citep{mallows1973some}. The second set of $3$ criteria refine the usual criteria used in time-series analysis to depend on both $N$ and $T$. \citet{bai2002determining} highlight that the criteria $IC_{p1}$, $IC_{p2}$, $PC_{p1}$ and $PC_{p2}$ are specifically suited for principal component estimation. \citet{bai2002determining} present a montecarlo study to highlight the differences between the criteria. Notably the $PC_{p}$ criteria require the specification of a maximum number of factors, the choice of which is quite arbitrary\footnote{In their montecarlo study \citet{bai2002determining} set the maximum number of factors to be $8$ noting that they used the rule in \citet{schwert2002tests} and that one could consider $kmax=\text{int}[(\min\left\{N, T\right\}/100)^{1/4}]$. Tests which are not presented here show that choosing a different $kmax$ can result in the $PC_p$ criteria to become quite unstable. Especially high values of $kmax$ often result in the maximum number of factors chosen such that $r=kmax$}. Resultingly this paper uses the $IC_p$ criteria. Specifically the $IC_{p2}$ criterion because it seems to be more conservative (i.e. it usually underestimates $r$ whereas $IC_{p2}$ overestimates at times). 
+\subsubsection{The number of factors}
+One important issue that remains to be addressed is the question of how many factors should be used in the factor equation. There exist many different ways that this choice can be made. Firstly there are simple rules of thumb. E.g. some researchers only consider factors with eigenvalues greater than $1$ (see \citet{larsen2010estimating}). The intuition behind this rule is that the variance of the variables has been normalized to $1$. Since the variance of the factors is equal to the corresponding eigenvalues (see appendix \ref{Derrivation of Principal Components}) this implies that only factors with more information about variation than any single predictor is included. Other methods also focus on the percentage of variation explained but simply require the cumulative variance to be higher than a certain threshold value e.g. 90\% of variation. Then there are methods which rely on a similar idea but employ graphical methods. One approach is to inspect the resulting scree plots\footnote{Scree plots plot the ordered eigenvalues against the number of factors (i.e. eigenvalues and corresponding eigenvectors) which results in a falling curve.}. The intuition is to only take factors into account until the addition of another factor does not contain enough additional variance. Basing on this, formal tests have been derrived which rely on the size of the eigenvalues \citep{stock2011dynamic}. Additionally \citet{larsen2010estimating} stress that since the eigenvalues are summary statistics they are prone to sampling errors which allows for the construction of confidence intervals.
+
+This list is not comprehensive, there are many more such methods and they are not all listed here. However, an additional method needs to be mentioned. The information criteria developed by \citet{bai2002determining} are perhaps more appealing than the approaches considered so far as they formalize the costs and benefits of an additional factor explicitly \citep{stock2011dynamic}. \citet{cragg1997inferring} show in a Monte Carlo analysis that $T\rightarrow\infty$ and $N\rightarrow\infty$ makes that classical theory for predicting the number of factors performs badly. Resultingly information criteria as in \citet{bai2002determining} should be used which take into account that both $T$ and $N$ can grow. \citet{bai2002determining} show that their results hold under heteroskedasticity and weak serial correlation and are thus applicable to approximate factor models.
+
+\citet{bai2002determining} consider $6$ criteria, the first three of which they call $PCp$ criteria (Panel $C_p$ criteria). These criteria result from a generalization of Mallows' $C_p$ \citep{mallows1973some}. The second set of $3$ criteria refine the usual criteria used in time-series analysis to depend on both $N$ and $T$. \citet{bai2002determining} highlight that the criteria $IC_{p1}$, $IC_{p2}$, $PC_{p1}$ and $PC_{p2}$ are specifically suited for principal component estimation. \citet{bai2002determining} present a montecarlo study to highlight the differences between the criteria. Notably the $PC_{p}$ criteria require the specification of a maximum number of factors, the choice of which is quite arbitrary\footnote{In their montecarlo study \citet{bai2002determining} set the maximum number of factors to be $8$ noting that they used the rule in \citet{schwert2002tests} and that one could consider $kmax=\text{int}[(\min\left\{N, T\right\}/100)^{1/4}]$. Tests which are not presented here show that choosing a different $kmax$ can result in the $PC_p$ criteria to become quite unstable. Especially high values of $kmax$ often result in the maximum number of factors chosen such that $r=kmax$}. Resultingly this paper uses the $IC_p$ criteria. Specifically the $IC_{p2}$ criterion because it seems to be more conservative (i.e. it usually underestimates $r$ whereas $IC_{p2}$ overestimates at times). 
 
 In order to understand the criteria better, tables 1 and 2 of \citet{bai2002determining} have been replicated using both different values for $r$ and $kmax$. If $r$ is chosen as in \citet{bai2002determining}, the replicated results are almost identical to the original calculations and thus are not reported\footnote{I.e. differences are so small that they can be explained by sampling variation.}. The results can be found in two tables in appendix \ref{bai ng information criteria}. Tables I through VIII in \citet{bai2002determining} in essence show $3$ points. Firstly, traditional criteria perform poorly in estimating the number of factors if compared to the $6$ presented criteria. Of the newly developed information criteria $PC_{p1}$, $PC_{p2}$, $IC_{p1}$ and $IC_{p2}$ perform well even under heteroskedasticity and autocorrelation. Secondly, if $\min\{N, T\}$ becomes too small, the performance of the criteria suffers which is highlighted by the bottom 5 results in the tables. Especially $PC_{p3}$ suffers in this regard. In the given specifications the cut-off value for $\min\{N, T\}$ appears to be 40 or 60 if the variance of the innovations is high. Thirdly, $PC_{p3}$ and $IC_{p3}$ are less robust to a small $\min\{N, T\}$. \\
 The replication results in appendix \citet{bai2002determining} harbor three additional insights. Firstly as $r$ increases, the requirements for $\min\{N, T\}$ are also higher. For $r=7$ and $r=9$ it seems $\min\{N, T\}$ should be at least $100$. Secondly the choice of $kmax$ can matter a lot. Especially for small samples the specification of $kmax=8$ used in \citet{bai2002determining} choose the maximum number of factors frequently when the $N$ and $T$ are too small. Almost all results in the last 5 rows set $\hat k=8$ whereas the replicated results often report a lower number of factors if $kmax=\text{ceil}(\min\{T, N\})$. Noticeably, this also happens in the replicated results for $r \in \{1, 3, 5\}$ and $kmax=\text{ceil}(\min\{T, N\})$. If $kmax=\text{ceil}(\min\{T, N\})$ $IC_{p3}$ predicts $\hat k=50$ in the $T=100, N=100$ case for $r \in \{1, 3, 5, 7, 9\}$. Thus, the choice of $kmax$ can have a huge impact on the prediction of the number of factors. Luckily it is typically easy to see when the information criteria choose all the factors. In those cases the plausibily of the results should be checked by hand. \\
 
-An interesting question if one is ultimately interested in forecasting is whether the "true" number of factors is of any interest at all or if the number of factors used in the forecasting equation (\ref{forecasting equation}) should perhaps be different from the predicted $r$ in the static model or $q$ in the dynamic model. The answer can not be easily given. Similar to \citet{bai2008forecasting} we can dodge this question somewhat by using the BIC criterion to choose a model among a list of models with differing number of factors (or number of lags of the variable of interest).
+An interesting question if one is ultimately interested in forecasting is whether the "true" number of factors is of any interest at all or if the number of factors used in the forecasting equation (\ref{forecasting equation}) should perhaps be different from the predicted $r$ in the static model or $q$ in the dynamic model. The answer can not be easily given. Similar to \citet{bai2008forecasting} we try to dodge this question somewhat by using the BIC criterion to choose a model among a list of models with differing number of factors (or number of lags of the variable of interest).
 
-\citet{breitung2011testing} among others, however, note that if one is primarily interested in forecasting, the number of dynamic factors can be ignored and a static factor model with a higher number of factors can be estimated with equivalent success.
+\citet{breitung2011testing} among others, however, note that if one is primarily interested in forecasting, the number of dynamic factors can in principle be ignored and a static factor model with a higher number of factors can be estimated instead. The results presented in the empirical seciont, however, indicate that the forecasting accuracy of models which take dynamic effects into account is higher than static models.
+
+\subsubsection{Interpreting the factors}
+TODO: should I include such a chapter? It would involve finding out which variables the factors load onto.
 
 
 \subsection{Forecasting}
@@ -232,24 +306,37 @@ The forecasting equation (\ref{forecasting equation}) can be estimated using a s
 
 The performance of factor models for forecasting purposes is most pronounced if the number of variables used in the factor equation is high \citep{stock2011dynamic}. This makes sense because more variables improve the fit of the factor equation. However, there is a trade-off between quantity and quality of variables\footnote{I.e. a smaller set of variables with a high predictive power can outperform a larger set of variables which includes the variables from the smaller set} that should not be ignored. This case will be adressed in the next subsection.
 
+Actual point forecasts for the variable of interest can be gotten by rescaling the demeaned and normalized forecast back to the original form i.e. by multiplying the original standard error of the series and then adding the population average.
+
 \subsubsection{Targeted predictors}
 \citet{bai2008forecasting} follow the idea that if factor models are ultimately going to be used for forecasting it might make sense to "target" the set of predictors $X_t$ to the task of forecasting the variable of interest $y_t$. The idea stems from \citet{boivin2006more} who find that selecting only the "informative" variables can yield better results than taking a bigger set of variable which include the same "informative" variables but also additional ones. \citet{bai2008forecasting} thus provides a formal rule for which variables should be used for forecasting. To that end they use hard and soft thresholding rules to preselect among the predictors $X_t$ those that have a meassurable influence on $y_t$. Resultingly, a subset $\tilde X_t \subset X_t$ is selected for estimating the factor equation, the hope being that then the factors are better suited for predicting $y_t$.
 
- For hard thresholding they regress $y_t^h$ on $W_{t-h}$ and $X_{it-h}$ for each $i=1, ..., N$\footnote{Note that the $N$ regressions include only the lags and single predictors $X_i$ as independent variables.}. Then they compare the resulting t-statistics to a threshold and discard those predictors whose t-statistics do not exceed that threshold. For soft thresholding \citet{bai2008forecasting} perform penalized regressions, LASSO, elastic net and Least Angle Regression (see \citet{tibshirani1996}, \citet{zou_hastie2005}, \citet{efron_hastie_johnstone_tibshirani2004} for details) using the fact that these regression specifications set the parameters of variables which are not important to $0$. \\
+For hard thresholding they regress $y_t^h$ on $W_{t-h}$ and $X_{it-h}$ for each $i=1, ..., N$\footnote{Note that the $N$ regressions include only the lags and single predictors $X_i$ as independent variables.}. Then they compare the resulting t-statistics to a threshold and discard those predictors whose t-statistics do not exceed that threshold. 
 
-It should be noted that this approach, while attractive in principle, requires additional thought in the presence of structural breaks.
+For soft thresholding \citet{bai2008forecasting} perform penalized regressions in the form of LASSO, elastic net and Least angle regression (see \citet{tibshirani1996}, \citet{zou_hastie2005}, \citet{efron_hastie_johnstone_tibshirani2004} for details) using the fact that these regression specifications set the parameters of variables which are not "important" to $0$. 
+The idea is to perform a regularized regression i.e. a normal least squares regression with the addendum of a restriction on the size of the parameters $\beta$. LASSO sets the restriction to be that $||\beta||$ is not bigger than some constant. The resulting optimization problem reads
+
+$$\min \text{RSS} + \lambda \sum_{i=1}^N |\beta_j|$$
+
+Ridge regression takes a similar approach but uses the L$_2$ norm $\sum_{i=1}^N \beta_i^2 \leq c$ for some penalty term $c$. The elastic net weighs between the two regularization mechanisms keeping both the sparsity of the LASSO estimator and the property of the Ridge estimator to include groups of variables which are correlated together \citet{zou_hastie2005}. Least angle regression is a variable selection mechanism which updates coefficients stepwise in a way that keeps the angle between variables which are most correlated with the residuals of the currently chosen set equal until (in the next step) a new variable has to be added to the set of most correlated variables.
+
+The sparsity property of these penalized regressions allows the choice of relevant variables to be those which have a coefficient different from $0$. Note that ridge regression, although similar in construction, does not have this property because coefficients are shrunk in absolute size but not set to $0$. In applications the three approaches named above typically give similar results.
+The practical problem with soft thresholding lies in the fact that the algorithms\footnote{In practice the LARS-EN (Least angle regression and Elastic net) algorithm can be used which computes Elastic Net solutions for all values of the penalization parameter using Least angle regressions. It has been shown by \citet{efron_hastie_johnstone_tibshirani2004} that the LARS-EN implementation includes the LASSO as special case (namely if the parameter $\lambda_2$ is set to 0. $\lambda_2$ weighs the penalty of the Elastic net between Ridge regression and the LASSO penalty).} provide solutions to restricted regression problem in the form of a solution path consisting of several steps where in each step the "most relevant" variable is added in the sense that the respective parameter is estimated and set to be different from $0$. After the final step all variables are included in the model. Typically one choses the number of steps to be taken by the algorithm and thus the value of the restriction parameter using a cross-validation approach. \citet{bai2008forecasting} propose to use the BIC or the AIC criteria to choose the size of the active set in a general application of the LARS-EN algorithm. However, in the framework of factor models it is of interest how the factors calculated from the chosen active set performs in the forecasting equation. This open question is answered here by considering the optimal size of the restriction parameter in a forward looking way. The RMSE of pseudo out-of-sample forecasts are calculated to choose the size of the targeted set of variables. This approach is presented in the empirical section. \\
+
+The approach of targeting predictors, while attractive, requires additional thought in the presence of structural breaks. As has been stated, targeting the data prior to estimation can be interpreted as removing predictors which are not relevant or too "noisy" to be used in the prediction of the variable of interest. One of the approaches considered here in dealing with structural breaks once detected, is to remove the offending variables. The success of this method to deal with structural breaks is meassured using the RMSE. Resultingly it is unclear whether improved forecasting accuracy are the results of removing structural breaks or of removing a generally noisy predictor which happens to also have a structural break but would be removed also if it would not feature the structural break. Luckily this relationship can be somewhat untangled by targeting the data prior to testing the approach to deal with structural breaks. If the residual effect is positive it can be assumed that the method is succesfull especially since targeting the data in advance is likely to already account for some of the structural breaks. Thus, if there is a residual positive effect of removing structural breaks it can be assumed that because some variable with structural breaks have already been removed by targeting the predictors, the approach of removing variables associated with breaks is successful.
 
 
-\subsection{Interpreting the factors}
-TODO: should I include such a chapter? It would involve finding out which variables the factors load onto.
 
 \subsection{Applications}
-Factor models have been applied in a wide range of different domains apart from economics. Most notably psychology and biology. Staying in the realms of economics, prominently, there are applications in the calculation of indices. The is based on the idea that the factors consist of underlying tendencies applying to all variables which makes them appealing as tools to generate indices.
-
-\citet{schumacher2010factor} employs a similar idea in that he uses international predictors to forecast German GDP. Firstly it is intuitive that international data has an influence on an open economy directly. But secondly it is conceivable that there are underlying factors which influence both German GDP growth and international macroeconomic variables at the same time. However, to make sure that the information conveyed in the additional international predictors is of relevance for forecasting, \citet{schumacher2010factor} "targets" the predictors prior to esimating the factor equation, as described above.
+Factor models have been applied in a wide range of problems both in economics and in different domains apart from economics, most notably perhaps psychology and biology. Within the realms of economics, prominently, there are applications in the calculation of indices. Analogeously to the factors in factor models, indices try to capture underlying tendencies applying to all variables. Resultingly the underlying factors calculated from a data set can be seen as some kind of index. Examples for this type of application include \citet{langetieg1978application} who calculates a performance index of stockholder gains from mergers. \citet{kim1998business} use Bayesian methods to estimate a regime switching factor model which indicates boom and bust business cycles. \citet{altissimo2001eurocoin} calculate a monthly inflation index using time-series data of differing frequencies.
 
 
-TODO: see Bai (2003) page 1 for more examples!
+\citet{forni1998let} use the factors to estimate structural VAR equations to identify economy wide shocks.
+
+\citet{schumacher2010factor} employs international predictors to forecast German GDP which has influences the data choice for this thesis. The immediate justification is similar. Firstly it is intuitive that international data has an influence on an open economy directly. But secondly it is conceivable that there are underlying factors which influence both German GDP growth and international macroeconomic variables at the same time. However, to make sure that the information conveyed in the additional international predictors is of relevance for forecasting, \citet{schumacher2010factor} "targets" the predictors prior to estimating the factor equation. \citet{schumacher2010factor} does not deal with structural breaks.
+
+%TODO: see Bai (2003) page 1 for more examples!
+
 
 \section{Structural breaks}
 The treatment of structural breaks follows \citet{breitung2011testing} closely. The question of interest is how a researcher should react to structural breaks in the factor equation.
@@ -273,7 +360,7 @@ If structural breaks are detected in one or more of the factors the question rem
 An alternative approach consists of removing the variable containing the structural break from the data set. This approach allows all other series to enter the forecasting equation at the same length as before while the added noise through the structural breaks is removed. The idea is similar to targeted predictors which remove uninformative predictors from the data set in order to improve the ratio of information to noise. Because of the typically high dimension of the data matrix $X$, factor models appear to be well suited for the second approach. Which method should be chosen depends on the size of the structural break, the relative position of the break and the relative information content of the other variables. In practice it is necessary to test in order to weigh the benefits and costs. This is done in the empirical section.
 
 \subsection{Testing for structural breaks}
-\citet{breitung2011testing} develop several Chow type tests for the static factor model under the assumptions of the strict factor model. They also develop Quandt-Andrews type supremum tests. The test statistics are as follows.
+\citet{breitung2011testing} develop several Chow type tests for the static factor model under the assumptions of the strict factor model. They also present Quandt-Andrews type supremum tests to identify breaks at unknown dates. The test statistics are as follows.
 
 
 \begin{equation}
@@ -326,7 +413,8 @@ $$\varrho_i(L) y_{it} = \lambda_i'[\varrho(L) \hat f_t] + \psi' [\varrho_i(L) \h
 The lag polynomials are obtained by applying some information criterion to the $N$ regressions
 $$\hat \varepsilon_{it} = \varrho_{i, t-1} \hat u_{i, t-1} + ... + \varrho_{i, p_i} \hat u_{i, t-p_i} + \tilde \varepsilon_{i,t}$$
 
-Similar test statistics as above can then be applied to the results of the GLS regressions. \citet{breitung2011testing} only present the LM-statistic.
+Similar test statistics as above can then be applied to the results of the GLS regressions. \citet{breitung2011testing} only present the LM-statistic arguing that it has the best size properties compared to the LR and Wald statistics.
+
 $$\hat \varrho_i(L) y_{it} = \lambda_i' \left[\varrho_i(L) \hat f_t\right] + \psi_i' \left[\hat \varrho_i(L) \hat f_t^*\right] + \tilde \varepsilon^*_{it} \text{ for } t= p_i+1, ..., T_i$$
 
 Under heteroskedasticity the regression has to be weighted by the covariance matrix. If we also take account of the possibility of a break in the covariance matrix we get two distinct regressions
@@ -364,16 +452,10 @@ Where $\hat e_t^+$ is set such that to $\hat e_{it}^+ = \hat e_{it} \nu_{it}$ an
 
 
 
-\section{Notes on the Literature}
-\citet{cragg1997inferring} shows in a Monte Carlo analysis that $T\rightarrow\infty$ and $N\rightarrow\infty$ makes that classical theory for predicting the number of factors performs badly. Resultingly information criteria as in \citet{bai2002determining} should be used. These results hold under heteroskedasticity and weak serial correlation. But: structural breaks! TODO!!
-
-
-
-
 \section{Empirical application}
-In this section I will approach the issue of forecasting economic time series in the presence of structural breaks. Specifically, I will focus on forecasting German GDP using German und US American macroeconomic time-series. The reason for including American time-series to predict German GDP is twofold. Firstly, Germany is active on international markets with the US being the second most important export market after France. Coupled with the big importance of the US American market in the world economy it is plausible that US data plays a role in predicting German economic development. Secondly, we are interested in forecasting time-series under structural breaks. There are at least two periods commonly associated with breaks in the world economy: the dot-com bubble of 2000 and the financial crisis of 2008, both of which originated in the US. The hope is that big ruptures in the world economy make a break of relationships between variables (and ultimately of the factor loadings) likely.
+In this section I will approach the issue of forecasting economic time-series in the presence of structural breaks. Specifically, I will focus on forecasting German GDP using German und US American macroeconomic time-series. The reason for including American time-series to predict German GDP is twofold. Firstly, Germany is active on international markets with the US being the second most important export market after France. Coupled with the big importance of the US American market in the world economy it is plausible that US data plays a role in predicting German economic development. Secondly, we are interested in forecasting time-series under structural breaks. There are at least two periods commonly associated with breaks in the world economy: the dot-com bubble of 2000 and the financial crisis of 2008, both of which originated in the US. The hope is that big ruptures in the world economy make a break of relationships between variables (and ultimately of the factor loadings) providing us with meaningful data for the following analysis.
 
-There are several ways to address the issue of structural breaks from a forecasting viewpoint. Firstly structural breaks can be ignored. As has been stated above, in this case factor models will tend to choose the a higher number of factors than if no structural breaks are present which is means that the space the factors span is of a higher dimension as the factors are orthogonal.\footnote{How this affects the information criteria of \citet{bai2002determining} can be seen in table 1 of \citet{breitung2011testing}.}
+There are several ways to address the issue of structural breaks from a forecasting viewpoint. Firstly structural breaks can be ignored. As has been stated above, in this case factor models will tend to choose a higher number of factors than if no structural breaks are present which means that the space the factors span is of a higher dimension as the factors are orthogonal to each other and thus linearly independent.\footnote{How this affects the information criteria of \citet{bai2002determining} can be seen in table 1 of \citet{breitung2011testing}.}
 
 Secondly, structural breaks can be included in the model in the form of a dummy parameter interacting with the factor estimations $\hat f_t$. The forecasting equation of the model then results as
 \begin{equation}
@@ -386,14 +468,14 @@ Thirdly, if predictors are to be targeted prior to estimating the factor equatio
 
 
 \subsection{Data choice and treatment}
-The data used for the horse race has been collected from the German Bundesbank and the the American Federal Reserve Bank of St. Louis.\footnote{More specifically the FRED2 public API has been used to extract selected series. The data from the Bundesbank have been scraped from the Bundesbank website.}  It consists of $T=82$ observations from $N=169$ quarterly variables. The series are listed below in appendix \ref{Data series}. The series contain macroeconomic variables such as wages and salaries, employment levels and survey data from Germany and the US as well as financial variables.
+The data used for the horse race has been collected from the German Bundesbank and from the American Federal Reserve Bank of St. Louis.\footnote{More specifically the FRED2 public API has been used to extract selected series. The data from the Bundesbank have been scraped from the Bundesbank website.}  Together the data set consists of $T=82$ observations from $N=169$ quarterly variables. The series are listed below in appendix \ref{Data series}. The data set contains macroeconomic variables such as wages and salaries, employment levels and survey data from Germany and the US as well as financial variables.
 
 Additionally an emphasis has been put on selecting several time-series which are well known to be subjected to big changes in the abovementioned periods such as "Housing starts".
 
 
 They have been downloaded in seasonally adjusted form where appropriate. The data series have then been differenced (zero times, once or twice) until stationarity. To this end the number of differencing operations necessary to make the series stationary have been tested using the KPSS method developed in \citet{kwiatkowski1992testing}.\footnote{The method consists of constructing an LM-test for the hypothesis that the variance $\sigma^2_\varepsilon$ is 0 (or equivalently that $\mu_t$ is constant) in $$y_t = \beta'D_t + \mu_t + u_t$$ $$\mu_t = \mu_{t-1} + \varepsilon_t$$ where $\varepsilon_t \sim N(0, \sigma^2_\varepsilon)$ and $D_t$ captures deterministic components and time trends. This implies that the difference of $y_t$ denoted $\Delta y_t$ is stationary.}
 
-The series have been demeaned and normalized such that $\frac{1}{T}\sum_{t=1}^T X_{it} = 0 \ \forall i$ and $\frac{1}{T}\sum_{t=1}^T X_{it}^2 = 1 \Leftrightarrow \sum_{t=1}^T X_{it}^2 = T \ \forall i$. \\
+Finally, the series have been demeaned and normalized such that $\frac{1}{T}\sum_{t=1}^T X_{it} = 0 \ \forall i$ and $\frac{1}{T}\sum_{t=1}^T X_{it}^2 = 1 \Leftrightarrow \sum_{t=1}^T X_{it}^2 = T \ \forall i$. \\
 
 
 \subsection{Model selection and evaluation}
@@ -415,16 +497,18 @@ I follow \citet{bai2008forecasting} in selecting among model candidates using th
 
 Where $\hat \sigma_n^2$ is the residual variance $\hat e'e$ from an estimation of the factor equation using $n$ predictors.
 
-Since the point of the exercise is forecasting, additionally, the best model in terms of out-of-sample forecasting performance is calculated. This is done by calculating the root mean squared error of one step ahead pseudo out-of-sample forecasts.\footnote{Pseudo out-of-sample forecasts are a method to simulated a forecasting situation in that the forecaster does as if he would not know the true realizations of the data after $t$. The forecaster tries to predict the value $y_{t+h}$ given all the information up to $t$. $t$ is then successively moved one period ahead. Here we set $h=1$.} This evaluation method follows \citet{forni2005the} and \citet{bai2008forecasting} among others. The foreacasting window $w$ over which the pseudo out-of-sample-forecasts are performed is set to $w=15$ here. \\
+Since the point of the exercise is forecasting, additionally, the optimal model in terms of out-of-sample forecasting performance is found. This is done by calculating the root mean squared error of one step ahead pseudo out-of-sample forecasts.\footnote{Pseudo out-of-sample forecasts are a method to simulated a forecasting situation in that the forecaster does as if he would not know the true realizations of the data after $t$. The forecaster tries to predict the value $y_{t+h}$ given all the information up to $t$. $t$ is then successively moved one period ahead. Here we set $h=1$.} This evaluation method follows \citet{forni2005the} and \citet{bai2008forecasting} among others. The foreacasting window $w$ over which the pseudo out-of-sample-forecasts are performed is set to $w=15$ here. \\
 
 
-All models are compared to a benchmark model which consists of a simple moving average over the forecasting window $w$. This forecasting window makes sure that there are more observations than parameters for all possible models. Since the length of the data series is $T=82$ this leaves $67$ observations for the first forecast in the pseudo out-of-sample procedure. The maximum number of factors is set to $15$ for static models and $10$ for dynamic models. The maximum number of lags of $y_t$ is set to $10$. This brings the maximal number of parameters to $n_{max} = 25$ for static models and $n_{max} = 50$ for dynamic models. The original number of predictors is $N = 169$ which highlights that factor models are are an appropriate way to deal with the situation of $N>>T$ in this data set.
+All models are compared to a benchmark model which consists of a simple moving average over the forecasting window $w$. This forecasting window makes sure that there are more observations than parameters for all possible models. Since the length of the data series is $T=82$ this leaves $67$ observations for the first forecast in the pseudo out-of-sample procedure. The maximum number of factors is set to $15$ for static models and $10$ for dynamic models. The maximum number of lags of $y_t$ is set to $10$. This brings the maximal number of parameters to $n_{max} = 25$ for static models and $n_{max} = 50$ for dynamic models. The original number of predictors is $N = 169$ which highlights that factor models can be used as a dimensionality reduction method and that they are are an appropriate way to deal with the situation of $N>>T$ in this data set.
 
 The first panel in table \ref{results static factor model} shows the results of the in sample selection procedure for a static factor model. Three variants for choosing the number of factors are considered. Firstly the IC$_{p2}$ criterion from \citet{bai2002determining} is used to estimate the number of static factors for both the factor equation and the forecasting equation. The information criteria (BIC and FPE) are then used to select $s$, the number of lags of $y_t$.
 As a second choice, the decision over the number of factors \textit{and} the number of lags of $y_t$ in the forecasting equation are left to the information criteria. I.e. the information criteria are minimized over different choices of $r$ and $s$. The same number of factors is used in the factor equation.
 A third possibility consists of leaving the choice of the number of factors for the factor equation to a \citet{bai2002determining} criterion and using the BIC or FPE criterion to choose the number of static factors in the forecasting equation along with the number of lags of $y_t$. I.e. the BIC or FPE are minimized over $r$ and $s$.
 
-Both the BIC and FPE as well as the $IC_{p2}$ criteria select a large number of factors. The fact that conventional information criteria should not be used for selecting the number of static factors has been extensively documented in the factor model literature and is no surprise. Another approach to model selection for forecasting consists of testing the model in an out-of-sample forecasting situation and selecting the best performing model in terms of the forecasting error. The results of optimal forecasting model are reported in the second panel of table \ref{results static factor model}.
+Both the BIC and FPE as well as the $IC_{p2}$ criteria select a large number of factors and are generally very erratic in their choice of a model. The fact that conventional information criteria should not be used for selecting the number of static factors has been extensively documented in the factor model literature and is no surprise. Another approach to model selection for forecasting consists of testing the model in an out-of-sample forecasting situation and selecting the best performing model in terms of the forecasting error. In a forecasting application this would imply that a certain fraction of the data has to be used for 
+
+The results of optimal forecasting model are reported in the second panel of table \ref{results static factor model}.
 
 Since the variance of the data series has been normalized to $1$ and the mean to $0$ the RMSE of the simple average $y_t$ in the given window can be expected to be close to $1$. The RMSE of the resulting out-of-sample forecasts is very large with $1.30$ and $1.22$ respectively. The benchmark model of a moving average reports an RMSE of $0.86$ and an AR(6) model achieves an RMSE of $0.50$ for the same time horizon.\footnote{$6$ is the optimal lag number in terms of RMSE.}
 
@@ -543,7 +627,10 @@ TODO: talk about the series that are most affected (for that I need to fix the v
 
 \subsubsection{Removing the effect of structural breaks}
 
-In the following the question of how to react to the presence of structural breaks is approached as in section 2 above. Either the length of the series is reduced by estimating the model only on data which is not subjected to structural breaks or the width of the data is reduced by removing the variables which are subjected to the structural break or a combination thereof. For the purpose of this paper we are interested in forecasting performance of factor models which ignore structural breaks versus factor models which take the structural breaks into account. Thus the results of models which restrict the amount of data to reduce the effect of structural breaks are compared with those that do not. It is worth noting that the comparison is not perfect because as has been argued in section $2$ it can be better to reduce the number of predictors to a set which is "targeted" towards the prediction of the variable of interest. It is possible that removing the variables with structural breaks "accidentally" targets the set of variables towards predicting the variable of interest independent of the structural break. In other words an improved result is not necessarily only due to the structural breaks being removed but might be due to a noisy predictor being removed. To be precise a series with a structural break could be considered a noisy predictor as well. However, it might be noisy independent of the structural breaks.
+In the following the question of how to react to the presence of structural breaks is approached as in section 2 above. Structural breaks in the factor loadings influence the performance of the forecasting equation through at least two channels. Firstly the presence of structural breaks decreases the signal to noise ratio in the data and thus. \citet{breitung2011testing} show that it is necessary to increase the number of factors $r$ under the presence of structural breaks in order to estimate the space spanned by the factors. If the number of static factors in the forecasting equation is set equal to the number of static factors in the factor equation it becomes necessary to estimate a bigger number of parameters. 
+
+
+Either the length of the series is reduced by estimating the model only on data which is not subjected to structural breaks or the width of the data is reduced by removing the variables which are subjected to the structural break or a combination thereof. For the purpose of this paper we are interested in forecasting performance of factor models which ignore structural breaks versus factor models which take the structural breaks into account. Thus the results of models which restrict the amount of data to reduce the effect of structural breaks are compared with those that do not. It is worth noting that the comparison is not perfect because as has been argued in section $2$ it can be better to reduce the number of predictors to a set which is "targeted" towards the prediction of the variable of interest. It is possible that removing the variables with structural breaks "accidentally" targets the set of variables towards predicting the variable of interest independent of the structural break. In other words an improved result is not necessarily only due to the structural breaks being removed but might be due to a noisy predictor being removed. To be precise a series with a structural break could be considered a noisy predictor as well. However, it might be noisy independent of the structural breaks.
 Resultingly, a robustness check consists of targeting the set of variables for both approaches prior to the estimation to remove that effect.
 
 A practical difficulty has to be addressed before the results are presented. Given the fact that there are two periods where a majority of structural breaks occur, each of which affects a different set of factor loadings, cutting off the values before the significant break periods would leave very few observations for estimating the new model.
@@ -583,8 +670,8 @@ Table \ref{results dynamic factor model, reduced data sets} shows that the exclu
 	  	  & \multicolumn{5}{c}{\textit{All variables with breaks removed}} \\ 
 			& & \multicolumn{3}{c}{$T=82, N=105$} \\
           \hline
-		   	RMSE & 6 & 6 & 3 & 2 & 0.39 \\
-		   	RMSE \& $IC_{p2}$ & 3 & 3 & 4 & 2 & 0.40 \\
+		   	RMSE & 6 & 6 & 3 & 2 & 0.40 \\
+		   	RMSE \& $IC_{p2}$ & 3 & 3 & 4 & 2 & 0.39 \\
 		  \hline
 		  \hline
 		  & \multicolumn{5}{c}{\textit{Second break cluster removed, length trimmed}} \\
@@ -602,41 +689,82 @@ Table \ref{results dynamic factor model, reduced data sets} shows that the exclu
 
 Figures for the number of structural breaks per period after variables have been dropped or the data length has been trimmed can be found in appendix \ref{structural breaks, reduced data sets}. Notably figure \ref{reduced data set, all variables with breaks removed} shows a modest number of structural breaks at the 5\% significance level \textit{after} all structural breaks had been removed from the data set. Iterating the procedure by removing the variables with structural breaks again increases the RMSE to $0.72$ which makes clear that blindly removing all variables which contain structural breaks need not be a good idea even though the previous results in table \ref{results dynamic factor model, reduced data sets} seemed to indicate that removing as many variables with structural breaks as possible has a positive effect on RMSE.
 
-\subsubsection{Targeted predictors}
-Targeting the predictors using hard thresholding at the 5\% significance level (see \citet{bai2008forecasting} for details) leaves $78$ variables in the data set. Figure \ref{structural breaks per period, targeted predictors} shows that targetting the data removes a part of the two clusters of structural breaks found in the original data. It can be inspected in table \ref{results dynamic factor model, targeted data sets} that the MSE is higher than it was for the original data set. For the complete data set the optimal model achieved an RMSE of $0.47$.
+
+\subsubsection{Removing breaks after targeting the data}
+It was found before that removing all variables with structural breaks can improve the forecasting performance. To test if targetting the predictors and removing the structural breaks has a similar effect, the variables with structural breaks are removed after the data set has been targeted. To this end the following sub section considers the residual effect of removing the structural breaks after the effect of targeting the predictors has been accounted for. Both soft and hard thresholding rules are applied.
+
+Starting with hard thresholding, targeting the predictors at the 10\%, 5\% and 1\% significance level (see \citet{bai2008forecasting} for details) leaves $85$, $78$ and $43$ variables in the data set respectively. Figure \ref{structural breaks per period, targeted predictors} shows that targetting the data removes a part of the two clusters of structural breaks found in the original data. It can be inspected in table \ref{results dynamic factor model, targeted data sets} that with hard thresholding the MSE is higher than it was for the original data set. For the complete data set the optimal model achieved an RMSE of $0.47$. with hard thresholding the mse increases to about $0.50$ for all three cut-off values. Regardless of the relatively bad performance of hard thresholding rules to target the predictors, removing the structural breaks from the targeted data set marginally improves the results.
 
 \begin{table}[ht]
 	\centering
 	\begin{tabular}{c|lllll}
+		   & \multicolumn{4}{c}{\textbf{Hard thresholding}} \\
 		   & $r_{factor}$ & $r_{forecast}$ & $s$ & $q$ & RMSE\\
 		 \hline
 		 \hline
-		  & \multicolumn{5}{c}{\textit{Hard Thresholding $\alpha=0.1$}} \\ 
+		  & \multicolumn{5}{c}{$\alpha=0.1$} \\ 
 		  & \multicolumn{5}{c}{$T=82, N=85$} \\
 		  \hline
 		   	RMSE & 1 & 1 & 5 & 2 & 0.50 \\
 		   	RMSE \& $IC_{p2}$ & 6 & 1 & 5 & 2 & 0.50 \\
 		 \hline
  		 \hline
-		  & \multicolumn{5}{c}{\textit{Hard Thresholding $\alpha=0.05$}} \\ 
+		  & \multicolumn{5}{c}{Hard Thresholding $\alpha=0.05$} \\ 
  		 & \multicolumn{5}{c}{$T=82, N=78$} \\
 		  \hline
 		   	RMSE & 1 & 1 & 5 & 2 & 0.50 \\
 		   	RMSE \& $IC_{p2}$ & 6 & 1 & 5 & 2 & 0.50 \\
 		 \hline
  		 \hline
- 		 & \multicolumn{5}{c}{\textit{Hard Thresholding $\alpha=0.01$}} \\ 
+ 		 & \multicolumn{5}{c}{$\alpha=0.01$} \\ 
  		 & \multicolumn{5}{c}{$T=82, N=43$} \\
 		  \hline
 		   	RMSE & 1 & 1 & 5 & 2 & 0.49 \\
 		   	RMSE \& $IC_{p2}$ & 7 & 1 & 5 & 2 & 0.49 \\
 		 \hline
  		 \hline
- 		 
 	\end{tabular}
-	\caption{Dynamic factor model, Targeted data}
+	\caption{Dynamic factor model, Targeted data, Hard Thresholding}
 	\label{results dynamic factor model, targeted data sets}
 \end{table}
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{c|llllll}
+		   & \multicolumn{5}{c}{\textbf{Hard thresholding, breaks removed}} \\
+		   & $r_{factor}$ & $r_{forecast}$ & $s$ & $q$ & RMSE & $\Delta$ \\
+		 \hline
+		 \hline
+		    & \multicolumn{5}{c}{$\alpha = 0.1$} \\ 
+			& \multicolumn{5}{c}{$T=82, N=51$} \\
+		  \hline
+		   	RMSE & 11 & 11 & 2 & 1 & 0.44 & 0.06 \\
+		   	RMSE \& $IC_{p2}$ & 4 & 11 & 2 & 1 & 0.44 & 0.06\\
+		 \hline
+		 \hline
+		    & \multicolumn{5}{c}{$\alpha = 0.05$} \\ 
+			& \multicolumn{5}{c}{$T=82, N=51$} \\
+		  \hline
+		   	RMSE & 1 & 1 & 5 & 2 & 0.50 & 0 \\
+		   	RMSE \& $IC_{p2}$ & 4 & 1 & 5 & 2 & 0.50 & 0\\
+		 \hline
+ 		 \hline
+ 		    & \multicolumn{5}{c}{$\alpha = 0.01$} \\ 
+			& \multicolumn{5}{c}{$T=82, N=28$} \\
+		 \hline
+			& \multicolumn{5}{c}{Results omitted} \\
+
+		 \hline
+ 		 \hline
+ 		 
+		 \multicolumn{7}{l} {\rule{0pt}{3.5cm} \begin{minipage}{12cm}
+			\small{\textbf{\textit{Notes:}}  $T$ and $N$ denote the dimension of the targeted data sets where all variables with evidence of structural breaks found at the 5\% level using the sup LM test have been removed. The column denoted with $\Delta$ calculates the difference between the RMSE of the best factor model calculated on the targeted data with structural breaks removed and the results from table \ref{results dynamic factor model, targeted data sets} where the structural breaks have not been removed. Note that the set of variables for hard thresholding with $\alpha=0.05$ differs although the number of variables coincides. Also note that there are no results for $\alpha=0.01$ because the estiamted number of factors for this data set is $22$ for wich there are no tabulated values to calculate the structural break tests with in \citet{andrews2003tests}. The critical values have not been simulated here.}
+		 \end{minipage}} \\
+	\end{tabular}
+	\caption{Dynamic factor model, Targeted data, Structural breaks removed}
+	\label{results dynamic factor model, reduced targeted data sets}
+\end{table}
+
 
 \begin{figure}[htp]
 \centering
@@ -646,46 +774,61 @@ Targeting the predictors using hard thresholding at the 5\% significance level (
 \label{structural breaks per period, targeted predictors}
 \end{figure}
 
+
+
 \clearpage
 
-It was found before that removing all variables with structural breaks can improve the forecasting performance. To test if targetting the predictors and removing the structural breaks has a similar effect the variables with structural breaks are removed from the targeted data set.
-This leaves $N = 51$ variables in the model. The estimation results are very similar and can be seen in table \ref{results dynamic factor model, reduced targeted data sets} which indicates that the removal of structural breaks after the data set has been targeted does not further improve the forecasting accuracy.
+As noted in the introduction on targeted predictors above, the difficulty with soft thresholding lies in the choice of steps (denoted $k$ from here on out) in the LARS-EN algorithm. This coincides with the number of variables chosen as each step adds one variable to the active set. It is conceivable that if the thresholding is too strict, i.e. the regularization parameter too large, the LASSO will have kicked out most of the variables which contain structural breaks. A chosen set of results of the removal of structural breaks after applying soft thresholding can be seen in table \ref{results dynamic factor model, targeted data sets, soft thresholding}. Relative improvements of removing structural breaks for more values of $k$ and Diebold-Mariano test statistics are shown in table \ref{diff rmse by removing breaks after targeting}. It can be seen that unless soft thresholding is too strict or too lenient in the sense that only if few or if too many variables are selected, removing the variables with structural breaks can still improve the RMSE. This can be seen in the positive entries in the $\Delta_{\text{RMSE}}$ column.
+
+ However, significant improvements in forecasting accuracy can not be confirmed for customary levels of significance and different forecasting performance can only be detected for very few choices of $k$.
+
 
 \begin{table}[ht]
 	\centering
 	\begin{tabular}{c|llllll}
+		   & \multicolumn{5}{c}{\textbf{Soft thresholding}} \\
 		   & $r_{factor}$ & $r_{forecast}$ & $s$ & $q$ & RMSE & $\Delta$ \\
+			% TODO: is this still accurate?
 		 \hline
 		 \hline
-		    & & \multicolumn{3}{c}{\textit{Hard thresholding $\alpha = 0.1$, breaks removed}} \\ 
-			& & \multicolumn{3}{c}{$T=82, N=51$} \\
+		  & \multicolumn{6}{c}{$k=21$} \\ 
+		  & \multicolumn{6}{c}{$T=82, N=21$} \\
 		  \hline
-		   	RMSE & 11 & 11 & 2 & 1 & 0.44 & 0.06 \\
-		   	RMSE \& $IC_{p2}$ & 4 & 11 & 2 & 1 & 0.44 & 0.06\\
-		 \hline
-		 \hline
-		    & & \multicolumn{3}{c}{\textit{Hard thresholding $\alpha = 0.05$, breaks removed}} \\ 
-			& & \multicolumn{3}{c}{$T=82, N=51$} \\
-		  \hline
-		   	RMSE & 1 & 1 & 5 & 2 & 0.50 & 0 \\
-		   	RMSE \& $IC_{p2}$ & 4 & 1 & 5 & 2 & 0.50 & 0\\
+		   	RMSE & 2 & 2 & 6 & 1 & 0.31 & $-0.06$ \\
+		   	RMSE \& $IC_{p2}$ & 1 & 2 & 6 & 1 & 0.31 & $-0.06$\\
 		 \hline
  		 \hline
- 		    & & \multicolumn{3}{c}{\textit{Hard thresholding $\alpha = 0.01$, breaks removed}} \\ 
-			& & \multicolumn{3}{c}{$T=82, N=51$} \\
+		  & \multicolumn{6}{c}{$k=25$} \\ 
+ 		  & \multicolumn{6}{c}{$T=82, N=25$} \\
 		  \hline
-		   	RMSE & 1 & 1 & 3 & 1 & 0.59 & -0.09 \\
-		   	RMSE \& $IC_{p2}$ & 14 & 1 & 3 & 1 & 0.59 & -0.09 \\
+		   	RMSE & 4 & 4 & 3 & 1 & 0.41 & $ +0.04$ \\
+		   	RMSE \& $IC_{p2}$ & 1 & 4 & 3 & 1 & 0.41 & $+0.04$\\
 		 \hline
  		 \hline
- 		 
-		 \multicolumn{6}{l} {\rule{0pt}{2cm} \begin{minipage}{14cm}
-			\small{\textbf{\textit{Notes:}}  All variables with evidence of structural breaks found at the 5\% level using the sup LM test have been removed. The column denoted Difference calculates the difference between the RMSE of the best factor model calculated on the targeted data with structural breaks removed and the results from table \ref{results dynamic factor model, targeted data sets} where the structural breaks have not been removed. Note that the set of variables for hard thresholding with $\alpha=0.01$ and $\alpha=0.05$ differs although the number of variables coincides.}
-		 \end{minipage}} \\
+ 		  & \multicolumn{6}{c}{$k=30$} \\ 
+ 		  & \multicolumn{6}{c}{$T=82, N=30$} \\
+		  \hline
+		   	RMSE & 7 & 7 & 3 & 1 & 0.44 & $+0.06$ \\
+		   	RMSE \& $IC_{p2}$ & 3 & 7 & 3 & 1 & 0.44 & $+0.06$ \\
+		 \hline
+ 		 \hline
+		\multicolumn{7}{l} {\rule{0pt}{1cm} \begin{minipage}{10cm}
+			\small{\textbf{\textit{Notes:}} The entries report differnt optimal models for three choices of thresholding rules $k \in \{21, 25, 30\}$. $k=21$ was chosen because it was the overall best performing model.}
+		\end{minipage}} \\
 	\end{tabular}
-	\caption{Dynamic factor model, Targeted data, Structural breaks removed}
-	\label{results dynamic factor model, reduced targeted data sets}
+	\caption{Dynamic factor model, Targeted data, Soft thresholding}
+	\label{results dynamic factor model, targeted data sets, soft thresholding}
 \end{table}
+
+
+To study the interaction between targeted predictors and structural breaks, in a final step, a monte carlo study is performed in which the simulated data contains a structural break in only one on the factor loadings. The size of the break and the information content for the prediction of $y$ is varied. The idea is to meassure the difference in RMSE in this contained environment if the variable is removed versus keeping the variable in the model for varying sizes of the break and levels of information for predicting $y$.
+
+
+\clearpage
+\section{Conclusion}
+While factor models perform quite well in forecasting economic time-series, structural breaks can, if not accounted for, undermine the forecasting performance significantly. Not only does one have to be careful with the actual prediction results but also interpretting the factors directly can become unfeasible as the number of static factors changes under structural breaks.
+
+Estimating different model specifications under structural breaks on a large macroeconomic data set including German and US macroeconomic variables shows that removing variables with structural breaks tends to improve forecasting accuracy considerably. This result holds even after the data set has been targeted on forecasting the variable of interest. The best performing models beat simple AR and moving average benchmark models along with the dynamic factor model which does not account for breaks.
 
 
 \clearpage
@@ -722,7 +865,7 @@ This is equivalent to the problem $\max_\Lambda \text{tr}\left\{(\Lambda'\Lambda
 
 
 \newpage
-\section{Replication of \citet{bai2002determining} for $r=7$ and $r=9$}
+\section{Replication of \citet{bai2002determining} for $r=7$, $r=9$}
 
 \label{bai ng information criteria}
 \begin{table}[h!]
@@ -730,9 +873,7 @@ This is equivalent to the problem $\max_\Lambda \text{tr}\left\{(\Lambda'\Lambda
 \center{
 	DGP: $X_{it} = \sum_{j=1}^r \lambda_{ij}F_{tj} + \sqrt{\theta}e_{it}, r=7$
 } \\
-
 \center
-
 \begin{tabular}{cc|lllllll}
 
 	N & T & $PC_{p1}$ & $PC_{p2}$ & $PC_{p3}$ & $IC_{p1}$ & $IC_{p2}$ & $IC_{p3}$\\
@@ -778,7 +919,8 @@ This is equivalent to the problem $\max_\Lambda \text{tr}\left\{(\Lambda'\Lambda
 \end{tabular}
 \end{table}
 
-\begin{table}
+
+\begin{table}[htp]
 \caption{Replication of Table I of \citet{bai2002determining} for $r=9$}
 \center{
 	DGP: $X_{it} = \sum_{j=1}^r \lambda_{ij}F_{tj} + \sqrt{\theta}e_{it}, r=9$
@@ -831,9 +973,142 @@ This is equivalent to the problem $\max_\Lambda \text{tr}\left\{(\Lambda'\Lambda
 \end{tabular}
 \end{table}
 
+
+\clearpage
+
+\begin{table}[htp]
+\caption{Size of Chow-tests, Table II of \citet{bai2002determining} Residual resampling}
+\center{
+	DGP: $X_{it} = \sum_{j=1}^r \lambda_{ij}F_{tj} + \sigma e_{it}, r=1, \sigma_i \sim U(0.5,1.5)$
+} \\
+\center
+\begin{tabular}{lllllll}
+	\hline
+	$N$ & LR & LM & W & LR & LM & W \\
+	\hline
+	& \multicolumn{3}{l}{T=50} & \multicolumn{3}{l}{T=100} \\
+	\hline
+	20 & 0.0445 & 0.0445 & 0.0483 &	0.0405 & 0.0435 & 0.0443 \\
+	50 & 0.0462 & 0.0456 & 0.0488 & 0.0524 & 0.0512 & 0.0508 \\
+	100 & 0.0513 & 0.0516 & 0.0549 & 0.0458 & 0.0458 & 0.0475 \\
+	150 & 0.0481 & 0.0487 & 0.0519 & 0.0483 & 0.0493 & 0.0487 \\
+	200 & 0.0497 & 0.0498 & 0.0509 & 0.0481 & 0.0483 & 0.0472 \\
+	\hline
+	& \multicolumn{3}{l}{T=150} & 	\multicolumn{3}{l}{T=200} \\
+	\hline
+	20 & 0.051 & 0.054 & 0.054 & 0.0515 & 0.054 & 0.0525 \\
+	50 & 0.0458 & 0.0474 & 0.0464 & 0.0504 & 0.0514 & 0.046 \\
+	100 & 0.0473 & 0.0463 & 0.0478 & 0.0472 & 0.0464 & 0.0478 \\
+	150 & 0.0491 & 0.0493 & 0.0491 & 0.0499 & 0.0499 & 0.0511 \\
+	200 & 0.0505 & 0.0514 & 0.0511 & 0.0489 & 0.0499 & 0.0497 \\
+	\hline \\
+	\multicolumn{7}{l} {\begin{minipage}{11cm}
+		\small{\textbf{\textit{Notes:}} Average rejection frequencies of $R=1000$ bootstrapped Wald, Lagrange multiplier and Likelihood ratio tests with $B=100$ bootstrap repetitions. Results are averaged over the $N$ tests for each variable. The DGP features no structural break ($b=0$). The tests are calculated at the $5\%$ significance level.}
+	\end{minipage}} \\
+\end{tabular}
+\end{table}
+
+\begin{table}[htp]
+\caption{Size of Chow-tests, Table II of \citet{bai2002determining} Wild bootstrap}
+\center{
+	DGP: $X_{it} = \sum_{j=1}^r \lambda_{ij}F_{tj} + \sigma e_{it}, r=1, \sigma_i \sim U(0.5,1.5)$
+} \\
+\center
+\begin{tabular}{lllllll}
+	\hline
+	N & LR & LM & W & LR & LM & W \\
+	\hline
+	& \multicolumn{3}{l}{T=50} & \multicolumn{3}{l}{T=100} \\
+	\hline
+	20 & 0.0251 & 0.0250 & 0.0552 & 0.0252 & 0.0351 & 0.0353 \\
+	50 & 0.0522 & 0.04602 & 0.0501 & 0.0461 & 0.0483 & 0.0462 \\
+	100 & 0.0421 & 0.0370 & 0.0502 & 0.0440 & 0.0481 & 0.0591 \\
+	150 & 0.0420 & 0.0401 & 0.0553 & 0.0547 & 0.0547 & 0.0601 \\
+	200 & 0.0435 & 0.0421 & 0.0495 & 0.0505 & 0.0502 & 0.0565 \\
+	\hline
+	& \multicolumn{3}{l}{T=150} & 	\multicolumn{3}{l}{T=200} \\
+	\hline
+	20 & 0.0551 & 0.0496 & 0.0581 & 0.0352 & 0.0403 & 0.0593 \\
+	50 & 0.0498 & 0.0574 & 0.0553 & 0.0346 & 0.0436 & 0.0374 \\
+	100 & 0.0569 & 0.0466 & 0.0559 & 0.0457 & 0.0455 & 0.0487 \\
+	150 & 0.0472 & 0.04464 & 0.0518 & 0.0447 & 0.0428 & 0.0453 \\
+	200 & 0.0485 & 0.0432 & 0.0515 & 0.0465 & 0.0492 & 0.0555 \\
+	\hline \\
+	\multicolumn{7}{l} {\begin{minipage}{11cm}
+		\small{\textbf{\textit{Notes:}} Average rejection frequencies of $R=1000$ bootstrapped Wald, Lagrange multiplier and Likelihood ratio tests with $B=100$ bootstrap repetitions. Results are averaged over the $N$ tests for each variable. The DGP features no structural break ($b=0$). The tests are calculated at the $5\%$ significance level.}
+	\end{minipage}} \\
+\end{tabular}
+\end{table}
+
+\clearpage
+
+\begin{table}[htp]
+\caption{Power of Chow-tests, Table III of \citet{bai2002determining} Residual resampling}
+\center{
+	DGP: $X_{it} = \sum_{j=1}^r \lambda_{ij}F_{tj} + \sigma e_{it}, r=1, \sigma_i \sim U(0.5,1.5)$
+} \\
+\center
+\begin{tabular}{lllllll}
+	\hline
+	b & LR & LM & W & LR & LM & W \\
+	\hline
+	& \multicolumn{3}{l}{T=50} & \multicolumn{3}{l}{T=100} \\
+	\hline
+	0.1 & 0.0532 & 0.0542 & 0.0564 & 0.0642 & 0.0682 & 0.0693 \\
+	0.2 & 0.0788 & 0.0784 & 0.0746 & 0.1134 & 0.1096 & 0.1112 \\
+	0.3 & 0.1076 & 0.1064 & 0.1006 & 0.1598 & 0.1616 & 0.1541 \\
+	0.5 & 0.1836 & 0.1806 & 0.1698 & 0.2934 & 0.2894 & 0.2828 \\
+	\hline
+	& \multicolumn{3}{l}{T=150} & 	\multicolumn{3}{l}{T=200} \\
+	\hline
+	0.1 & 0.0721 & 0.0743 & 0.0712 & 0.0814 & 0.0804 & 0.0838 \\
+	0.2 & 0.1466 & 0.1474 & 0.1442 & 0.1744 & 0.1716 & 0.1742 \\
+	0.3 & 0.2298 & 0.2284 & 0.2262 & 0.2644 & 0.2644 & 0.2564 \\
+	0.5 & 0.3654 & 0.3618 & 0.3662 & 0.4232 & 0.4264 & 0.4194 \\
+	\hline \\
+	\multicolumn{7}{l} {\begin{minipage}{11cm}
+		\small{\textbf{\textit{Notes:}} Average rejection frequencies of $R=1000$ bootstrapped Wald, Lagrange multiplier and Likelihood ratio tests with $B=100$ bootstrap repetitions. Results are averaged over the $N$ tests for each variable. The DGP features structural breaks of size $b$. The tests are calculated at the $5\%$ significance level.}
+	\end{minipage}} \\
+\end{tabular}
+\end{table}
+
+
+\begin{table}[htp]
+\caption{Power of Chow-tests, Table III of \citet{bai2002determining} Wild bootstrap}
+\center{
+	DGP: $X_{it} = \sum_{j=1}^r \lambda_{ij}F_{tj} + \sigma e_{it}, r=1, \sigma_i \sim U(0.5,1.5)$
+} \\
+\center
+\begin{tabular}{lllllll}
+	\hline
+	b & LR & LM & W & LR & LM & W \\
+	\hline
+	& \multicolumn{3}{l}{T=50} & \multicolumn{3}{l}{T=100} \\
+	\hline
+	0.1 & 0.0625 & 0.0684 & 0.0622 & 0.0921 & 0.0942 & 0.0961 \\
+	0.2 & 0.0644 & 0.0562 & 0.0741 & 0.1042 & 0.1310 & 0.1142 \\
+	0.3 & 0.0946 & 0.1041 & 0.1141 & 0.1583 & 0.1543 & 0.1665 \\
+	0.5 & 0.1644 & 0.1622 & 0.1785 & 0.3122 & 0.3312 & 0.3264 \\
+	\hline
+	& \multicolumn{3}{l}{T=150} & 	\multicolumn{3}{l}{T=200} \\
+	\hline
+	0.1 & 0.0581 & 0.0664 & 0.0686 & 0.1167 & 0.1041 & 0.1048 \\
+	0.2 & 0.1528 & 0.1581 & 0.1684 & 0.1824 & 0.1823 & 0.1921 \\
+	0.3 & 0.1981 & 0.2089 & 0.2147 & 0.2448 & 0.2389 & 0.2389 \\
+	0.4 & 0.4583 & 0.3965 & 0.4117 & 0.4246 & 0.4243 & 0.4347 \\
+	\hline \\
+	\multicolumn{7}{l} {\begin{minipage}{11cm}
+		\small{\textbf{\textit{Notes:}} Average rejection frequencies of $R=1000$ bootstrapped Wald, Lagrange multiplier and Likelihood ratio tests with $B=100$ bootstrap repetitions. Results are averaged over the $N$ tests for each variable. The DGP features structural breaks of size $b$. The tests are calculated at the $5\%$ significance level.}
+	\end{minipage}} \\
+\end{tabular}
+\end{table}
+
+
+
+\clearpage
 \newpage
 
-\section{Reestimation of structural break tests after reducing data sets}
+\section{Figures - Empirical Section}
 \label{structural breaks, reduced data sets}
 
 \begin{figure}[htp]
@@ -871,6 +1146,57 @@ This is equivalent to the problem $\max_\Lambda \text{tr}\left\{(\Lambda'\Lambda
 
 \clearpage
 \newpage
+
+\section{Tables - Empirical Section}
+\begin{table}[htp]
+	\centering
+	\begin{tabular}{cc|lll|lll}
+		k & N$_{\text{breaks removed}}$ & RMSE$_{\text{tar}}$ & RMSE$_{\text{br}}$ & $\Delta_{\text{RMSE}}$ & DM & $p_>$ & $p_{\not =}$ \\
+		\hline
+		26 & 20 & 0.4155 & 0.4608 & -0.0453 & -0.0697 & 0.5273 & 0.9455 \\
+		28 & 19 & 0.4032 & 0.4114 & -0.0082 & -0.6566 & 0.7390 & 0.5221 \\
+		30 & 22 & 0.4046 & 0.3599 & 0.0447 & 1.0106 & 0.1647 & 0.3294 \\
+		31 & 23 & 0.4114 & 0.3695 & 0.0420 & -0.7677 & 0.7723 & 0.4554 \\
+		32 & 22 & 0.3957 & 0.3835 & 0.0122 & 0.2713 & 0.3951 & 0.7901 \\
+		33 & 23 & 0.4056 & 0.3752 & 0.0304 & 0.1704 & 0.4336 & 0.8671 \\
+		34 & 22 & 0.4022 & 0.3815 & 0.0207 & 0.0958 & 0.4625 & 0.9250 \\
+		35 & 24 & 0.4149 & 0.4459 & -0.0311 & -1.2286 & 0.8803 & 0.2395 \\
+		36 & 23 & 0.4376 & 0.5062 & -0.0685 & 0.4031 & 0.3465 & 0.6930 \\
+		37 & 26 & 0.4407 & 0.5095 & -0.0688 & 0.1898 & 0.4261 & 0.8522 \\
+		38 & 26 & 0.4483 & 0.5223 & -0.0739 & -0.4054 & 0.6544 & 0.6913 \\
+		39 & 27 & 0.4535 & 0.5214 & -0.0679 & -0.4809 & 0.6810 & 0.6380 \\
+		40 & 29 & 0.4539 & 0.5112 & -0.0573 & 0.4473 & 0.3307 & 0.6615 \\
+		41 & 30 & 0.4551 & 0.5267 & -0.0715 & -0.9111 & 0.8112 & 0.3777 \\
+		42 & 31 & 0.4507 & 0.5330 & -0.0823 & 0.5962 & 0.2803 & 0.5605 \\
+		43 & 32 & 0.4574 & 0.5417 & -0.0843 & 0.7720 & 0.2265 & 0.4529 \\
+		44 & 31 & 0.4643 & 0.5240 & -0.0597 & 0.3969 & 0.3487 & 0.6974 \\
+		45 & 30 & 0.4635 & 0.5380 & -0.0746 & 0.6731 & 0.2559 & 0.5118 \\
+		46 & 30 & 0.4676 & 0.5389 & -0.0713 & 0.5448 & 0.2972 & 0.5945 \\
+		47 & 33 & 0.4503 & 0.5303 & -0.0800 & 0.6317 & 0.2689 & 0.5378 \\
+		48 & 34 & 0.4934 & 0.5429 & -0.0495 & 0.7543 & 0.2316 & 0.4632 \\
+		49 & 34 & 0.4991 & 0.5474 & -0.0484 & 0.7230 & 0.2408 & 0.4816 \\
+		50 & 33 & 0.4902 & 0.5472 & -0.0570 & 0.6203 & 0.2725 & 0.5450 \\
+
+		\hline
+	\end{tabular}
+
+	\begin{minipage}{14cm}
+		Critical values for the Diebold-Mariano test of improved and differing accuracy: \\ DM$_{1\%} = 2.62$, DM$_{5\%} = 1.76$, DM$_{10\%} = 1.35$ \\ DM$_{1\%} = 2.98$, DM$_{5\%} = 2.14$, DM$_{10\%} = 1.76$ (the relevant Statistic is $\text{abs}(\text{DM})$
+	\end{minipage}
+	\begin{minipage}{16cm}
+		\small{\textbf{\textit{Notes:}} Entries report the performance of the optimal model achieved through targeting the predictors and removing the structural breaks from data sets respectively. The data sets have been targeted using soft thresholding with $k$ steps. The results with $k \in \{21, 22, 23, 25, 27, 29\}$ are not presented because the estimates for the number of factors was too high and there are were tabulated values for the critical values. N$_{\text{breaks removed}}$ is the number of variables left in the model after structural breaks are removed. DM denotes the small sample corrected Diebold Mariano statistic from \citet{harvey1997testing}. $p_>$ and $p_{\not =}$ denote the p-values of a test for improved and differing forecasting accuracy respectively.}
+	\end{minipage}
+	\caption{Improvement in RMSE by removing structural breaks from targeted data}
+	\label{diff rmse by removing breaks after targeting}
+\end{table}
+
+
+
+
+
+\clearpage
+\newpage
+
 \section{Data series}
 \label{Data series}
 
@@ -1471,4 +1797,6 @@ This is equivalent to the problem $\max_\Lambda \text{tr}\left\{(\Lambda'\Lambda
 \newpage
 \bibliographystyle{plainnat}
 \bibliography{/home/joi/workspace/latex/citations}
+
+
 \end{document}

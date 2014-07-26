@@ -91,7 +91,7 @@ split.csv <- function(file, folder=F) { # this splits a file into different file
 
 
 
-# the following might be useful for debugging
+# the following was useful for debugging
 #col.is.equal <- function(col, matr)
 #    sapply(1:(dim(matr)[2]), function(idx) all(col %in% matr[, idx]))
 #
@@ -115,3 +115,18 @@ gdp <- xts(gdp[,2], gdp.time.index)
 colnames(gdp) <- c("BBK01.JQA000")
 final.data <- na.trim(normalize.data(na.omit(merge(zoo(gdp), zoo(final.data)))))
 #write.zoo(final.data, "../data/final_data.csv")
+
+series <- names(final.data)
+bb.descriptions.mat <- read.csv("../data/series_bundesbank_descriptions", as.is=T, sep="\t", header=F)
+bb.descriptions <- bb.descriptions.mat[,2]
+names(bb.descriptions) <- bb.descriptions.mat[,1]
+fred.descriptions.mat <- read.csv("../data/series_FRED_descriptions", as.is=T, header=F)
+fred.descriptions = fred.descriptions.mat[,2]
+names(fred.descriptions) <- fred.descriptions.mat[,1]
+descriptions <- c(bb.descriptions, fred.descriptions)
+descriptions[series]
+sum(is.na(descriptions[series]))
+series[which(is.na(descriptions[series]))]
+
+
+

@@ -1,0 +1,131 @@
+A229RX0,Real Disposable Personal Income: Per capita
+AAA,Moody's Seasoned Aaa Corporate Bond Yield©
+ACNGNO,Value of Manufacturers' New Orders for Consumer Goods: Consumer Nondurable Goods Industries
+AHECONS,Average Hourly Earnings Of Production And Nonsupervisory Employees: Construction
+AHEMAN,Average Hourly Earnings Of Production And Nonsupervisory Employees: Manufacturing
+AHETPI,Average Hourly Earnings of Production and Nonsupervisory Employees: Total Private
+AWHMAN,Average Weekly Hours of Production and Nonsupervisory Employees: Manufacturing
+AWOTMAN,Average Weekly Overtime Hours of Production and Nonsupervisory Employees: Manufacturing
+BAA,Moody's Seasoned Baa Corporate Bond Yield©
+BOGMBASE,Monetary Base; Total
+BOGNONBR,Non-Borrowed Reserves of Depository Institutions (DISCONTINUED SERIES)
+BUSLOANS,"Commercial and Industrial Loans, All Commercial Banks"
+BUSLOANSNSA,"Commercial and Industrial Loans, All Commercial Banks"
+CCRETT01USM661N,Real Effective Exchange Rates Based on Manufacturing Consumer Price Index for the United States©
+CES0600000007,Average Weekly Hours of Production and Nonsupervisory Employees: Goods-Producing
+CES0600000008,Average Hourly Earnings of Production and Nonsupervisory Employees: Goods-Producing
+CES2000000008,Average Hourly Earnings of Production and Nonsupervisory Employees: Construction
+CES3000000008,Average Hourly Earnings of Production and Nonsupervisory Employees: Manufacturing
+CEU0500000008,Average Hourly Earnings of Production and Nonsupervisory Employees: Total Private
+CEU0600000007,Average Weekly Hours of Production and Nonsupervisory Employees: Goods-Producing
+CEU0600000008,Average Hourly Earnings of Production and Nonsupervisory Employees: Goods-Producing
+CEU1000000001,All Employees: Mining and Logging
+CEU2000000001,All Employees: Construction
+CEU3000000001,All Employees: Manufacturing
+CEU3000000007,Average Weekly Hours of Production and Nonsupervisory Employees: Manufacturing
+CEU3000000009,Average Weekly Overtime Hours of Production and Nonsupervisory Employees: Manufacturing
+CEU3100000001,All Employees: Durable Goods
+CEU3200000001,All Employees: Nondurable Goods
+CEU9000000001,All Employees: Government
+CIVPART,Civilian Labor Force Participation Rate
+CLF16OV,Civilian Labor Force
+CPALTT01USM661S,Consumer Price Index: Total All Items for the United States©
+CPIAPPNS,Consumer Price Index for All Urban Consumers: Apparel
+CPIAPPSL,Consumer Price Index for All Urban Consumers: Apparel
+CPIAUCNS,Consumer Price Index for All Urban Consumers: All Items
+CPIAUCSL,Consumer Price Index for All Urban Consumers: All Items
+CPILFENS,Consumer Price Index for All Urban Consumers: All Items Less Food & Energy
+CPILFESL,Consumer Price Index for All Urban Consumers: All Items Less Food & Energy
+CPIMEDNS,Consumer Price Index for All Urban Consumers: Medical Care
+CPIMEDSL,Consumer Price Index for All Urban Consumers: Medical Care
+CPITRNNS,Consumer Price Index for All Urban Consumers: Transportation
+CPITRNSL,Consumer Price Index for All Urban Consumers: Transportation
+CURRNS,Currency Component of M1
+CURRSL,Currency Component of M1
+DGORDER,Manufacturers' New Orders: Durable Goods
+DMANEMP,All Employees: Durable goods
+EXCAUS,Canada / U.S. Foreign Exchange Rate
+EXJPUS,Japan / U.S. Foreign Exchange Rate
+EXSZUS,Switzerland / U.S. Foreign Exchange Rate
+EXUSUK,U.S. / U.K. Foreign Exchange Rate
+FEDFUNDS,Effective Federal Funds Rate
+FII10,"10-Year Treasury Inflation-Indexed Security, Constant Maturity"
+GS1,1-Year Treasury Constant Maturity Rate
+GS5,5-Year Treasury Constant Maturity Rate
+HMRMT,Real Manufacturing and Trade Industries Sales
+HOUST,Housing Starts: Total: New Privately Owned Housing Units Started
+HOUSTMW,Housing Starts in Midwest Census Region
+HOUSTMWNSA,Housing Starts in Midwest Census Region
+HOUSTNE,Housing Starts in Northeast Census Region
+HOUSTNSA,Housing Starts: Total: New Privately Owned Housing Units Started
+HOUSTS,Housing Starts in South Census Region
+HOUSTSNSA,Housing Starts in South Census Region
+HOUSTW,Housing Starts in West Census Region
+HOUSTWNSA,Housing Starts in West Census Region
+INDPRO,Industrial Production Index
+IPBUSEQ,Industrial Production: Business Equipment
+IPCONGD,Industrial Production: Consumer Goods
+IPDCONGD,Industrial Production: Durable Consumer Goods
+IPDMAN,Industrial Production: Durable Manufacturing (NAICS)
+IPFINAL,Industrial Production: Final Products (Market Group)
+IPFUELN,Industrial Production: Fuels
+IPFUELS,Industrial Production: Fuels
+IPMAN,Industrial Production: Manufacturing (NAICS)
+IPMAT,Industrial Production: Materials
+IPMINE,Industrial Production: Mining
+IPNCONGD,Industrial Production: Nondurable Consumer Goods
+ISRATIO,Total Business: Inventories to Sales Ratio
+LNS12032197,"Employment Level - Part-Time for Economic Reasons, Nonagricultural Industries"
+LNU01000000,Civilian Labor Force
+LNU01300000,Civilian Labor Force Participation Rate
+M04195USM350NNBR,Index of Spot Market Prices of 22 Commodities for United States
+M0882AUSM349NNBR,Help-Wanted Advertising In Newspapers for United States
+M0882BUSM350NNBR,Help-Wanted Advertising In Newspapers for United States
+M1NS,M1 Money Stock
+M1SL,M1 Money Stock
+M2NS,M2 Money Stock
+M2SL,M2 Money Stock
+MABMM301USM189S,M3 for the United States©
+MANEMP,All Employees: Manufacturing
+MCUMFN,Capacity Utilization: Manufacturing (NAICS)
+MICH,University of Michigan Inflation Expectation©
+NAPM,ISM Manufacturing: PMI Composite Index©
+NAPMEI,ISM Manufacturing: Employment Index©
+NAPMII,ISM Manufacturing: Inventories Index©
+NAPMNOI,ISM Manufacturing: New Orders Index©
+NAPMPI,ISM Manufacturing: Production Index©
+NAPMSDI,ISM Manufacturing: Supplier Deliveries Index©
+NDMANEMP,All Employees: Nondurable goods
+NEWORDER,Manufacturers' New Orders: Nondefense Capital Goods Excluding Aircraft
+NPPCON,Nonfarm Private Construction Payroll Employment©
+NPPFIN,Nonfarm Private Financial Activities Payroll Employment©
+NPPMNF,Nonfarm Private Manufacturing Payroll Employment©
+NPPTTU,"Nonfarm Private Trade, Transportation, and Utilities Payroll Employment©"
+PAYEMS,All Employees: Total nonfarm
+PAYNSA,All Employees: Total nonfarm
+PCEC96,Real Personal Consumption Expenditures
+PERMITNSA,New Privately-Owned Housing Units Authorized by Building Permits: Total
+PPIACO,Producer Price Index: All Commodities
+PPICRM,Producer Price Index: Crude Materials for Further Processing
+PPIFCF,Producer Price Index: Finished Consumer Foods
+PPIFGS,Producer Price Index: Finished Goods
+PPIITM,Producer Price Index: Intermediate Materials: Supplies & Components
+RBMTSRBR,Reserve Balances Maintained; Balances Maintained To Satisfy Reserve Balance Requirements
+RRSFS,Real Retail and Food Services Sales
+SRVPRD,All Employees: Service-Providing Industries
+TB3MS,3-Month Treasury Bill: Secondary Market Rate
+TB6MS,6-Month Treasury Bill: Secondary Market Rate
+TCU,Capacity Utilization: Total Industry
+TOTBUSIMNSA,Total Business Inventories
+TOTBUSIRNSA,Total Business: Inventories to Sales Ratio
+UCNGNO,Value of Manufacturers' New Orders for Consumer Goods: Consumer Nondurable Goods Industries
+UEMPMEAN,Average (Mean) Duration of Unemployment
+UMCSENT,University of Michigan: Consumer Sentiment©
+UNEMPLOY,Unemployed
+UNRATE,Civilian Unemployment Rate
+UNRATENSA,Civilian Unemployment Rate
+USCONS,All Employees: Construction
+USGOOD,All Employees: Goods-Producing Industries
+USGOVT,All Employees: Government
+USMINE,All Employees: Mining and logging
+W875RX1,Real personal income excluding current transfer receipts
