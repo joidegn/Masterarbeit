@@ -1,8 +1,8 @@
 using FactorModels
 
-R=3
-bs = [0.1, 0.5]
-deltas = [0.5, 0.9]
+R=10
+bs = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+deltas = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]
 #bs = [0.1, 0.3, 0.5, 0.7, 1]
 #deltas = [0.1, 02, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
 
@@ -17,8 +17,6 @@ results_reduced = Array(Any, R)
 diebold_results = Array(Any, R)
 diebold_results_two_sided = Array(Any, R)
 
-    x = factor_model_DGP(1000, N, r; model="single_break", b=0, delta=0.99, default_correlation=0.1)[1]
-    targeted_predictors(1, x, 4, "soft"; number_of_steps_in_lars=1)
 for rep in 1:R
     data_sets = [factor_model_DGP(T, N, r; model="single_break", b=b, delta=delta) for b in bs, delta in deltas]
     x_sets = [data_set[1] for data_set in data_sets]
@@ -37,7 +35,7 @@ end
 
 rmses = Float64[results[rep][b_ind, delta_ind][1] for b_ind in 1:length(bs), delta_ind in 1:length(deltas), rep in 1:R]
 rmses_reduced = Float64[results_reduced[rep][b_ind, delta_ind][1] for b_ind in 1:length(bs), delta_ind in 1:length(deltas), rep in 1:R]
-iff_rmses = rmses - rmses_reduced
+diff_rmses = rmses - rmses_reduced
 mean_diff = mean(diff_rmses, 3)[:, :, 1]
 
 diebold_rejections_improved = Bool[diebold_results[rep][b_ind, delta_ind][3] for b_ind in 1:length(bs), delta_ind in 1:length(deltas), rep in 1:R]

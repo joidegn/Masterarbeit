@@ -124,9 +124,13 @@ fred.descriptions.mat <- read.csv("../data/series_FRED_descriptions", as.is=T, h
 fred.descriptions = fred.descriptions.mat[,2]
 names(fred.descriptions) <- fred.descriptions.mat[,1]
 descriptions <- c(bb.descriptions, fred.descriptions)
-descriptions[series]
-sum(is.na(descriptions[series]))
-series[which(is.na(descriptions[series]))]
 
-
-
+variable.descriptions <- na.omit(descriptions[series])
+nas = sapply(series[which(is.na(descriptions[series]))], function(id) system(paste0("cat ../data/items.grouped.json | jq '.[] | .[] | select(.id==\"", id, "\") | .title' | sed 's/\"//g'"), intern=T))
+# not enough time to solve this issue properly, we just grep the missing descriptions from the file. This is clumsy, slow and require jq (the command line json parser to be installed)
+variable.descriptions <- c(variable.descriptions, nas)
+#library(xtable)
+#sink("variable_table.tex")
+#xtable(matrix(c(names(variable.descriptions), variable.descriptions), ncol=2))
+#sink(NULL)
+ 
