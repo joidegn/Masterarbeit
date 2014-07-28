@@ -1,6 +1,7 @@
+# some functions which perform model choice for static and dynamic models based on the rmse of pseudo-out-of-sample forecasts
 
 function pseudo_out_of_sample_forecasts(x::Array{Float64, 2}, y_index::Int64, number_of_lags::Int64, number_of_factors::Int64, number_of_factors_criterion::String=""; num_predictions::Int=10)
-    # one step ahead pseudo out-of-sample forecasts
+    # one step ahead pseudo out-of-sample forecasts for statuc models
     # the number of factors is used for the forecasting equation not for the factor equation if a criterion is given
     T = size(x,1)
     predictions = zeros(num_predictions)
@@ -65,7 +66,8 @@ function choose_static_factor_model_out_of_sample(x::Array{Float64, 2}, number_o
     prediction_tuples = [pseudo_out_of_sample_forecasts(x, 1, number_of_lags, number_of_factors; num_predictions=number_of_forecasts) for number_of_factors in 1:max_factors, number_of_lags in 1:max_lags]
     rmses = [RMSE(prediction_tuples[number_of_factors, number_of_lags][1], prediction_tuples[number_of_factors, number_of_lags][2]) for number_of_factors in 1:max_factors, number_of_lags in 1:max_lags]
     number_of_factors, number_of_lags = ind2sub(size(rmses), indmin(rmses))
-    return(number_of_factors, number_of_lags, minimum(rmses))
+    forecasts, true_values = prediction_tuples[number_of_factors, number_of_lags]
+    return(number_of_factors, number_of_lags, minimum(rmses), forecasts, true_values)
 end
 
 # dynamic factor model
