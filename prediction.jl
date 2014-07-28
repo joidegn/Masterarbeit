@@ -103,10 +103,12 @@ break_period_per_variable, significant_break_counts, periods_tested = sup_test(f
 #)
 #draw(PNG("graphs/structural_breaks.png", 20cm, 15cm), plt)
 
+# all break series
+series_id_with_break = header[find(Bool[break_period_per_variable[i].>0 for i in 1:size(fm.x, 2)])]
 # which variables have a break in period 25 and periods 62 to 65 which is when most variables have breaks
 series_idx_with_break_at25 = find(Bool[break_period_per_variable[i].==25 for i in 1:size(fm.x, 2)])
 series_id_with_break_at25 = header[series_idx_with_break_at25]
-series_idx_with_break_62_to_65 = find(Bool[65 .>= break_period_per_variable[i] .>= 62 for i in 1:size(fm.x, 2)])
+series_idx_with_break_62_to_65 = find(Bool[66 .>= break_period_per_variable[i] .>= 61 for i in 1:size(fm.x, 2)])
 series_id_with_break_62_to_65 = header[series_idx_with_break_62_to_65]
 
 # as an answer to the structural breaks we change the window of observations considered  (period 47 is 2004-07-01, period 61 is 2008-01-01)

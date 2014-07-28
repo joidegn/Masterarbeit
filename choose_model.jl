@@ -8,7 +8,7 @@ function pseudo_out_of_sample_forecasts(x::Array{Float64, 2}, y_index::Int64, nu
     to_predict = T-num_predictions+1:T
     for date_index in to_predict
         period = date_index - T+num_predictions
-        println("out-of-sample period: $period")
+        #println("out-of-sample period: $period")
         let y=x[1:date_index, y_index], x=x[1:date_index, [1:size(x,2)].!=y_index]  # y and x are updated so its easier for humans to read the next lines
             let newx=x[end, :], y=y[1:end-1], x=x[1:end-1, :]  # pseudo-one step ahead --> we predict only the last value in y using only information before that
                 length(number_of_factors_criterion) > 0 ? fm = FactorModel(hcat(y, x), number_of_factors_criterion) : fm = FactorModel(hcat(y, x), number_of_factors)
@@ -27,7 +27,7 @@ function pseudo_out_of_sample_forecasts(x::Array{Float64, 2}, y_index::Int64, nu
     to_predict = T-num_predictions+1:T
     for date_index in to_predict
         period = date_index - T+num_predictions
-        println("out-of-sample period: $period")
+        #println("out-of-sample period: $period")
         let y=x[1:date_index, y_index], x=x[1:date_index, [1:size(x,2)].!=y_index]  # y and x are updated so its easier for humans to read the next lines
             let newx=x[end, :], y=y[1:end-1], x=x[1:end-1, :]  # pseudo-one step ahead --> we predict only the last value in y using only information before that
                 length(number_of_factors_criterion) > 0 ? dfm = DynamicFactorModel((hcat(y, x), number_of_factors_criterion,), number_of_factor_lags) : dfm = DynamicFactorModel((hcat(x, y), number_of_factors, ), number_of_factor_lags)
