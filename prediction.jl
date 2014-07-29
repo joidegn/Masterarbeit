@@ -94,6 +94,9 @@ using Gadfly
 fm = FactorModel(x, "ICp2")
 break_period_per_variable, significant_break_counts, periods_tested = sup_test(fm)
 
+cor_factors_x = Float64[cor(fm.factors[:, i], x[:, j]) for i in 1:fm.number_of_factors, j in 1:size(x,2)]
+header[find(abs(cor_factors_x[4, :]) .> 0.6)]  # find series highly correlated with the first factor
+
 #plt = plot(
 #    layer(x=periods_tested, y=[i for i in values(significant_break_counts)], Geom.point),
 #    layer(x=periods_tested, y=[i for i in values(significant_break_counts)], Geom.line),
@@ -217,6 +220,7 @@ soft_targeting_steps = 20:50
 x_targeted_sets = [x[:, targeted_predictors(1, x, 6, "soft"; number_of_steps_in_lars=i)] for i in soft_targeting_steps]   # AR(6) is the best performing AR model so we use 6 lags here
 fm_targeted_sets = [FactorModel(x_targeted, "ICp2") for x_targeted in x_targeted_sets]
 x_targeted_sets = x_targeted_sets[find([fm.number_of_factors <= 7 for fm in fm_targeted_sets])]  # can only test breaks for less than 8 static factors
+soft_targeting_steps = soft_targeting_steps[find([fm.number_of_factors <= 7 for fm in fm_targeted_sets])]
 fm_targeted_sets = fm_targeted_sets[find([fm.number_of_factors <= 7 for fm in fm_targeted_sets])]  # can only test breaks for less than 8 static factors
 
 breaks_period_per_variable_targeted_sets = [sup_test(fm_targeted, 0.05)[1] for fm_targeted in fm_targeted_sets]
@@ -233,14 +237,30 @@ breaks_period_per_variable_targeted_sets = [[0, breaks_period_per_variable_targe
 #draw(PNG("graphs/structural_breaks_targeted_1percent.png", 20cm, 15cm), plt)
 
 
-#dynamic_model_out_of_sample_targeted_sets = [choose_dynamic_factor_model_out_of_sample(x_targeted) for x_targeted in x_targeted_sets]
+dynamic_model_out_of_sample_targeted_sets = [choose_dynamic_factor_model_out_of_sample(x_targeted) for x_targeted in x_targeted_sets]
 dynamic_model_out_of_sample_ICp2_targeted_sets = [choose_dynamic_factor_model_out_of_sample(x_targeted, "ICp2") for x_targeted in x_targeted_sets]
+
+rmses_targeted_sets = [dynamic_model_out_of_sample_ICp2_targeted_sets[i][4] for i in 1:length(dynamic_model_out_of_sample_ICp2_targeted_sets)]
+
+best_targeted_model_index = indmin(rmses_targeted_sets)  # the best performing targeted predictors model
+best_targeted_model_variable_indices = find(targeted_predictors(1, x, 6, "soft"; number_of_steps_in_lars=size(x_targeted_sets[best_targeted_model_index], 2)))
+second_best_targeted_model_index = find(sort(rmses_targeted_sets)[2].==rmses_targeted_sets)[1]
+second_best_targeted_model_variable_indices = find(targeted_predictors(1, x, 6, "soft"; number_of_steps_in_lars=size(x_targeted_sets[second_best_targeted_model_index], 2)))
+third_best_targeted_model_index = find(sort(rmses_targeted_sets)[3].==rmses_targeted_sets)[1]
+third_best_targeted_model_variable_indices = find(targeted_predictors(1, x, 6, "soft"; number_of_steps_in_lars=size(x_targeted_sets[third_best_targeted_model_index], 2)))
+dynamic_model_out_of_sample_ICp2_targeted_sets[third_best_targeted_model_index]
+fm_targeted_sets[third_best_targeted_model_index]
+
+
+# which variables are removed by the second best model and added the third best model?
+header[best_targeted_model_variable_indices[Bool[!(idx in second_best_targeted_model_variable_indices) for idx in best_targeted_model_variable_indices]]]
+header[third_best_targeted_model_variable_indices[Bool[!(idx in best_targeted_model_variable_indices) for idx in third_best_targeted_model_variable_indices]]]
+
 
 x_targeted_window_sets = [x_targeted_sets[i][:, breaks_period_per_variable_targeted_sets[i] .== 0] for i in 1:length(x_targeted_sets)]
 # [size(x_targeted, 2) for x_targeted in x_targeted_sets]  # data sets are tiny!
 # [size(x_targeted_window, 2) for x_targeted_window in x_targeted_window_sets]  # data sets are tiny!
 dynamic_model_out_of_sample_ICp2_targeted_window_sets = [choose_dynamic_factor_model_out_of_sample(x_targeted_window, "ICp2"; max_factors=5, max_factor_lags=3, max_lags=5) for x_targeted_window in x_targeted_window_sets]
-rmses_targeted_sets = [dynamic_model_out_of_sample_ICp2_targeted_sets[i][4] for i in 1:length(dynamic_model_out_of_sample_ICp2_targeted_sets)]
 rmses_targeted_window_sets = [dynamic_model_out_of_sample_ICp2_targeted_window_sets[i][4] for i in 1:length(dynamic_model_out_of_sample_ICp2_targeted_window_sets)]
 differences = rmses_targeted_sets - rmses_targeted_window_sets
 forecasts_targeted_sets = [dynamic_model_out_of_sample_ICp2_targeted_sets[i][5] for i in 1:length(dynamic_model_out_of_sample_ICp2_targeted_sets)]
