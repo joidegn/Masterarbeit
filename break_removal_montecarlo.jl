@@ -30,8 +30,8 @@ for rep in 1:R
 end
 toc()  # 50 repetitions take about 5100 seconds which is 85 minutes  --> 1000 repetitions would take about 45 hours, 500 would take ~22 hours, 100 reps took 9671 seconds = 161.18 minutes, 200 reps took 14955 seconds = 250 minutes
 
-diebold_results = [[diebold_mariano(results_reduced[rep][b_ind, delta_ind][4], results[rep][b_ind, delta_ind][4], results[rep][b_ind, delta_ind][5], 0.05) for b_ind in 1:length(bs), delta_ind in 1:length(deltas)] for rep in 1:R]
-diebold_results_two_sided = [[diebold_mariano(results_reduced[rep][b_ind, delta_ind][4], results[rep][b_ind, delta_ind][4], results[rep][b_ind, delta_ind][5], 0.05; test_type="two sided") for b_ind in 1:length(bs), delta_ind in 1:length(deltas)] for rep in 1:R]
+diebold_results = [[diebold_mariano(results_reduced[rep][b_ind, delta_ind][4], results[rep][b_ind, delta_ind][4], results[rep][b_ind, delta_ind][5], 0.10) for b_ind in 1:length(bs), delta_ind in 1:length(deltas)] for rep in 1:R]
+diebold_results_two_sided = [[diebold_mariano(results_reduced[rep][b_ind, delta_ind][4], results[rep][b_ind, delta_ind][4], results[rep][b_ind, delta_ind][5], 0.10; test_type="two sided") for b_ind in 1:length(bs), delta_ind in 1:length(deltas)] for rep in 1:R]
 
 rmses = Float64[results[rep][b_ind, delta_ind][3] for b_ind in 1:length(bs), delta_ind in 1:length(deltas), rep in 1:R]
 rmses_reduced = Float64[results_reduced[rep][b_ind, delta_ind][3] for b_ind in 1:length(bs), delta_ind in 1:length(deltas), rep in 1:R]
