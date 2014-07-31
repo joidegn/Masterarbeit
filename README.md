@@ -24,7 +24,7 @@ Some of the data series have been downloaded from the bundesbank website using P
 
 The rest of the data comes from the Federal Reserve of St. Louis (specifically the FRED2 API) and has been downloaded straightforwardly using the code in the [FRED] (https://github.com/joidegn/FRED.jl) Julia package.  The result can be found in data/FRED\_selected/.
 
-Shell scripts, R and Julia code to clean, normalize, difference and merge the data can be found in the data\_scripts folder.
+Shell scripts, R and Julia code to clean, normalize, difference and merge the data can be found in the data\_scripts folder. The cleaned and normalized data set on which the calculations are run can be found at data/final\_data.csv.
 
 
 ### Replication of the Results
