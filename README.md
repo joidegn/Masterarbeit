@@ -17,7 +17,7 @@ For Julia the list of required Packages is:
 
 
 ### Folder structure
-The  main folder holds all program code required for replication. Namely the files are `prediction.jl` and `bootstrap.jl` which can best be run in a  [Julia REPL] (http://julialang.org/). The data folder holds all data files including the raw data from the bundesbank and from FRED.
+The  main folder holds all program code required for replication. Namely the files are `prediction.jl`, `bootstrap.jl` and `break_removal_montecarlo.jl`  which can best be run in a  [Julia REPL] (http://julialang.org/). The data folder holds all data files including the raw data from the bundesbank and from FRED.
 
 ### Downloading, choosing and cleaning the data
 Some of the data series have been downloaded from the bundesbank website using Python and [Scrapy] (http://scrapy.org/). The program code to download the data from the bundesbank website can be found in the folder data/scrape/bundesbank. The results are on the one hand the csv files in data/bundesbank and on the other hand a list of all series descriptions in data/scrape/bundesbank/items.json which has been prettyfied in /data/scrape/bundesbank/items.pretty.json.
@@ -28,6 +28,6 @@ Shell scripts, R and Julia code to clean, normalize, difference and merge the da
 
 
 ### Replication of the Results
-Most easily the results can be replicated by installing the necessary dependencies for julia, checking out this repository and running the main `prediction.jl` and `bootstrap.jl` in a julia REPL e.g. by running `include("predictions.jl")` and `include("bootstrap.jl")`.
+Most easily the results can be replicated by installing the necessary dependencies for julia, checking out this repository and running the main `prediction.jl`, `bootstrap.jl` and `break_removal_montecarlo.jl` in a julia REPL e.g. by running `include("predictions.jl")`, `include("bootstrap.jl")` or `include("break_removal_montecarlo.jl")`.
 
 Note that some time consuming tasks have been commented out and it might be necessary to walk through the code line by line and uncomment manually.
