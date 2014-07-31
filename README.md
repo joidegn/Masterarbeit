@@ -1,4 +1,4 @@
-Replication filesfor "Forecasting Economic Time Series Using Dynamic Factor Models under Structural Breaks"
+Replication files for "Forecasting Economic Time Series Using Dynamic Factor Models under Structural Breaks"
 ====
 ### Requirements
 The calculations for this master thesis have been done mostly in [R] (http://cran.r-project.org/) and [Julia] (http://julialang.org/). For R the packages that have been used are 
